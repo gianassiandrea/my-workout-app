@@ -8,168 +8,266 @@
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex justify-center">
 
-  <div class="w-full max-w-md bg-slate-900 border-x border-slate-800 flex flex-col min-h-screen relative pb-20">
+  <div class="w-full max-w-md bg-slate-900 border-x border-slate-800 flex flex-col min-h-screen relative pb-10">
     
     <!-- Header -->
     <header class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/90 sticky top-0 z-10 backdrop-blur">
       <h1 class="text-xl font-extrabold tracking-wider text-emerald-400">PUMP // LAB</h1>
-      <span class="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full font-mono">v0.3</span>
+      <span class="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full font-mono">v1.2</span>
     </header>
 
-    <!-- Contenuto Principale -->
-    <main class="flex-1 p-4 space-y-5">
-      
-      <!-- SCHEDA ESERCIZIO IN CORSO -->
-      <div class="p-4 bg-slate-800/60 border border-slate-700/60 rounded-2xl space-y-4">
-        
-        <div class="flex justify-between items-start">
-          <div>
-            <h3 class="font-bold text-lg text-white">Panca Piana Bilanciere</h3>
-            <p class="text-xs text-slate-400">Target: 3 Serie x 8-10 Reps</p>
-          </div>
-          <button onclick="openModal('tutorial-modal')" class="px-2.5 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-lg text-xs font-medium">
-            🎬 Tutorial / Alt
+    <main class="flex-1 p-4 space-y-4">
+
+      <!-- SCHERMATA 1: HOME -->
+      <div id="screen-home" class="space-y-4 text-center py-10">
+        <div class="p-6 bg-slate-800/40 border border-slate-800 rounded-3xl space-y-4">
+          <h2 class="text-2xl font-bold text-white">Pronto per l'allenamento?</h2>
+          <p class="text-xs text-slate-400">Cliccando avvia, la data e l'orario d'inizio verranno salvati su Google Sheets.</p>
+          <button onclick="startWorkout()" class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-lg rounded-2xl transition shadow-lg shadow-emerald-500/10">
+            🚀 AVVIA ALLENAMENTO
           </button>
         </div>
+      </div>
 
-        <!-- CONTROLLO TIMER DOPPIO (Recupero vs Esercizio a Tempo) -->
-        <div class="grid grid-cols-2 gap-2">
-          <!-- Timer Recupero (90s) -->
-          <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-center space-y-1">
-            <span class="text-3xs font-mono text-slate-400 uppercase">Recupero (90s)</span>
-            <div id="rest-timer-display" class="text-2xl font-extrabold font-mono text-emerald-400">01:30</div>
-            <button onclick="startRestTimer(90)" class="w-full py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold text-2xs rounded">
-              AVVIA RECUPERO
-            </button>
+      <!-- SCHERMATA 2: SELEZIONE SCHEDA -->
+      <div id="screen-selection" class="hidden space-y-3">
+        <h2 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Scegli la scheda di oggi:</h2>
+        
+        <button onclick="selectRoutine('GIORNO_A')" class="w-full p-4 bg-slate-800/80 border border-slate-700/80 hover:border-emerald-500 rounded-2xl text-left space-y-1">
+          <div class="font-bold text-emerald-400">GIORNO A</div>
+          <div class="text-xs text-slate-300">Panca Piana, Goblet Squat Light, TRX, Military Press, Alzate Laterali</div>
+        </button>
+
+        <button onclick="selectRoutine('GIORNO_B')" class="w-full p-4 bg-slate-800/80 border border-slate-700/80 hover:border-emerald-500 rounded-2xl text-left space-y-1">
+          <div class="font-bold text-emerald-400">GIORNO B</div>
+          <div class="text-xs text-slate-300">Panca Inclinata, Goblet Heavy, Rematore, Push-ups, Curl, Plank</div>
+        </button>
+
+        <button onclick="selectRoutine('LIBERO')" class="w-full p-4 bg-slate-800/80 border border-slate-700/80 hover:border-emerald-500 rounded-2xl text-left space-y-1">
+          <div class="font-bold text-amber-400">ALLENAMENTO LIBERO</div>
+          <div class="text-xs text-slate-300">Sessione libera con note dirette</div>
+        </button>
+      </div>
+
+      <!-- SCHERMATA 3: ESERCIZIO E SERIE -->
+      <div id="screen-workout" class="hidden space-y-4">
+        
+        <!-- Header Esercizio -->
+        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+          <h2 id="routine-title" class="font-extrabold text-lg text-emerald-400">GIORNO A</h2>
+          <span id="exercise-step" class="text-xs font-mono bg-slate-800 px-2.5 py-1 rounded-full text-slate-300">Esercizio 1/5</span>
+        </div>
+
+        <!-- Esercizio Corrente Card -->
+        <div class="p-5 bg-slate-800/60 border border-slate-700/60 rounded-3xl space-y-4">
+          <div>
+            <h3 id="ex-name" class="font-bold text-xl text-white">Panca Piana (Bilanciere)</h3>
+            <p id="ex-target" class="text-sm font-semibold text-emerald-400 mt-1">Target: 4 x 10 @ 40 kg</p>
           </div>
 
-          <!-- Timer Esercizio a tempo -->
-          <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-center space-y-1">
+          <!-- Timer Esercizio a tempo (es. Plank) -->
+          <div id="work-timer-box" class="hidden p-3 bg-slate-900 rounded-2xl border border-slate-800 text-center space-y-1">
             <span class="text-3xs font-mono text-slate-400 uppercase">Timer Esercizio</span>
-            <div id="work-timer-display" class="text-2xl font-extrabold font-mono text-amber-400">00:45</div>
-            <button onclick="startWorkTimer(45)" class="w-full py-1 bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold text-2xs rounded">
-              AVVIA TEMPO
+            <div id="work-timer-display" class="text-3xl font-extrabold font-mono text-amber-400">01:00</div>
+            <button onclick="startWorkTimer(60)" class="w-full py-1.5 bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold text-xs rounded-xl">
+              AVVIA TEMPO ESERCIZIO
             </button>
           </div>
-        </div>
 
-        <!-- TABELLA REGISTRAZIONE SERIE -->
-        <div class="space-y-2">
-          <div class="grid grid-cols-5 gap-1 text-center text-3xs font-mono text-slate-400">
-            <span>SERIE</span>
-            <span>KG</span>
-            <span>REPS</span>
-            <span>RIR</span>
-            <span>STATO</span>
+          <!-- Timer Defaticamento (90s) -->
+          <div class="p-3 bg-slate-900 rounded-2xl border border-slate-800 text-center space-y-1">
+            <span id="rest-label" class="text-3xs font-mono text-slate-400 uppercase">Timer Recupero (90s)</span>
+            <div id="rest-timer-display" class="text-3xl font-extrabold font-mono text-emerald-400">01:30</div>
           </div>
 
-          <!-- Container dinamico delle serie -->
-          <div id="sets-container" class="space-y-2">
-            <!-- Serie 1 -->
-            <div id="set-row-1" class="grid grid-cols-5 gap-1 items-center bg-slate-900 p-2 rounded-xl border border-slate-800">
-              <span class="text-center font-bold text-xs text-emerald-400">1</span>
-              <input type="number" value="80" class="bg-slate-800 text-center rounded py-1 text-xs font-bold text-white border border-slate-700 w-full">
-              <input type="number" value="10" class="bg-slate-800 text-center rounded py-1 text-xs font-bold text-white border border-slate-700 w-full">
-              <select class="bg-slate-800 text-center rounded py-1 text-3xs font-bold text-slate-200 border border-slate-700 w-full">
-                <option value="2">RIR 2</option>
-                <option value="1">RIR 1</option>
-                <option value="0">Cedimento</option>
-              </select>
-              <button onclick="completeSet(1)" class="py-1 bg-emerald-500 text-slate-950 font-bold text-3xs rounded hover:bg-emerald-400">FINE</button>
-            </div>
-
-            <!-- Serie 2 -->
-            <div id="set-row-2" class="grid grid-cols-5 gap-1 items-center bg-slate-900 p-2 rounded-xl border border-slate-800 opacity-50">
-              <span class="text-center font-bold text-xs text-slate-500">2</span>
-              <input type="number" value="80" class="bg-slate-800 text-center rounded py-1 text-xs font-bold text-white border border-slate-700 w-full">
-              <input type="number" value="10" class="bg-slate-800 text-center rounded py-1 text-xs font-bold text-white border border-slate-700 w-full">
-              <select class="bg-slate-800 text-center rounded py-1 text-3xs font-bold text-slate-200 border border-slate-700 w-full">
-                <option value="2">RIR 2</option>
-                <option value="1">RIR 1</option>
-                <option value="0">Cedimento</option>
-              </select>
-              <button onclick="completeSet(2)" class="py-1 bg-slate-800 text-slate-400 font-bold text-3xs rounded" disabled>FINE</button>
-            </div>
-
-            <!-- Serie 3 (Ultima) -->
-            <div id="set-row-3" class="grid grid-cols-5 gap-1 items-center bg-slate-900 p-2 rounded-xl border border-slate-800 opacity-50">
-              <span class="text-center font-bold text-xs text-slate-500">3</span>
-              <input type="number" value="80" class="bg-slate-800 text-center rounded py-1 text-xs font-bold text-white border border-slate-700 w-full">
-              <input type="number" value="8" class="bg-slate-800 text-center rounded py-1 text-xs font-bold text-white border border-slate-700 w-full">
-              <select class="bg-slate-800 text-center rounded py-1 text-3xs font-bold text-slate-200 border border-slate-700 w-full">
-                <option value="2">RIR 2</option>
-                <option value="1">RIR 1</option>
-                <option value="0">Cedimento</option>
-              </select>
-              <button onclick="completeSet(3)" class="py-1 bg-slate-800 text-slate-400 font-bold text-3xs rounded" disabled>FINE</button>
+          <!-- TABELLA SERIE -->
+          <div class="space-y-2">
+            <div id="sets-container" class="space-y-2">
+              <!-- Le righe delle serie vengono generate dinamicamente -->
             </div>
           </div>
         </div>
 
-        <div id="ai-feedback" class="p-3 bg-slate-800/80 border border-slate-700 rounded-xl text-xs text-slate-300">
-          💡 Completa la Serie 1 e fai partire il timer di recupero da 90 secondi.
+      </div>
+
+      <!-- SCHERMATA 4: NOTE FINALI & AGENTE IA -->
+      <div id="screen-summary" class="hidden space-y-4">
+        <h2 class="font-bold text-lg text-emerald-400">Sessione Completata! 🎉</h2>
+        
+        <div class="p-4 bg-slate-800/40 border border-slate-800 rounded-2xl space-y-2">
+          <label class="text-xs font-bold text-slate-300 uppercase">Note Facoltative Sessione:</label>
+          <textarea id="workout-notes" placeholder="Come ti sei sentito? Fastidi, sensazioni, energia..." class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white outline-none h-24 focus:border-emerald-500"></textarea>
         </div>
 
+        <button onclick="generateAIReport()" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm rounded-xl">
+          🤖 ANALIZZA CON AGENTE IA
+        </button>
+
+        <div id="ai-response-box" class="hidden p-4 bg-emerald-950/30 border border-emerald-500/30 rounded-2xl space-y-2 text-xs text-slate-200">
+          <div class="font-bold text-emerald-400 flex items-center gap-1">🤖 Proposta IA / Suggerimenti:</div>
+          <div id="ai-response-text" class="whitespace-pre-line leading-relaxed"></div>
+        </div>
       </div>
 
     </main>
 
-    <!-- MODAL POPUP DOMS POST-ESERCIZIO -->
-    <div id="doms-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-5 space-y-4 text-center">
-        <h4 class="font-bold text-lg text-emerald-400">Esercizio Completato! 🎉</h4>
-        <p class="text-xs text-slate-300">Valuta l'affaticamento / percezione del lavoro sul muscolo target appena concluso:</p>
+    <!-- MODAL POPUP DIFFICOLTÀ (1-10) POST ULTIMA SERIE -->
+    <div id="diff-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 text-center">
+        <h4 class="font-bold text-base text-white">Esercizio Completato!</h4>
+        <p class="text-xs text-slate-400">Valuta la difficoltà complessiva dell'esercizio da 1 a 10:</p>
         
-        <div class="grid grid-cols-5 gap-1">
-          <button onclick="saveDOMS(1)" class="py-3 bg-slate-800 hover:bg-emerald-500/30 border border-slate-700 rounded-lg font-bold text-xs">1<br><span class="text-3xs font-normal text-slate-400">Leggero</span></button>
-          <button onclick="saveDOMS(2)" class="py-3 bg-slate-800 hover:bg-emerald-500/30 border border-slate-700 rounded-lg font-bold text-xs">2<br><span class="text-3xs font-normal text-slate-400">Buono</span></button>
-          <button onclick="saveDOMS(3)" class="py-3 bg-slate-800 hover:bg-emerald-500/30 border border-slate-700 rounded-lg font-bold text-xs">3<br><span class="text-3xs font-normal text-slate-400">Ottimo</span></button>
-          <button onclick="saveDOMS(4)" class="py-3 bg-slate-800 hover:bg-amber-500/30 border border-slate-700 rounded-lg font-bold text-xs text-amber-400">4<br><span class="text-3xs font-normal text-slate-400">Intenso</span></button>
-          <button onclick="saveDOMS(5)" class="py-3 bg-slate-800 hover:bg-red-500/30 border border-slate-700 rounded-lg font-bold text-xs text-red-400">5<br><span class="text-3xs font-normal text-slate-400">Estremo</span></button>
+        <div class="grid grid-cols-5 gap-2">
+          <button onclick="submitDifficulty(1)" class="py-2.5 bg-slate-800 hover:bg-emerald-500/30 border border-slate-700 rounded-xl font-bold text-xs">1</button>
+          <button onclick="submitDifficulty(2)" class="py-2.5 bg-slate-800 hover:bg-emerald-500/30 border border-slate-700 rounded-xl font-bold text-xs">2</button>
+          <button onclick="submitDifficulty(3)" class="py-2.5 bg-slate-800 hover:bg-emerald-500/30 border border-slate-700 rounded-xl font-bold text-xs">3</button>
+          <button onclick="submitDifficulty(4)" class="py-2.5 bg-slate-800 hover:bg-emerald-500/30 border border-slate-700 rounded-xl font-bold text-xs">4</button>
+          <button onclick="submitDifficulty(5)" class="py-2.5 bg-slate-800 hover:bg-emerald-500/30 border border-slate-700 rounded-xl font-bold text-xs">5</button>
+          <button onclick="submitDifficulty(6)" class="py-2.5 bg-slate-800 hover:bg-amber-500/30 border border-slate-700 rounded-xl font-bold text-xs text-amber-400">6</button>
+          <button onclick="submitDifficulty(7)" class="py-2.5 bg-slate-800 hover:bg-amber-500/30 border border-slate-700 rounded-xl font-bold text-xs text-amber-400">7</button>
+          <button onclick="submitDifficulty(8)" class="py-2.5 bg-slate-800 hover:bg-amber-500/30 border border-slate-700 rounded-xl font-bold text-xs text-amber-400">8</button>
+          <button onclick="submitDifficulty(9)" class="py-2.5 bg-slate-800 hover:bg-red-500/30 border border-slate-700 rounded-xl font-bold text-xs text-red-400">9</button>
+          <button onclick="submitDifficulty(10)" class="py-2.5 bg-slate-800 hover:bg-red-500/30 border border-slate-700 rounded-xl font-bold text-xs text-red-400">10</button>
         </div>
       </div>
     </div>
-
-    <!-- MODAL TUTORIAL & ALTERNATIVE -->
-    <div id="tutorial-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-4 space-y-4">
-        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-          <h4 class="font-bold text-slate-100">Tutorial & Alternative</h4>
-          <button onclick="closeModal('tutorial-modal')" class="text-slate-400 font-bold">✕</button>
-        </div>
-        <div class="aspect-video bg-slate-800 rounded-xl flex items-center justify-center text-slate-500 text-xs border border-slate-700">
-          ▶ Video Esecuzione Corretta
-        </div>
-        <div class="space-y-2">
-          <h5 class="text-xs font-semibold text-slate-400 uppercase">Alternative Praticabili:</h5>
-          <ul class="text-xs space-y-1 text-slate-300">
-            <li class="p-2 bg-slate-800 rounded flex justify-between"><span>Distensioni Manubri</span><button class="text-emerald-400">Sostituisci</button></li>
-            <li class="p-2 bg-slate-800 rounded flex justify-between"><span>Dips Parallele</span><button class="text-emerald-400">Sostituisci</button></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bottom Navigation -->
-    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto border-t border-slate-800 bg-slate-900 p-3 flex justify-around text-xs font-bold">
-      <button class="text-emerald-400">WORKOUT</button>
-      <button class="text-slate-500">STORICO</button>
-      <button class="text-slate-500">AGENTE IA</button>
-    </nav>
 
   </div>
 
   <script>
+    const GOOGLE_SHEET_URL = ""; 
+
+    const routines = {
+      GIORNO_A: [
+        { name: "Panca Piana (Bilanciere)", target: "4 x 10 @ 40 kg", totalSets: 4, hasWorkTimer: false },
+        { name: "Goblet Squat (Light/Tecnico)", target: "4 x 12 @ 10 kg", totalSets: 4, hasWorkTimer: false },
+        { name: "TRX Chest Press", target: "3 x 10-12", totalSets: 3, hasWorkTimer: false },
+        { name: "Military Press (Seduto)", target: "4 x 12 @ 6 kg/manubrio", totalSets: 4, hasWorkTimer: false },
+        { name: "Alzate Laterali (Seduto)", target: "4 x 8 @ 6 kg/manubrio", totalSets: 4, hasWorkTimer: false }
+      ],
+      GIORNO_B: [
+        { name: "Panca Inclinata a 45° (Bilanciere)", target: "4 x 8 @ 40 kg", totalSets: 4, hasWorkTimer: false },
+        { name: "Goblet Squat (Heavy)", target: "4 x 12 @ 15 kg", totalSets: 4, hasWorkTimer: false },
+        { name: "Rematore Manubrio su Panca", target: "4 x 10 @ 15 kg", totalSets: 4, hasWorkTimer: false },
+        { name: "Flessioni (Push-ups)", target: "4 x 10", totalSets: 4, hasWorkTimer: false },
+        { name: "Curl Alternato Manubri (Seduto)", target: "3 x 12 @ 5 kg/braccio", totalSets: 3, hasWorkTimer: false },
+        { name: "Plank", target: "3 x 60 secondi", totalSets: 3, hasWorkTimer: true, workTime: 60 }
+      ]
+    };
+
+    let currentRoutineKey = "";
+    let currentExercises = [];
+    let currentIndex = 0;
+    let exerciseRatings = [];
     let restTimer, workTimer;
 
-    function startRestTimer(seconds) {
+    function startWorkout() {
+      if (GOOGLE_SHEET_URL) {
+        fetch(GOOGLE_SHEET_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: JSON.stringify({ workoutType: "Inizio Sessione" })
+        }).catch(err => console.log(err));
+      }
+
+      document.getElementById('screen-home').classList.add('hidden');
+      document.getElementById('screen-selection').classList.remove('hidden');
+    }
+
+    function selectRoutine(key) {
+      currentRoutineKey = key;
+      document.getElementById('screen-selection').classList.add('hidden');
+
+      if (key === 'LIBERO') {
+        document.getElementById('screen-summary').classList.remove('hidden');
+        return;
+      }
+
+      currentExercises = routines[key];
+      currentIndex = 0;
+      exerciseRatings = [];
+      
+      document.getElementById('routine-title').textContent = key.replace('_', ' ');
+      document.getElementById('screen-workout').classList.remove('hidden');
+      loadExercise();
+    }
+
+    function loadExercise() {
+      const ex = currentExercises[currentIndex];
+      document.getElementById('ex-name').textContent = ex.name;
+      document.getElementById('ex-target').textContent = `Target: ${ex.target}`;
+      document.getElementById('exercise-step').textContent = `Esercizio ${currentIndex + 1}/${currentExercises.length}`;
+      document.getElementById('rest-label').textContent = "Timer Recupero Serie (90s)";
+
+      // Reset Timer
+      document.getElementById('rest-timer-display').textContent = "01:30";
+      clearInterval(restTimer);
+      clearInterval(workTimer);
+
+      const workBox = document.getElementById('work-timer-box');
+      if (ex.hasWorkTimer) {
+        workBox.classList.remove('hidden');
+        document.getElementById('work-timer-display').textContent = `00:${ex.workTime}`;
+      } else {
+        workBox.classList.add('hidden');
+      }
+
+      // Genera dinamica delle serie
+      const container = document.getElementById('sets-container');
+      container.innerHTML = "";
+
+      for (let i = 1; i <= ex.totalSets; i++) {
+        const isFirst = i === 1;
+        container.innerHTML += `
+          <div id="set-row-${i}" class="flex justify-between items-center bg-slate-900 p-3 rounded-2xl border border-slate-800 ${isFirst ? '' : 'opacity-40'}">
+            <span class="font-bold text-xs ${isFirst ? 'text-emerald-400' : 'text-slate-500'}">SERIE ${i} di ${ex.totalSets}</span>
+            <button id="set-btn-${i}" onclick="finishSet(${i}, ${ex.totalSets})" ${isFirst ? '' : 'disabled'} 
+              class="px-4 py-2 ${isFirst ? 'bg-emerald-500 text-slate-950 hover:bg-emerald-400' : 'bg-slate-800 text-slate-500'} font-bold text-xs rounded-xl transition">
+              FINE SERIE
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    function finishSet(setNum, totalSets) {
+      const currentRow = document.getElementById(`set-row-${setNum}`);
+      const currentBtn = document.getElementById(`set-btn-${setNum}`);
+      
+      currentRow.classList.add('bg-emerald-950/30', 'border-emerald-500/40');
+      currentBtn.disabled = true;
+      currentBtn.textContent = "COMPLETATA ✓";
+      currentBtn.className = "px-4 py-2 bg-slate-800 text-emerald-400 font-bold text-xs rounded-xl";
+
+      if (setNum < totalSets) {
+        // Recupero tra le SERIE dello stesso esercizio
+        startRestTimer(90, "Timer Recupero Serie (90s)");
+        
+        const nextNum = setNum + 1;
+        const nextRow = document.getElementById(`set-row-${nextNum}`);
+        const nextBtn = document.getElementById(`set-btn-${nextNum}`);
+
+        nextRow.classList.remove('opacity-40');
+        nextBtn.disabled = false;
+        nextBtn.className = "px-4 py-2 bg-emerald-500 text-slate-950 hover:bg-emerald-400 font-bold text-xs rounded-xl transition";
+      } else {
+        // È l'ultima serie: mostra il popup di difficoltà
+        setTimeout(() => {
+          document.getElementById('diff-modal').classList.remove('hidden');
+        }, 500);
+      }
+    }
+
+    function startRestTimer(seconds, labelText = "Timer Recupero (90s)") {
       clearInterval(restTimer);
       let time = seconds;
       const display = document.getElementById('rest-timer-display');
+      document.getElementById('rest-label').textContent = labelText;
+
       restTimer = setInterval(() => {
         let m = Math.floor(time / 60), s = time % 60;
         display.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-        if (--time < 0) { clearInterval(restTimer); display.textContent = "PRONTO!"; }
+        if (--time < 0) { clearInterval(restTimer); display.textContent = "RECUPERATO!"; }
       }, 1000);
     }
 
@@ -184,35 +282,53 @@
       }, 1000);
     }
 
-    function completeSet(setNum) {
-      const currentRow = document.getElementById(`set-row-${setNum}`);
-      currentRow.classList.add('bg-emerald-950/30', 'border-emerald-500/40');
+    function submitDifficulty(score) {
+      document.getElementById('diff-modal').classList.add('hidden');
       
-      // Far partire il timer di defaticamento automatico da 90 secondi
-      startRestTimer(90);
+      exerciseRatings.push({
+        exercise: currentExercises[currentIndex].name,
+        target: currentExercises[currentIndex].target,
+        difficulty: score
+      });
 
-      if (setNum < 3) {
-        const nextRow = document.getElementById(`set-row-${setNum + 1}`);
-        nextRow.classList.remove('opacity-50');
-        const nextBtn = nextRow.querySelector('button');
-        nextBtn.disabled = false;
-        nextBtn.className = "py-1 bg-emerald-500 text-slate-950 font-bold text-3xs rounded hover:bg-emerald-400";
+      currentIndex++;
+
+      if (currentIndex < currentExercises.length) {
+        loadExercise();
+        // Fai partire il recupero da 90s PER IL CAMBIO ESERCIZIO
+        startRestTimer(90, "🔄 Cambio Esercizio - Recupero (90s)");
       } else {
-        // Se è l'ultima serie (Serie 3), apri la valutazione DOMS
-        setTimeout(() => {
-          openModal('doms-modal');
-        }, 500);
+        // Fine allenamento
+        document.getElementById('screen-workout').classList.add('hidden');
+        document.getElementById('screen-summary').classList.remove('hidden');
       }
     }
 
-    function saveDOMS(score) {
-      closeModal('doms-modal');
-      const feedback = document.getElementById('ai-feedback');
-      feedback.innerHTML = `✅ <strong>Esercizio Registrato!</strong> Valutazione sforzo/DOMS: <strong>${score}/5</strong>. Il carico della prossima sessione verrà ricalcolato di conseguenza.`;
-    }
+    function generateAIReport() {
+      const box = document.getElementById('ai-response-box');
+      const text = document.getElementById('ai-response-text');
+      box.classList.remove('hidden');
 
-    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+      let summaryText = "Analisi basata sui tuoi voti di difficoltà:\n\n";
+      
+      if (exerciseRatings.length === 0) {
+        summaryText += "Sessione Libera registrata. Mantieni focus sulla progressione di carico costante.";
+      } else {
+        exerciseRatings.forEach(item => {
+          summaryText += `• ${item.exercise}: Difficoltà ${item.difficulty}/10\n`;
+          if (item.difficulty <= 4) {
+            summaryText += `  👉 Carico leggero. Prossima sessione: +2.5kg o +2 reps.\n`;
+          } else if (item.difficulty >= 8) {
+            summaryText += `  ⚠️ Sforzo alto. Mantieni questo carico fino a RIR 2.\n`;
+          } else {
+            summaryText += `  ✅ Carico target ideale per l'ipertrofia.\n`;
+          }
+        });
+      }
+
+      text.textContent = summaryText;
+    }
   </script>
 </body>
+</html>
 </html>
