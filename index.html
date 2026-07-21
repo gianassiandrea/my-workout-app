@@ -13,7 +13,7 @@
     <!-- Header -->
     <header class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/90 sticky top-0 z-10 backdrop-blur">
       <h1 class="text-xl font-extrabold tracking-wider text-emerald-400">PUMP // LAB</h1>
-      <span class="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full font-mono">v1.3</span>
+      <span class="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full font-mono">v2.0 IA</span>
     </header>
 
     <main class="flex-1 p-4 space-y-4">
@@ -22,7 +22,7 @@
       <div id="screen-home" class="space-y-4 text-center py-10">
         <div class="p-6 bg-slate-800/40 border border-slate-800 rounded-3xl space-y-4">
           <h2 class="text-2xl font-bold text-white">Pronto per l'allenamento?</h2>
-          <p class="text-xs text-slate-400">Cliccando avvia, la data e l'orario d'inizio verranno salvati su Google Sheets.</p>
+          <p class="text-xs text-slate-400">Tracciamento live e progressione automatica con IA.</p>
           <button onclick="startWorkout()" class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-lg rounded-2xl transition shadow-lg shadow-emerald-500/10">
             🚀 AVVIA ALLENAMENTO
           </button>
@@ -72,13 +72,13 @@
             </button>
           </div>
 
-          <!-- Timer Defaticamento (90s) -->
+          <!-- Timer Defaticamento -->
           <div class="p-3 bg-slate-900 rounded-2xl border border-slate-800 text-center space-y-1">
             <span id="rest-label" class="text-3xs font-mono text-slate-400 uppercase">Timer Recupero Serie (90s)</span>
             <div id="rest-timer-display" class="text-3xl font-extrabold font-mono text-emerald-400">01:30</div>
           </div>
 
-          <!-- TABELLA SERIE DINAMICA CON KG E REPS -->
+          <!-- TABELLA SERIE -->
           <div class="space-y-2">
             <div class="grid grid-cols-4 gap-2 text-center text-3xs font-mono text-slate-400 px-1">
               <span>SERIE</span>
@@ -86,30 +86,44 @@
               <span>REPS</span>
               <span>AZIONI</span>
             </div>
-            <div id="sets-container" class="space-y-2">
-              <!-- Righe generate da JS -->
-            </div>
+            <div id="sets-container" class="space-y-2"></div>
           </div>
         </div>
 
       </div>
 
-      <!-- SCHERMATA 4: NOTE FINALI & INVIO -->
+      <!-- SCHERMATA 4: SUMMARY & CHAT CON GEMINI IA -->
       <div id="screen-summary" class="hidden space-y-4">
         <h2 class="font-bold text-lg text-emerald-400">Sessione Completata! 🎉</h2>
         
         <div class="p-4 bg-slate-800/40 border border-slate-800 rounded-2xl space-y-2">
-          <label class="text-xs font-bold text-slate-300 uppercase">Note Facoltative Sessione:</label>
-          <textarea id="workout-notes" placeholder="Come ti sei sentito? Fastidi, sensazioni, energia..." class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white outline-none h-24 focus:border-emerald-500"></textarea>
+          <label class="text-xs font-bold text-slate-300 uppercase">Note Sessione:</label>
+          <textarea id="workout-notes" placeholder="Sensazioni, energia, fastidi..." class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white outline-none h-20 focus:border-emerald-500"></textarea>
         </div>
 
         <button onclick="finishWorkoutAndSend()" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm rounded-xl">
-          💾 SALVA SU GOOGLE SHEETS & ANALIZZA
+          💾 SALVA SU GOOGLE SHEETS & AVVIA CHAT IA
         </button>
 
-        <div id="ai-response-box" class="hidden p-4 bg-emerald-950/30 border border-emerald-500/30 rounded-2xl space-y-2 text-xs text-slate-200">
-          <div class="font-bold text-emerald-400 flex items-center gap-1">🤖 Proposta IA / Suggerimenti:</div>
-          <div id="ai-response-text" class="whitespace-pre-line leading-relaxed"></div>
+        <!-- BOX CHAT IA -->
+        <div id="ai-chat-box" class="hidden space-y-3 pt-2">
+          <div class="p-4 bg-slate-900 border border-emerald-500/30 rounded-2xl space-y-3">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+              <span class="font-bold text-xs text-emerald-400">🤖 GEMINI COACH IA</span>
+              <span id="chat-status" class="text-3xs text-slate-400">In ascolto...</span>
+            </div>
+
+            <!-- Messaggi Chat -->
+            <div id="chat-messages" class="space-y-2 max-h-60 overflow-y-auto text-xs text-slate-200">
+              <!-- I messaggi compariranno qui -->
+            </div>
+
+            <!-- Input Chat -->
+            <div class="flex gap-2 pt-2">
+              <input type="text" id="chat-input" placeholder="Chiedi modifiche ai carichi..." class="flex-1 bg-slate-800 p-2.5 rounded-xl border border-slate-700 text-xs text-white outline-none focus:border-emerald-500">
+              <button onclick="sendChatMessage()" class="px-3 bg-emerald-500 text-slate-950 font-bold rounded-xl text-xs">Invia</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -119,7 +133,7 @@
     <div id="diff-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 text-center">
         <h4 class="font-bold text-base text-white">Esercizio Completato!</h4>
-        <p class="text-xs text-slate-400">Valuta la difficoltà complessiva dell'esercizio da 1 a 10:</p>
+        <p class="text-xs text-slate-400">Valuta la difficoltà complessiva (1-10):</p>
         
         <div class="grid grid-cols-5 gap-2">
           <button onclick="submitDifficulty(1)" class="py-2.5 bg-slate-800 hover:bg-emerald-500/30 border border-slate-700 rounded-xl font-bold text-xs">1</button>
@@ -139,10 +153,10 @@
   </div>
 
   <script>
-    // INSERISCI QUI IL TUO URL GOOGLE APPS SCRIPT
     const GOOGLE_SHEET_URL = "INCOLLA_QUI_IL_TUO_URL_DI_GOOGLE"; 
+    const GEMINI_API_KEY = "https://script.google.com/macros/s/AKfycbypRNVRrHy5jmZJZa-jfRGTCMVviGSBTlvZbOxwPZxMlxGk6bffCuxK98l7xBkkEJDBoQ/exec"; // Inserisci la tua API Key di Gemini
 
-    const routines = {
+    const defaultRoutines = {
       GIORNO_A: [
         { name: "Panca Piana (Bilanciere)", target: "4 x 10 @ 40 kg", totalSets: 4, defaultKg: 40, defaultReps: 10, hasWorkTimer: false },
         { name: "Goblet Squat (Light/Tecnico)", target: "4 x 12 @ 10 kg", totalSets: 4, defaultKg: 10, defaultReps: 12, hasWorkTimer: false },
@@ -160,11 +174,15 @@
       ]
     };
 
+    // Carica schede aggiornate da LocalStorage se presenti
+    let routines = JSON.parse(localStorage.getItem('my_routines')) || defaultRoutines;
+
     let currentRoutineKey = "";
     let currentExercises = [];
     let currentIndex = 0;
-    let completedWorkoutData = []; // Salva il log dettagliato di ogni esercizio/serie
+    let completedWorkoutData = [];
     let currentExerciseSetsData = [];
+    let chatHistory = [];
     let restTimer, workTimer;
 
     function startWorkout() {
@@ -176,10 +194,9 @@
       currentRoutineKey = key;
       document.getElementById('screen-selection').classList.add('hidden');
 
-      if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL !== "INCOLLA_QUI_IL_TUO_URL_DI_GOOGLE") {
+      if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL.startsWith("http")) {
         fetch(GOOGLE_SHEET_URL, {
-          method: 'POST',
-          mode: 'no-cors',
+          method: 'POST', mode: 'no-cors',
           body: JSON.stringify({ action: "START", routine: key })
         }).catch(err => console.log(err));
       }
@@ -317,30 +334,83 @@
     function finishWorkoutAndSend() {
       const notes = document.getElementById('workout-notes').value;
 
-      if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL !== "https://script.google.com/macros/s/AKfycbxOsClRFKurUZGemZ0bROH-T5IXTRaE7G7dzfwjOzIoxfIXvc6w3oa5zp11mbZ2MMiJag/exec") {
+      if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL.startsWith("http")) {
         fetch(GOOGLE_SHEET_URL, {
-          method: 'POST',
-          mode: 'no-cors',
+          method: 'POST', mode: 'no-cors',
           body: JSON.stringify({
-            action: "FINISH",
-            routine: currentRoutineKey,
-            completedData: completedWorkoutData,
-            notes: notes
+            action: "FINISH", routine: currentRoutineKey,
+            completedData: completedWorkoutData, notes: notes
           })
         }).catch(err => console.log(err));
       }
 
-      // Mostra Report IA locale
-      const box = document.getElementById('ai-response-box');
-      const text = document.getElementById('ai-response-text');
-      box.classList.remove('hidden');
+      // Attiva Chat IA
+      document.getElementById('ai-chat-box').classList.remove('hidden');
+      initAIChat(notes);
+    }
 
-      let summaryText = "✅ Dati registrati con successo su Google Sheets!\n\nAnalisi sessione:\n";
-      completedWorkoutData.forEach(item => {
-        summaryText += `• ${item.exerciseName}: Difficoltà ${item.difficulty}/10\n`;
-      });
+    async function initAIChat(notes) {
+      const prompt = `Sei un esperto allenatore IA. L'utente ha appena completato l'allenamento (${currentRoutineKey}).
+Ecco i dati raccolti:
+${JSON.stringify(completedWorkoutData, null, 2)}
+Note utente: ${notes || "Nessuna"}
 
-      text.textContent = summaryText;
+Analizza la sessione e proponi aggiustamenti o progressioni di carichi/reps/esercizi per la prossima volta.
+Se l'utente accetta le modifiche, rispondi confermando i nuovi valori.`;
+
+      addChatMessage("IA", "Sto analizzando i dati del tuo allenamento...");
+      
+      if (!GEMINI_API_KEY || GEMINI_API_KEY.includes("INCOLLA")) {
+        setTimeout(() => {
+          addChatMessage("IA", "⚠️ Inserisci la tua GEMINI_API_KEY nel codice per abilitare il dialogo live. Ecco l'analisi simulata:\nOttima sessione! Suggerisco +2.5kg su Panca Piana la prossima volta.");
+        }, 1000);
+        return;
+      }
+
+      callGemini(prompt);
+    }
+
+    async function callGemini(userText) {
+      document.getElementById('chat-status').textContent = "Gemini sta pensando...";
+      chatHistory.push({ role: "user", parts: [{ text: userText }] });
+
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: chatHistory })
+        });
+        const data = await response.json();
+        const aiReply = data.candidates[0].content.parts[0].text;
+
+        chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
+        document.getElementById('chat-status').textContent = "In ascolto...";
+        addChatMessage("IA", aiReply);
+      } catch (e) {
+        document.getElementById('chat-status').textContent = "Errore";
+        addChatMessage("IA", "Errore di connessione con Gemini API.");
+      }
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      addChatMessage("TU", text);
+      input.value = "";
+      callGemini(text);
+    }
+
+    function addChatMessage(sender, text) {
+      const box = document.getElementById('chat-messages');
+      const isUser = sender === "TU";
+      box.innerHTML += `
+        <div class="p-2.5 rounded-xl text-xs ${isUser ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 self-end ml-4' : 'bg-slate-800 text-slate-200 mr-4'}">
+          <strong>${sender}:</strong> <span class="whitespace-pre-line">${text}</span>
+        </div>
+      `;
+      box.scrollTop = box.scrollHeight;
     }
   </script>
 </body>
