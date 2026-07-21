@@ -13,7 +13,7 @@
     <!-- Header -->
     <header class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/90 sticky top-0 z-10 backdrop-blur">
       <h1 class="text-xl font-extrabold tracking-wider text-emerald-400">PUMP // LAB</h1>
-      <span class="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full font-mono">v1.2</span>
+      <span class="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full font-mono">v1.3</span>
     </header>
 
     <main class="flex-1 p-4 space-y-4">
@@ -52,20 +52,18 @@
       <!-- SCHERMATA 3: ESERCIZIO E SERIE -->
       <div id="screen-workout" class="hidden space-y-4">
         
-        <!-- Header Esercizio -->
         <div class="flex justify-between items-center border-b border-slate-800 pb-2">
           <h2 id="routine-title" class="font-extrabold text-lg text-emerald-400">GIORNO A</h2>
           <span id="exercise-step" class="text-xs font-mono bg-slate-800 px-2.5 py-1 rounded-full text-slate-300">Esercizio 1/5</span>
         </div>
 
-        <!-- Esercizio Corrente Card -->
         <div class="p-5 bg-slate-800/60 border border-slate-700/60 rounded-3xl space-y-4">
           <div>
             <h3 id="ex-name" class="font-bold text-xl text-white">Panca Piana (Bilanciere)</h3>
             <p id="ex-target" class="text-sm font-semibold text-emerald-400 mt-1">Target: 4 x 10 @ 40 kg</p>
           </div>
 
-          <!-- Timer Esercizio a tempo (es. Plank) -->
+          <!-- Timer Esercizio a tempo -->
           <div id="work-timer-box" class="hidden p-3 bg-slate-900 rounded-2xl border border-slate-800 text-center space-y-1">
             <span class="text-3xs font-mono text-slate-400 uppercase">Timer Esercizio</span>
             <div id="work-timer-display" class="text-3xl font-extrabold font-mono text-amber-400">01:00</div>
@@ -76,21 +74,27 @@
 
           <!-- Timer Defaticamento (90s) -->
           <div class="p-3 bg-slate-900 rounded-2xl border border-slate-800 text-center space-y-1">
-            <span id="rest-label" class="text-3xs font-mono text-slate-400 uppercase">Timer Recupero (90s)</span>
+            <span id="rest-label" class="text-3xs font-mono text-slate-400 uppercase">Timer Recupero Serie (90s)</span>
             <div id="rest-timer-display" class="text-3xl font-extrabold font-mono text-emerald-400">01:30</div>
           </div>
 
-          <!-- TABELLA SERIE -->
+          <!-- TABELLA SERIE DINAMICA CON KG E REPS -->
           <div class="space-y-2">
+            <div class="grid grid-cols-4 gap-2 text-center text-3xs font-mono text-slate-400 px-1">
+              <span>SERIE</span>
+              <span>KG</span>
+              <span>REPS</span>
+              <span>AZIONI</span>
+            </div>
             <div id="sets-container" class="space-y-2">
-              <!-- Le righe delle serie vengono generate dinamicamente -->
+              <!-- Righe generate da JS -->
             </div>
           </div>
         </div>
 
       </div>
 
-      <!-- SCHERMATA 4: NOTE FINALI & AGENTE IA -->
+      <!-- SCHERMATA 4: NOTE FINALI & INVIO -->
       <div id="screen-summary" class="hidden space-y-4">
         <h2 class="font-bold text-lg text-emerald-400">Sessione Completata! 🎉</h2>
         
@@ -99,8 +103,8 @@
           <textarea id="workout-notes" placeholder="Come ti sei sentito? Fastidi, sensazioni, energia..." class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white outline-none h-24 focus:border-emerald-500"></textarea>
         </div>
 
-        <button onclick="generateAIReport()" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm rounded-xl">
-          🤖 ANALIZZA CON AGENTE IA
+        <button onclick="finishWorkoutAndSend()" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm rounded-xl">
+          💾 SALVA SU GOOGLE SHEETS & ANALIZZA
         </button>
 
         <div id="ai-response-box" class="hidden p-4 bg-emerald-950/30 border border-emerald-500/30 rounded-2xl space-y-2 text-xs text-slate-200">
@@ -111,7 +115,7 @@
 
     </main>
 
-    <!-- MODAL POPUP DIFFICOLTÀ (1-10) POST ULTIMA SERIE -->
+    <!-- MODAL DIFFICOLTÀ (1-10) -->
     <div id="diff-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 text-center">
         <h4 class="font-bold text-base text-white">Esercizio Completato!</h4>
@@ -135,41 +139,35 @@
   </div>
 
   <script>
-    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbx5ZqSAsZQT--HoqhBWUC_j9S7oiWFgPQT3Wtm9gceiEAGdqukObjzypPcdPS1Sfxg/exec"; 
+    // INSERISCI QUI IL TUO URL GOOGLE APPS SCRIPT
+    const GOOGLE_SHEET_URL = "INCOLLA_QUI_IL_TUO_URL_DI_GOOGLE"; 
 
     const routines = {
       GIORNO_A: [
-        { name: "Panca Piana (Bilanciere)", target: "4 x 10 @ 40 kg", totalSets: 4, hasWorkTimer: false },
-        { name: "Goblet Squat (Light/Tecnico)", target: "4 x 12 @ 10 kg", totalSets: 4, hasWorkTimer: false },
-        { name: "TRX Chest Press", target: "3 x 10-12", totalSets: 3, hasWorkTimer: false },
-        { name: "Military Press (Seduto)", target: "4 x 12 @ 6 kg/manubrio", totalSets: 4, hasWorkTimer: false },
-        { name: "Alzate Laterali (Seduto)", target: "4 x 8 @ 6 kg/manubrio", totalSets: 4, hasWorkTimer: false }
+        { name: "Panca Piana (Bilanciere)", target: "4 x 10 @ 40 kg", totalSets: 4, defaultKg: 40, defaultReps: 10, hasWorkTimer: false },
+        { name: "Goblet Squat (Light/Tecnico)", target: "4 x 12 @ 10 kg", totalSets: 4, defaultKg: 10, defaultReps: 12, hasWorkTimer: false },
+        { name: "TRX Chest Press", target: "3 x 10-12", totalSets: 3, defaultKg: 0, defaultReps: 12, hasWorkTimer: false },
+        { name: "Military Press (Seduto)", target: "4 x 12 @ 6 kg/manubrio", totalSets: 4, defaultKg: 6, defaultReps: 12, hasWorkTimer: false },
+        { name: "Alzate Laterali (Seduto)", target: "4 x 8 @ 6 kg/manubrio", totalSets: 4, defaultKg: 6, defaultReps: 8, hasWorkTimer: false }
       ],
       GIORNO_B: [
-        { name: "Panca Inclinata a 45° (Bilanciere)", target: "4 x 8 @ 40 kg", totalSets: 4, hasWorkTimer: false },
-        { name: "Goblet Squat (Heavy)", target: "4 x 12 @ 15 kg", totalSets: 4, hasWorkTimer: false },
-        { name: "Rematore Manubrio su Panca", target: "4 x 10 @ 15 kg", totalSets: 4, hasWorkTimer: false },
-        { name: "Flessioni (Push-ups)", target: "4 x 10", totalSets: 4, hasWorkTimer: false },
-        { name: "Curl Alternato Manubri (Seduto)", target: "3 x 12 @ 5 kg/braccio", totalSets: 3, hasWorkTimer: false },
-        { name: "Plank", target: "3 x 60 secondi", totalSets: 3, hasWorkTimer: true, workTime: 60 }
+        { name: "Panca Inclinata a 45° (Bilanciere)", target: "4 x 8 @ 40 kg", totalSets: 4, defaultKg: 40, defaultReps: 8, hasWorkTimer: false },
+        { name: "Goblet Squat (Heavy)", target: "4 x 12 @ 15 kg", totalSets: 4, defaultKg: 15, defaultReps: 12, hasWorkTimer: false },
+        { name: "Rematore Manubrio su Panca", target: "4 x 10 @ 15 kg", totalSets: 4, defaultKg: 15, defaultReps: 10, hasWorkTimer: false },
+        { name: "Flessioni (Push-ups)", target: "4 x 10", totalSets: 4, defaultKg: 0, defaultReps: 10, hasWorkTimer: false },
+        { name: "Curl Alternato Manubri (Seduto)", target: "3 x 12 @ 5 kg/braccio", totalSets: 3, defaultKg: 5, defaultReps: 12, hasWorkTimer: false },
+        { name: "Plank", target: "3 x 60 secondi", totalSets: 3, defaultKg: 0, defaultReps: 60, hasWorkTimer: true, workTime: 60 }
       ]
     };
 
     let currentRoutineKey = "";
     let currentExercises = [];
     let currentIndex = 0;
-    let exerciseRatings = [];
+    let completedWorkoutData = []; // Salva il log dettagliato di ogni esercizio/serie
+    let currentExerciseSetsData = [];
     let restTimer, workTimer;
 
     function startWorkout() {
-      if (GOOGLE_SHEET_URL) {
-        fetch(GOOGLE_SHEET_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          body: JSON.stringify({ workoutType: "Inizio Sessione" })
-        }).catch(err => console.log(err));
-      }
-
       document.getElementById('screen-home').classList.add('hidden');
       document.getElementById('screen-selection').classList.remove('hidden');
     }
@@ -178,6 +176,14 @@
       currentRoutineKey = key;
       document.getElementById('screen-selection').classList.add('hidden');
 
+      if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL !== "INCOLLA_QUI_IL_TUO_URL_DI_GOOGLE") {
+        fetch(GOOGLE_SHEET_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: JSON.stringify({ action: "START", routine: key })
+        }).catch(err => console.log(err));
+      }
+
       if (key === 'LIBERO') {
         document.getElementById('screen-summary').classList.remove('hidden');
         return;
@@ -185,7 +191,7 @@
 
       currentExercises = routines[key];
       currentIndex = 0;
-      exerciseRatings = [];
+      completedWorkoutData = [];
       
       document.getElementById('routine-title').textContent = key.replace('_', ' ');
       document.getElementById('screen-workout').classList.remove('hidden');
@@ -199,7 +205,6 @@
       document.getElementById('exercise-step').textContent = `Esercizio ${currentIndex + 1}/${currentExercises.length}`;
       document.getElementById('rest-label').textContent = "Timer Recupero Serie (90s)";
 
-      // Reset Timer
       document.getElementById('rest-timer-display').textContent = "01:30";
       clearInterval(restTimer);
       clearInterval(workTimer);
@@ -212,18 +217,20 @@
         workBox.classList.add('hidden');
       }
 
-      // Genera dinamica delle serie
+      currentExerciseSetsData = [];
       const container = document.getElementById('sets-container');
       container.innerHTML = "";
 
       for (let i = 1; i <= ex.totalSets; i++) {
         const isFirst = i === 1;
         container.innerHTML += `
-          <div id="set-row-${i}" class="flex justify-between items-center bg-slate-900 p-3 rounded-2xl border border-slate-800 ${isFirst ? '' : 'opacity-40'}">
-            <span class="font-bold text-xs ${isFirst ? 'text-emerald-400' : 'text-slate-500'}">SERIE ${i} di ${ex.totalSets}</span>
+          <div id="set-row-${i}" class="grid grid-cols-4 gap-2 items-center bg-slate-900 p-2.5 rounded-2xl border border-slate-800 ${isFirst ? '' : 'opacity-40'}">
+            <span class="font-bold text-xs text-center ${isFirst ? 'text-emerald-400' : 'text-slate-500'}">${i}</span>
+            <input type="number" id="input-kg-${i}" value="${ex.defaultKg}" ${isFirst ? '' : 'disabled'} class="bg-slate-800 text-center rounded-lg py-1 text-xs font-bold text-white border border-slate-700 w-full outline-none">
+            <input type="number" id="input-reps-${i}" value="${ex.defaultReps}" ${isFirst ? '' : 'disabled'} class="bg-slate-800 text-center rounded-lg py-1 text-xs font-bold text-white border border-slate-700 w-full outline-none">
             <button id="set-btn-${i}" onclick="finishSet(${i}, ${ex.totalSets})" ${isFirst ? '' : 'disabled'} 
-              class="px-4 py-2 ${isFirst ? 'bg-emerald-500 text-slate-950 hover:bg-emerald-400' : 'bg-slate-800 text-slate-500'} font-bold text-xs rounded-xl transition">
-              FINE SERIE
+              class="py-1.5 ${isFirst ? 'bg-emerald-500 text-slate-950 hover:bg-emerald-400' : 'bg-slate-800 text-slate-500'} font-bold text-3xs rounded-lg transition">
+              FINE
             </button>
           </div>
         `;
@@ -231,16 +238,20 @@
     }
 
     function finishSet(setNum, totalSets) {
+      const kg = document.getElementById(`input-kg-${setNum}`).value;
+      const reps = document.getElementById(`input-reps-${setNum}`).value;
+
+      currentExerciseSetsData.push({ setNum: setNum, weight: kg, reps: reps });
+
       const currentRow = document.getElementById(`set-row-${setNum}`);
       const currentBtn = document.getElementById(`set-btn-${setNum}`);
       
       currentRow.classList.add('bg-emerald-950/30', 'border-emerald-500/40');
       currentBtn.disabled = true;
-      currentBtn.textContent = "COMPLETATA ✓";
-      currentBtn.className = "px-4 py-2 bg-slate-800 text-emerald-400 font-bold text-xs rounded-xl";
+      currentBtn.textContent = "✓";
+      currentBtn.className = "py-1.5 bg-slate-800 text-emerald-400 font-bold text-3xs rounded-lg";
 
       if (setNum < totalSets) {
-        // Recupero tra le SERIE dello stesso esercizio
         startRestTimer(90, "Timer Recupero Serie (90s)");
         
         const nextNum = setNum + 1;
@@ -248,10 +259,11 @@
         const nextBtn = document.getElementById(`set-btn-${nextNum}`);
 
         nextRow.classList.remove('opacity-40');
+        document.getElementById(`input-kg-${nextNum}`).disabled = false;
+        document.getElementById(`input-reps-${nextNum}`).disabled = false;
         nextBtn.disabled = false;
-        nextBtn.className = "px-4 py-2 bg-emerald-500 text-slate-950 hover:bg-emerald-400 font-bold text-xs rounded-xl transition";
+        nextBtn.className = "py-1.5 bg-emerald-500 text-slate-950 hover:bg-emerald-400 font-bold text-3xs rounded-lg transition";
       } else {
-        // È l'ultima serie: mostra il popup di difficoltà
         setTimeout(() => {
           document.getElementById('diff-modal').classList.remove('hidden');
         }, 500);
@@ -285,9 +297,9 @@
     function submitDifficulty(score) {
       document.getElementById('diff-modal').classList.add('hidden');
       
-      exerciseRatings.push({
-        exercise: currentExercises[currentIndex].name,
-        target: currentExercises[currentIndex].target,
+      completedWorkoutData.push({
+        exerciseName: currentExercises[currentIndex].name,
+        setsData: currentExerciseSetsData,
         difficulty: score
       });
 
@@ -295,40 +307,41 @@
 
       if (currentIndex < currentExercises.length) {
         loadExercise();
-        // Fai partire il recupero da 90s PER IL CAMBIO ESERCIZIO
         startRestTimer(90, "🔄 Cambio Esercizio - Recupero (90s)");
       } else {
-        // Fine allenamento
         document.getElementById('screen-workout').classList.add('hidden');
         document.getElementById('screen-summary').classList.remove('hidden');
       }
     }
 
-    function generateAIReport() {
+    function finishWorkoutAndSend() {
+      const notes = document.getElementById('workout-notes').value;
+
+      if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL !== "https://script.google.com/macros/s/AKfycbxOsClRFKurUZGemZ0bROH-T5IXTRaE7G7dzfwjOzIoxfIXvc6w3oa5zp11mbZ2MMiJag/exec") {
+        fetch(GOOGLE_SHEET_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: JSON.stringify({
+            action: "FINISH",
+            routine: currentRoutineKey,
+            completedData: completedWorkoutData,
+            notes: notes
+          })
+        }).catch(err => console.log(err));
+      }
+
+      // Mostra Report IA locale
       const box = document.getElementById('ai-response-box');
       const text = document.getElementById('ai-response-text');
       box.classList.remove('hidden');
 
-      let summaryText = "Analisi basata sui tuoi voti di difficoltà:\n\n";
-      
-      if (exerciseRatings.length === 0) {
-        summaryText += "Sessione Libera registrata. Mantieni focus sulla progressione di carico costante.";
-      } else {
-        exerciseRatings.forEach(item => {
-          summaryText += `• ${item.exercise}: Difficoltà ${item.difficulty}/10\n`;
-          if (item.difficulty <= 4) {
-            summaryText += `  👉 Carico leggero. Prossima sessione: +2.5kg o +2 reps.\n`;
-          } else if (item.difficulty >= 8) {
-            summaryText += `  ⚠️ Sforzo alto. Mantieni questo carico fino a RIR 2.\n`;
-          } else {
-            summaryText += `  ✅ Carico target ideale per l'ipertrofia.\n`;
-          }
-        });
-      }
+      let summaryText = "✅ Dati registrati con successo su Google Sheets!\n\nAnalisi sessione:\n";
+      completedWorkoutData.forEach(item => {
+        summaryText += `• ${item.exerciseName}: Difficoltà ${item.difficulty}/10\n`;
+      });
 
       text.textContent = summaryText;
     }
   </script>
 </body>
-</html>
 </html>
