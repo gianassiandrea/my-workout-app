@@ -32,9 +32,9 @@
         <div class="space-y-4">
           <!-- 1. NUMERO, NOME E DETTAGLI -->
           <div class="border-b border-slate-800 pb-3">
-            <span id="ex-number" class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest">ESERCIZIO 1 DE 13</span>
+            <span id="ex-number" class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest">PASSAGGIO 1 DE 44</span>
             <h2 id="ex-name" class="text-2xl font-black text-white mt-0.5">Skip ginocchia alte</h2>
-            <p id="ex-details" class="text-sm font-semibold text-slate-300 mt-1">3 serie x 1' • Recupero 90s</p>
+            <p id="ex-details" class="text-sm font-semibold text-slate-300 mt-1">1' • Serie 1 di 3</p>
             <p id="ex-note" class="text-xs text-amber-400/90 mt-1 italic hidden"></p>
           </div>
 
@@ -105,73 +105,125 @@
     const GOOGLE_SHEET_URL = "INCOLLA_QUI_IL_TUO_URL_DI_GOOGLE"; 
     const GEMINI_API_KEY = "INCOLLA_QUI_LA_TUA_GEMINI_API_KEY";
 
-    function getEmbedUrl(videoId, autoplay = false) {
-      if (!videoId || videoId.startsWith("ID_")) return "";
-      return `https://www.youtube.com/embed/${videoId}${autoplay ? '?autoplay=1' : ''}`;
+    // Funzione universale per convertire QUALSIASI link YouTube in Embed Player
+    function parseYouTubeEmbedUrl(url, autoplay = false) {
+      if (!url || url.trim() === "") return "";
+      let videoId = "";
+      
+      try {
+        if (url.includes("youtu.be/")) {
+          videoId = url.split("youtu.be/")[1].split("?")[0].split("&")[0];
+        } else if (url.includes("youtube.com/watch")) {
+          const urlParams = new URLSearchParams(url.split("?")[1]);
+          videoId = urlParams.get("v");
+        } else if (url.includes("youtube.com/embed/")) {
+          videoId = url.split("youtube.com/embed/")[1].split("?")[0];
+        }
+      } catch (e) {
+        return "";
+      }
+
+      return videoId ? `https://www.youtube.com/embed/${videoId}${autoplay ? '?autoplay=1' : ''}` : "";
     }
 
-    // Definizione dei singoli esercizi base
+    // ELENCO ESERCIZI: INCOLLA IL LINK COMPLETO IN "videoUrl"
     const rawExercises = {
-      skip: { name: "1. Skip ginocchia alte", target: "1'", isTimer: true, workTime: 60, videoId: "ID_SKIP" },
-      squatRana: { name: "1. Squat rana", target: "10-14 reps", isTimer: false, videoId: "ID_SQUAT_RANA" },
-      montagna: { name: "1. Montagna -> Stretching", target: "3-5 per lato", isTimer: false, videoId: "ID_MONTAGNA" },
+      skip: { 
+        name: "1. Skip ginocchia alte", target: "1'", isTimer: true, workTime: 60, 
+        videoUrl: "https://youtu.be/-KmKv52IvXc?si=HvsWE83sEJd_Jp9D" 
+      },
+      squatRana: { 
+        name: "1. Squat rana", target: "10-14 reps", isTimer: false, 
+        videoUrl: "https://youtu.be/MfpvCWi85LE?si=-Cz_T2T0F78346TG" 
+      },
+      montagna: { 
+        name: "1. Montagna -> Stretching del mondo", target: "3-5 per lato", isTimer: false, 
+        videoUrl: "https://youtu.be/MfpvCWi85LE?si=80fMJdOyhdwzAJBt" 
+      },
       
-      jumping: { name: "2. Jumping Jacks", target: "1'", isTimer: true, workTime: 60, videoId: "ID_JUMPING" },
-      affondi: { name: "2. Affondi alternati indietro", target: "8-16 per lato", isTimer: false, videoId: "ID_AFFONDI" },
-      piegamentiStretti: { name: "2. Piegamenti stretti / Thruster", target: "5-9 reps", isTimer: false, videoId: "ID_PIEGAMENTI" },
-      crunch: { name: "2. Crunch gambe tese", target: "15-25 reps", isTimer: false, videoId: "ID_CRUNCH" },
+      jumping: { 
+        name: "2. Jumping Jacks", target: "1'", isTimer: true, workTime: 60, 
+        videoUrl: "https://youtu.be/Vfg_vxxAwIU?si=OjlJngr50A946o3z" 
+      },
+      affondi: { 
+        name: "2. Affondi alternati indietro", target: "8-16 per lato", isTimer: false, 
+        videoUrl: "https://youtu.be/Yqd9cPs3Z3E?si=wXlUYmT93fZGiLgO" 
+      },
+      piegamentiStretti: { 
+        name: "2. Piegamenti stretti / Thruster", target: "5-9 reps", isTimer: false, 
+        videoUrl: "https://youtu.be/cuQM0ETk2E8?si=SNOPe-3QDvZDCmp-" 
+      },
+      crunch: { 
+        name: "2. Crunch gambe tese", target: "15-25 reps", isTimer: false, 
+        videoUrl: "https://youtu.be/AMku5hdoLoM?si=TrRcIbLqRgP_yGd-" 
+      },
       
       mobySquat: { 
-        name: "3. Squat: Moby - Flower", target: "1 volta (Bring Sally Up)", isTimer: false, videoId: "6A2V9Bu80J4", autoplay: true,
+        name: "3. Squat: Moby - Flower", target: "1 volta (Bring Sally Up)", isTimer: false, 
+        videoUrl: "https://www.youtube.com/watch?v=6A2V9Bu80J4", 
+        autoplay: true,
         note: "'Bring Sally Down' -> Scendi | 'Bring Sally Up' -> Sali." 
       },
 
-      mountain: { name: "4. Mountain climber", target: "1'", isTimer: true, workTime: 60, videoId: "ID_MOUNTAIN" },
-      trazioni: { name: "4. Trazioni facilitata / Rematore", target: "10-15 reps", isTimer: false, videoId: "ID_TRAZIONI" },
-      crissCross: { name: "4. Criss Cross", target: "6-10 per lato", isTimer: false, videoId: "ID_CRISS_CROSS" },
+      mountain: { 
+        name: "4. Mountain climber", target: "1'", isTimer: true, workTime: 60, 
+        videoUrl: "https://youtu.be/XQLmIWrDPnc?si=-ldjuTmTivsfxBl2" 
+      },
+      trazioni: { 
+        name: "4. Rematore", target: "10-15 reps", isTimer: false, 
+        videoUrl: "https://youtu.be/H9ikfHG-hVw?si=ECuJ3N2LLGN4UidP" 
+      },
+      crissCross: { 
+        name: "4. Criss Cross", target: "6-10 per lato", isTimer: false, 
+        videoUrl: "https://youtu.be/SV4GrHcginQ?si=8av9vvG1ZX4jWCA0" 
+      },
 
       emom: { 
-        name: "5. Piegamenti braccia - EMOM", target: "10 x 1' (3-4 reps/min)", isTimer: true, workTime: 60, videoId: "ID_EMOM",
+        name: "5. Piegamenti braccia - EMOM", target: "10 x 1' (3-4 reps/min)", isTimer: true, workTime: 60, 
+        videoUrl: "https://youtu.be/mSGhSN6DgnA?si=CiVXZsWDeQSQ_Kr7",
         note: "EMOM: Fai le rep all'inizio di ogni minuto." 
       },
-      stretching: { name: "6. Stretching: Cane basso & alto", target: "3 x 3 (10'' tenuta)", isTimer: false, videoId: "ID_STRETCHING" }
+      stretching: { 
+        name: "6. Stretching: Cane basso & alto", target: "3 x 3 (10'' tenuta)", isTimer: false, 
+        videoUrl: "https://youtu.be/dTx5dXNvwJE?si=OxDwB6nd7zZC6xXp" 
+      }
     };
 
     // GENERAZIONE SEQUENZA IN SUPERSERIE ALTERNATA
     function generateWorkoutSequence() {
       let seq = [];
 
-      // BLOCCO 1 (Superserie 3 giri): Skip -> Squat Rana -> Montagna
+      // BLOCCO 1 (3 giri)
       for (let s = 1; s <= 3; s++) {
         seq.push({ ...rawExercises.skip, currentSet: s, totalSets: 3, groupRest: 0 });
         seq.push({ ...rawExercises.squatRana, currentSet: s, totalSets: 3, groupRest: 0 });
-        seq.push({ ...rawExercises.montagna, currentSet: s, totalSets: 3, groupRest: 90 }); // Riposo 90s a fine giro
+        seq.push({ ...rawExercises.montagna, currentSet: s, totalSets: 3, groupRest: 90 });
       }
 
-      // BLOCCO 2 (Superserie 3 giri): Jumping Jacks -> Affondi -> Piegamenti Stretti -> Crunch
+      // BLOCCO 2 (3 giri)
       for (let s = 1; s <= 3; s++) {
         seq.push({ ...rawExercises.jumping, currentSet: s, totalSets: 3, groupRest: 0 });
         seq.push({ ...rawExercises.affondi, currentSet: s, totalSets: 3, groupRest: 0 });
         seq.push({ ...rawExercises.piegamentiStretti, currentSet: s, totalSets: 3, groupRest: 0 });
-        seq.push({ ...rawExercises.crunch, currentSet: s, totalSets: 3, groupRest: 90 }); // Riposo 90s a fine giro
+        seq.push({ ...rawExercises.crunch, currentSet: s, totalSets: 3, groupRest: 90 });
       }
 
-      // BLOCCO 3: Single Challenge Moby (1 giro)
+      // BLOCCO 3 (1 giro)
       seq.push({ ...rawExercises.mobySquat, currentSet: 1, totalSets: 1, groupRest: 90 });
 
-      // BLOCCO 4 (Superserie 3 giri): Mountain Climber -> Trazioni -> Criss Cross
+      // BLOCCO 4 (3 giri)
       for (let s = 1; s <= 3; s++) {
         seq.push({ ...rawExercises.mountain, currentSet: s, totalSets: 3, groupRest: 0 });
         seq.push({ ...rawExercises.trazioni, currentSet: s, totalSets: 3, groupRest: 0 });
-        seq.push({ ...rawExercises.crissCross, currentSet: s, totalSets: 3, groupRest: 90 }); // Riposo 90s a fine giro
+        seq.push({ ...rawExercises.crissCross, currentSet: s, totalSets: 3, groupRest: 90 });
       }
 
-      // BLOCCO 5: EMOM Piegamenti (10 serie da 1 minuto consecutivi)
+      // BLOCCO 5 (EMOM 10 giri)
       for (let s = 1; s <= 10; s++) {
         seq.push({ ...rawExercises.emom, currentSet: s, totalSets: 10, groupRest: 0 });
       }
 
-      // BLOCCO 6: Stretching (1 giro da 3 serie)
+      // BLOCCO 6 (Stretching 3 giri)
       for (let s = 1; s <= 3; s++) {
         seq.push({ ...rawExercises.stretching, currentSet: s, totalSets: 3, groupRest: 60 });
       }
@@ -226,7 +278,7 @@
       state = "IDLE";
       const item = workoutSequence[currentStep];
 
-      document.getElementById('ex-number').textContent = `PASSAGGIO ${currentStep + 1} DE ${workoutSequence.length}`;
+      document.getElementById('ex-number').textContent = `PASSAGGIO ${currentStep + 1} DI ${workoutSequence.length}`;
       document.getElementById('ex-name').textContent = item.name;
       document.getElementById('ex-details').textContent = `${item.target} (Serie ${item.currentSet} di ${item.totalSets})`;
       
@@ -238,10 +290,12 @@
         noteEl.classList.add('hidden');
       }
 
-      // Video YouTube Embed
+      // Converti e applica il link YouTube
       const iframe = document.getElementById('youtube-iframe');
-      if (item.videoId && !item.videoId.startsWith("ID_")) {
-        iframe.src = getEmbedUrl(item.videoId, item.autoplay || false);
+      const embedUrl = parseYouTubeEmbedUrl(item.videoUrl, item.autoplay || false);
+      
+      if (embedUrl !== "") {
+        iframe.src = embedUrl;
         document.getElementById('youtube-container').classList.remove('hidden');
       } else {
         iframe.src = "";
@@ -272,10 +326,8 @@
 
       if (state === "IDLE") {
         if (item.isTimer) {
-          // Esercizio a tempo -> Timer Rosso
           startWorkTimer(item.workTime);
         } else {
-          // Esercizio a reps -> Bottone diventa FATTO
           state = "WORKING";
           const actionBtn = document.getElementById('main-action-btn');
           actionBtn.textContent = "FATTO";
@@ -283,7 +335,6 @@
         }
       } 
       else if (state === "WORKING" && !item.isTimer) {
-        // Premuto FATTO -> Se c'è riposo a fine superserie fai partire timer verde, altrimenti passa diretto al prossimo
         if (item.groupRest > 0) {
           startRestTimer(item.groupRest);
         } else {
@@ -364,7 +415,6 @@
         currentStep++;
         loadStep();
       } else {
-        // Fine Scheda -> Summary
         document.getElementById('screen-workout').classList.add('hidden');
         document.getElementById('footer-nav').classList.add('hidden');
         document.getElementById('screen-summary').classList.remove('hidden');
@@ -451,5 +501,4 @@
     }
   </script>
 </body>
-</html>
 </html>
