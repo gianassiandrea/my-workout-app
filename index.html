@@ -8,7 +8,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex justify-center">
 
-  <div class="w-full max-w-md bg-slate-900 border-x border-slate-800 flex flex-col min-h-screen relative pb-16">
+  <div class="w-full max-w-md bg-slate-900 border-x border-slate-800 flex flex-col min-h-screen relative pb-28">
     
     <!-- Header App -->
     <header class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/90 sticky top-0 z-10 backdrop-blur">
@@ -29,18 +29,23 @@
       <!-- SCHERMATA 2: EXECUTION WORKOUT -->
       <div id="screen-workout" class="hidden space-y-4 flex-1 flex flex-col justify-between">
         
-        <div class="space-y-4">
+        <div class="space-y-4 overflow-y-auto max-h-[calc(100vh-220px)] pr-1">
           <!-- 1. NUMERO, NOME E DETTAGLI -->
           <div class="border-b border-slate-800 pb-3">
-            <span id="ex-number" class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest">PASSAGGIO 1 DE 44</span>
+            <span id="ex-number" class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest">PASSAGGIO 1 DE 47</span>
             <h2 id="ex-name" class="text-2xl font-black text-white mt-0.5">Skip ginocchia alte</h2>
             <p id="ex-details" class="text-sm font-semibold text-slate-300 mt-1">1' • Serie 1 di 3</p>
             <p id="ex-note" class="text-xs text-amber-400/90 mt-1 italic hidden"></p>
           </div>
 
-          <!-- 2. VIDEO YOUTUBE IN APP -->
+          <!-- 2. VIDEO YOUTUBE IN APP (TUTORIAL PRINCIPALE O CANZONE MOBY) -->
           <div id="youtube-container" class="aspect-video w-full bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-lg">
             <iframe id="youtube-iframe" class="w-full h-full" src="" title="Video Tutorial" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+
+          <!-- 2B. SECONDO VIDEO YOUTUBE (PER TUTORIAL SQUAT MOBY) -->
+          <div id="youtube-container-secondary" class="hidden aspect-video w-full bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-lg space-y-1">
+            <iframe id="youtube-iframe-secondary" class="w-full h-full" src="" title="Video Tutorial Tecnico" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
 
           <!-- 3. TIMER DISPLAY (ROSSO=LAVORO, VERDE=RIPOSO) -->
@@ -50,9 +55,9 @@
           </div>
         </div>
 
-        <!-- 4. PULSANTE PRINCIPALE "VIA" / "FATTO" / "PROSSIMO" -->
-        <div class="pt-2">
-          <button id="main-action-btn" onclick="handleMainAction()" class="w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xl rounded-2xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider">
+        <!-- 4. PULSANTE PRINCIPALE "VIA" / "FATTO" / "PROSSIMO" (Invisibilizzato ai blocchi inferiori) -->
+        <div class="pt-2 sticky bottom-14 z-20 bg-slate-900/90 backdrop-blur pb-1">
+          <button id="main-action-btn" onclick="handleMainAction()" class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xl rounded-2xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider">
             VIA
           </button>
         </div>
@@ -90,7 +95,7 @@
     </main>
 
     <!-- FRECCE DI NAVIGAZIONE IN CALCE -->
-    <footer id="footer-nav" class="hidden fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-slate-900/95 border-t border-slate-800 p-3 flex justify-between items-center backdrop-blur">
+    <footer id="footer-nav" class="hidden fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-slate-900/95 border-t border-slate-800 p-3 flex justify-between items-center backdrop-blur z-30">
       <button onclick="prevStep()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl flex items-center gap-1">
         ← Precedente
       </button>
@@ -105,7 +110,6 @@
     const GOOGLE_SHEET_URL = "INCOLLA_QUI_IL_TUO_URL_DI_GOOGLE"; 
     const GEMINI_API_KEY = "INCOLLA_QUI_LA_TUA_GEMINI_API_KEY";
 
-    // Funzione universale per convertire QUALSIASI link YouTube in Embed Player
     function parseYouTubeEmbedUrl(url, autoplay = false) {
       if (!url || url.trim() === "") return "";
       let videoId = "";
@@ -126,66 +130,72 @@
       return videoId ? `https://www.youtube.com/embed/${videoId}${autoplay ? '?autoplay=1' : ''}` : "";
     }
 
-    // ELENCO ESERCIZI: INCOLLA IL LINK COMPLETO IN "videoUrl"
+    // ELENCO ESERCIZI BASE
     const rawExercises = {
       skip: { 
         name: "1. Skip ginocchia alte", target: "1'", isTimer: true, workTime: 60, 
-        videoUrl: "https://youtu.be/-KmKv52IvXc?si=HvsWE83sEJd_Jp9D" 
+        videoUrl: "https://www.youtube.com/watch?v=0h3eO1_4N0Y" 
       },
       squatRana: { 
         name: "1. Squat rana", target: "10-14 reps", isTimer: false, 
-        videoUrl: "https://youtu.be/MfpvCWi85LE?si=-Cz_T2T0F78346TG" 
+        videoUrl: "https://www.youtube.com/watch?v=sS_y2P4U_0g" 
       },
       montagna: { 
         name: "1. Montagna -> Stretching del mondo", target: "3-5 per lato", isTimer: false, 
-        videoUrl: "https://youtu.be/MfpvCWi85LE?si=80fMJdOyhdwzAJBt" 
+        videoUrl: "https://www.youtube.com/watch?v=9L24Zp_A0sM" 
       },
       
       jumping: { 
         name: "2. Jumping Jacks", target: "1'", isTimer: true, workTime: 60, 
-        videoUrl: "https://youtu.be/Vfg_vxxAwIU?si=OjlJngr50A946o3z" 
+        videoUrl: "https://www.youtube.com/watch?v=c4DAnQ6DtF8" 
       },
       affondi: { 
         name: "2. Affondi alternati indietro", target: "8-16 per lato", isTimer: false, 
-        videoUrl: "https://youtu.be/Yqd9cPs3Z3E?si=wXlUYmT93fZGiLgO" 
+        videoUrl: "https://www.youtube.com/watch?v=D7KaRcUTQeE" 
       },
       piegamentiStretti: { 
         name: "2. Piegamenti stretti / Thruster", target: "5-9 reps", isTimer: false, 
-        videoUrl: "https://youtu.be/cuQM0ETk2E8?si=SNOPe-3QDvZDCmp-" 
+        videoUrl: "https://www.youtube.com/watch?v=R08gYrS0a24" 
       },
       crunch: { 
         name: "2. Crunch gambe tese", target: "15-25 reps", isTimer: false, 
-        videoUrl: "https://youtu.be/AMku5hdoLoM?si=TrRcIbLqRgP_yGd-" 
+        videoUrl: "https://www.youtube.com/watch?v=Xyd_fa5zoEU" 
       },
       
       mobySquat: { 
         name: "3. Squat: Moby - Flower", target: "1 volta (Bring Sally Up)", isTimer: false, 
-        videoUrl: "https://www.youtube.com/watch?v=6A2V9Bu80J4", 
+        videoUrl: "https://www.youtube.com/watch?v=6A2V9Bu80J4", // Canzone Moby
+        secondaryVideoUrl: "https://www.youtube.com/watch?v=aclHkVaku9U", // Tutorial Esecuzione Squat
         autoplay: true,
-        note: "'Bring Sally Down' -> Scendi | 'Bring Sally Up' -> Sali." 
+        note: "🎵 CANZONE IN ALTO: 'Bring Sally Down' -> Scendi | 'Bring Sally Up' -> Sali.\n🎥 TUTORIAL TECNICO IN BASSO." 
       },
 
       mountain: { 
         name: "4. Mountain climber", target: "1'", isTimer: true, workTime: 60, 
-        videoUrl: "https://youtu.be/XQLmIWrDPnc?si=-ldjuTmTivsfxBl2" 
+        videoUrl: "https://www.youtube.com/watch?v=nmwgirgXLYM" 
       },
       trazioni: { 
-        name: "4. Rematore", target: "10-15 reps", isTimer: false, 
-        videoUrl: "https://youtu.be/H9ikfHG-hVw?si=ECuJ3N2LLGN4UidP" 
+        name: "4. Trazioni facilitata / Rematore", target: "10-15 reps", isTimer: false, 
+        videoUrl: "https://www.youtube.com/watch?v=eGo4IYlbE5g" 
       },
       crissCross: { 
         name: "4. Criss Cross", target: "6-10 per lato", isTimer: false, 
-        videoUrl: "https://youtu.be/SV4GrHcginQ?si=8av9vvG1ZX4jWCA0" 
+        videoUrl: "https://www.youtube.com/watch?v=J5S_1C_i_1Q" 
       },
 
       emom: { 
         name: "5. Piegamenti braccia - EMOM", target: "10 x 1' (3-4 reps/min)", isTimer: true, workTime: 60, 
-        videoUrl: "https://youtu.be/mSGhSN6DgnA?si=CiVXZsWDeQSQ_Kr7",
+        videoUrl: "https://www.youtube.com/watch?v=IODxDxX7oi4",
         note: "EMOM: Fai le rep all'inizio di ogni minuto." 
       },
-      stretching: { 
-        name: "6. Stretching: Cane basso & alto", target: "3 x 3 (10'' tenuta)", isTimer: false, 
-        videoUrl: "https://youtu.be/dTx5dXNvwJE?si=OxDwB6nd7zZC6xXp" 
+      
+      caneBasso: { 
+        name: "6. Stretching: Cane basso (Downward Dog)", target: "3 x 10'' tenuta", isTimer: false, 
+        videoUrl: "https://www.youtube.com/watch?v=EC7RGJ94G60" 
+      },
+      caneAlto: { 
+        name: "6. Stretching: Cane alto (Upward Dog)", target: "3 x 10'' tenuta", isTimer: false, 
+        videoUrl: "https://www.youtube.com/watch?v=48S4Cq3X0O4" 
       }
     };
 
@@ -223,9 +233,10 @@
         seq.push({ ...rawExercises.emom, currentSet: s, totalSets: 10, groupRest: 0 });
       }
 
-      // BLOCCO 6 (Stretching 3 giri)
+      // BLOCCO 6 (Stretching 3 giri tra Cane Basso e Cane Alto)
       for (let s = 1; s <= 3; s++) {
-        seq.push({ ...rawExercises.stretching, currentSet: s, totalSets: 3, groupRest: 60 });
+        seq.push({ ...rawExercises.caneBasso, currentSet: s, totalSets: 3, groupRest: 0 });
+        seq.push({ ...rawExercises.caneAlto, currentSet: s, totalSets: 3, groupRest: 60 });
       }
 
       return seq;
@@ -278,7 +289,7 @@
       state = "IDLE";
       const item = workoutSequence[currentStep];
 
-      document.getElementById('ex-number').textContent = `PASSAGGIO ${currentStep + 1} DI ${workoutSequence.length}`;
+      document.getElementById('ex-number').textContent = `PASSAGGIO ${currentStep + 1} DE ${workoutSequence.length}`;
       document.getElementById('ex-name').textContent = item.name;
       document.getElementById('ex-details').textContent = `${item.target} (Serie ${item.currentSet} di ${item.totalSets})`;
       
@@ -290,7 +301,7 @@
         noteEl.classList.add('hidden');
       }
 
-      // Converti e applica il link YouTube
+      // Converti e applica Video Principale YouTube
       const iframe = document.getElementById('youtube-iframe');
       const embedUrl = parseYouTubeEmbedUrl(item.videoUrl, item.autoplay || false);
       
@@ -302,7 +313,20 @@
         document.getElementById('youtube-container').classList.add('hidden');
       }
 
-      // Reset Display & Bottone
+      // Converti e applica Secondo Video YouTube (se presente)
+      const iframeSec = document.getElementById('youtube-iframe-secondary');
+      const secContainer = document.getElementById('youtube-container-secondary');
+      const embedSecUrl = parseYouTubeEmbedUrl(item.secondaryVideoUrl, false);
+
+      if (embedSecUrl !== "") {
+        iframeSec.src = embedSecUrl;
+        secContainer.classList.remove('hidden');
+      } else {
+        iframeSec.src = "";
+        secContainer.classList.add('hidden');
+      }
+
+      // Reset Display & Bottone VIA
       const timerDisplay = document.getElementById('timer-display');
       const timerLabel = document.getElementById('timer-label');
       const actionBtn = document.getElementById('main-action-btn');
@@ -317,7 +341,7 @@
       }
 
       actionBtn.textContent = "VIA";
-      actionBtn.className = "w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xl rounded-2xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider";
+      actionBtn.className = "w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xl rounded-2xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider";
     }
 
     function handleMainAction() {
@@ -331,7 +355,7 @@
           state = "WORKING";
           const actionBtn = document.getElementById('main-action-btn');
           actionBtn.textContent = "FATTO";
-          actionBtn.className = "w-full py-5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xl rounded-2xl transition shadow-lg uppercase tracking-wider";
+          actionBtn.className = "w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xl rounded-2xl transition shadow-lg uppercase tracking-wider";
         }
       } 
       else if (state === "WORKING" && !item.isTimer) {
@@ -355,7 +379,7 @@
       label.textContent = "TEMPO ESERCIZIO";
       display.className = "text-5xl font-black font-mono text-red-500 animate-pulse";
       btn.textContent = "IN ESECUZIONE...";
-      btn.className = "w-full py-5 bg-slate-800 text-slate-500 font-black text-xl rounded-2xl cursor-not-allowed uppercase tracking-wider";
+      btn.className = "w-full py-4 bg-slate-800 text-slate-500 font-black text-xl rounded-2xl cursor-not-allowed uppercase tracking-wider";
 
       const update = () => {
         display.textContent = formatTime(time);
@@ -391,7 +415,7 @@
       label.textContent = "RECUPERO SUPERSERIE";
       display.className = "text-5xl font-black font-mono text-emerald-400";
       btn.textContent = "RIPOSO IN CORSO...";
-      btn.className = "w-full py-5 bg-slate-800 text-slate-500 font-black text-xl rounded-2xl cursor-not-allowed uppercase tracking-wider";
+      btn.className = "w-full py-4 bg-slate-800 text-slate-500 font-black text-xl rounded-2xl cursor-not-allowed uppercase tracking-wider";
 
       const update = () => {
         display.textContent = formatTime(time);
