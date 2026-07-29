@@ -13,7 +13,7 @@
     <!-- Header -->
     <header class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/90 sticky top-0 z-10 backdrop-blur">
       <h1 class="text-xl font-extrabold tracking-wider text-emerald-400">PUMP // LAB</h1>
-      <span class="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full font-mono">v2.6 Audio</span>
+      <span class="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full font-mono">v2.7 Auto-Timer</span>
     </header>
 
     <main class="flex-1 p-4 space-y-4">
@@ -74,7 +74,7 @@
             <p id="ex-note" class="text-xs text-slate-400 mt-2 italic hidden"></p>
           </div>
 
-          <!-- Player YouTube integrato Modal/Box -->
+          <!-- Player YouTube integrato -->
           <div id="youtube-box" class="hidden p-2 bg-slate-900 rounded-2xl border border-red-500/30 space-y-2">
             <div class="aspect-video w-full">
               <iframe id="youtube-iframe" class="w-full h-full rounded-xl" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -91,7 +91,7 @@
             </button>
           </div>
 
-          <!-- Timer Defaticamento -->
+          <!-- Timer Defaticamento (Partenza automatica) -->
           <div class="p-3 bg-slate-900 rounded-2xl border border-slate-800 text-center space-y-1">
             <span id="rest-label" class="text-3xs font-mono text-slate-400 uppercase">Timer Recupero Serie (90s)</span>
             <div id="rest-timer-display" class="text-3xl font-extrabold font-mono text-emerald-400">01:30</div>
@@ -168,7 +168,6 @@
     const GOOGLE_SHEET_URL = "INCOLLA_QUI_IL_TUO_URL_DI_GOOGLE"; 
     const GEMINI_API_KEY = "INCOLLA_QUI_LA_TUA_GEMINI_API_KEY";
 
-    // MOTORE AUDIO SINTETICO (Web Audio API)
     let audioCtx = null;
 
     function initAudio() {
@@ -180,7 +179,6 @@
       }
     }
 
-    // Suono singolo per il conto alla rovescia (5, 4, 3, 2, 1)
     function playBeep(freq = 600, duration = 0.15) {
       try {
         initAudio();
@@ -199,7 +197,6 @@
       }
     }
 
-    // Triplo beep finale (al secondo 0)
     function playTripleBeep() {
       playBeep(900, 0.12);
       setTimeout(() => playBeep(900, 0.12), 200);
@@ -222,7 +219,7 @@
           defaultKg: 0, 
           defaultReps: 1, 
           hasWorkTimer: false,
-          youtubeUrl: "https://www.youtube.com/embed/gCzchpX0M2M?autoplay=1",
+          youtubeUrl: "https://www.youtube.com/embed/6A2V9Bu80J4?autoplay=1",
           note: "Segui il testo: 'Bring Sally Down' -> Scendi e mantieni lo squat. 'Bring Sally Up' -> Sali in piedi."
         },
         { name: "4. Cardio: Mountain climber", target: "3 x 1'", totalSets: 3, defaultKg: 0, defaultReps: 60, hasWorkTimer: true, workTime: 60 },
@@ -267,7 +264,7 @@
     let restTimer, workTimer;
 
     function startWorkout() {
-      initAudio(); // Inizializza l'audio al primo tap dell'utente
+      initAudio();
       document.getElementById('screen-home').classList.add('hidden');
       document.getElementById('screen-selection').classList.remove('hidden');
     }
@@ -380,6 +377,7 @@
       currentBtn.className = "py-1.5 bg-slate-800 text-emerald-400 font-bold text-3xs rounded-lg";
 
       if (setNum < totalSets) {
+        // AVVIO AUTOMATICO RECUPERO (90s)
         startRestTimer(90, "Timer Recupero Serie (90s)");
         
         const nextNum = setNum + 1;
@@ -398,7 +396,6 @@
       }
     }
 
-    // Timer con Segnale Acustico (Beep a -5s e Triplo Beep a 0s)
     function startRestTimer(seconds, labelText = "Timer Recupero (90s)") {
       clearInterval(restTimer);
       let time = seconds;
@@ -409,7 +406,6 @@
         let m = Math.floor(time / 60), s = time % 60;
         display.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
         
-        // Suono per gli ultimi 5 secondi
         if (time <= 5 && time > 0) {
           playBeep(600, 0.12);
         }
@@ -417,7 +413,7 @@
         if (--time < 0) { 
           clearInterval(restTimer); 
           display.textContent = "RECUPERATO!"; 
-          playTripleBeep(); // Triplo segnale di fine recupero
+          playTripleBeep();
         }
       }, 1000);
     }
@@ -432,7 +428,6 @@
         let m = Math.floor(time / 60), s = time % 60;
         display.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
         
-        // Suono per gli ultimi 5 secondi
         if (time <= 5 && time > 0) {
           playBeep(700, 0.12);
         }
@@ -440,7 +435,7 @@
         if (--time < 0) { 
           clearInterval(workTimer); 
           display.textContent = "FINE!"; 
-          playTripleBeep(); // Triplo segnale di fine tempo esercizio
+          playTripleBeep();
         }
       }, 1000);
     }
@@ -459,6 +454,7 @@
 
       if (currentIndex < currentExercises.length) {
         loadExercise();
+        // AVVIO AUTOMATICO RECUPERO CAMBIO ESERCIZIO (90s)
         startRestTimer(90, "🔄 Cambio Esercizio - Recupero (90s)");
       } else {
         document.getElementById('screen-workout').classList.add('hidden');
