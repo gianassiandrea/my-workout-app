@@ -8,119 +8,67 @@
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex justify-center">
 
-  <div class="w-full max-w-md bg-slate-900 border-x border-slate-800 flex flex-col min-h-screen relative pb-10">
+  <div class="w-full max-w-md bg-slate-900 border-x border-slate-800 flex flex-col min-h-screen relative pb-16">
     
-    <!-- Header -->
+    <!-- Header App -->
     <header class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/90 sticky top-0 z-10 backdrop-blur">
       <h1 class="text-xl font-extrabold tracking-wider text-emerald-400">PUMP // LAB</h1>
-      <span class="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full font-mono">v2.7 Auto-Timer</span>
+      <span id="routine-tag" class="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full font-mono">CHALLENGE</span>
     </header>
 
-    <main class="flex-1 p-4 space-y-4">
+    <main class="flex-1 p-4 flex flex-col justify-between">
 
       <!-- SCHERMATA 1: HOME -->
-      <div id="screen-home" class="space-y-4 text-center py-10">
-        <div class="p-6 bg-slate-800/40 border border-slate-800 rounded-3xl space-y-4">
-          <h2 class="text-2xl font-bold text-white">Pronto per l'allenamento?</h2>
-          <p class="text-xs text-slate-400">Seleziona la scheda e traccia la tua sessione.</p>
-          <button onclick="startWorkout()" class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-lg rounded-2xl transition shadow-lg shadow-emerald-500/10">
-            🚀 AVVIA ALLENAMENTO
+      <div id="screen-home" class="flex-1 flex flex-col items-center justify-center py-12 space-y-6">
+        <button onclick="startWorkout()" class="w-64 h-64 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-3xl tracking-widest shadow-2xl shadow-emerald-500/20 active:scale-95 transition flex items-center justify-center text-center p-4">
+          ALLENIAMOCI
+        </button>
+        <p class="text-xs text-slate-400 font-mono">Premi per iniziare la scheda</p>
+      </div>
+
+      <!-- SCHERMATA 2: EXECUTION WORKOUT -->
+      <div id="screen-workout" class="hidden space-y-4 flex-1 flex flex-col justify-between">
+        
+        <div class="space-y-4">
+          <!-- 1. NUMERO, NOME E DETTAGLI -->
+          <div class="border-b border-slate-800 pb-3">
+            <span id="ex-number" class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest">ESERCIZIO 1 DE 13</span>
+            <h2 id="ex-name" class="text-2xl font-black text-white mt-0.5">Skip ginocchia alte</h2>
+            <p id="ex-details" class="text-sm font-semibold text-slate-300 mt-1">3 serie x 1' • Recupero 90s</p>
+            <p id="ex-note" class="text-xs text-amber-400/90 mt-1 italic hidden"></p>
+          </div>
+
+          <!-- 2. VIDEO YOUTUBE IN APP -->
+          <div id="youtube-container" class="aspect-video w-full bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-lg">
+            <iframe id="youtube-iframe" class="w-full h-full" src="" title="Video Tutorial" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+
+          <!-- 3. TIMER DISPLAY (ROSSO=LAVORO, VERDE=RIPOSO) -->
+          <div id="timer-box" class="p-4 bg-slate-950 rounded-2xl border border-slate-800 text-center space-y-1">
+            <span id="timer-label" class="text-3xs font-mono text-slate-400 uppercase">PRONTO</span>
+            <div id="timer-display" class="text-5xl font-black font-mono text-slate-200">00:00</div>
+          </div>
+        </div>
+
+        <!-- 4. PULSANTE PRINCIPALE "VIA" / "FATTO" / "PROSSIMO" -->
+        <div class="pt-2">
+          <button id="main-action-btn" onclick="handleMainAction()" class="w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xl rounded-2xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider">
+            VIA
           </button>
         </div>
-      </div>
-
-      <!-- SCHERMATA 2: SELEZIONE SCHEDA -->
-      <div id="screen-selection" class="hidden space-y-3">
-        <h2 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Scegli la scheda di oggi:</h2>
-        
-        <button onclick="selectRoutine('CHALLENGE_EMOM')" class="w-full p-4 bg-slate-800/80 border border-emerald-500/50 hover:border-emerald-400 rounded-2xl text-left space-y-1">
-          <div class="font-bold text-emerald-400">ROUTINE CHALLENGE & EMOM 🎵</div>
-          <div class="text-xs text-slate-300">Squat Moby Challenge, EMOM Piegamenti, Super-set & Cardio</div>
-        </button>
-
-        <button onclick="selectRoutine('GIORNO_A')" class="w-full p-4 bg-slate-800/80 border border-slate-700/80 hover:border-emerald-500 rounded-2xl text-left space-y-1">
-          <div class="font-bold text-slate-300">GIORNO A</div>
-          <div class="text-xs text-slate-400">Panca Piana, Goblet Squat Light, TRX, Military Press, Alzate</div>
-        </button>
-
-        <button onclick="selectRoutine('GIORNO_B')" class="w-full p-4 bg-slate-800/80 border border-slate-700/80 hover:border-emerald-500 rounded-2xl text-left space-y-1">
-          <div class="font-bold text-slate-300">GIORNO B</div>
-          <div class="text-xs text-slate-400">Panca Inclinata, Goblet Heavy, Rematore, Push-ups, Curl, Plank</div>
-        </button>
-
-        <button onclick="selectRoutine('LIBERO')" class="w-full p-4 bg-slate-800/80 border border-slate-700/80 hover:border-emerald-500 rounded-2xl text-left space-y-1">
-          <div class="font-bold text-amber-400">ALLENAMENTO LIBERO</div>
-          <div class="text-xs text-slate-400">Sessione libera con note dirette</div>
-        </button>
-      </div>
-
-      <!-- SCHERMATA 3: ESERCIZIO E SERIE -->
-      <div id="screen-workout" class="hidden space-y-4">
-        
-        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-          <h2 id="routine-title" class="font-extrabold text-lg text-emerald-400">WORKOUT</h2>
-          <span id="exercise-step" class="text-xs font-mono bg-slate-800 px-2.5 py-1 rounded-full text-slate-300">Esercizio 1/13</span>
-        </div>
-
-        <div class="p-5 bg-slate-800/60 border border-slate-700/60 rounded-3xl space-y-4">
-          <div>
-            <div class="flex justify-between items-start">
-              <h3 id="ex-name" class="font-bold text-xl text-white">Nome Esercizio</h3>
-              <button id="youtube-btn" onclick="toggleYouTubeModal()" class="hidden px-2.5 py-1 bg-red-600/20 border border-red-500/40 text-red-400 rounded-lg text-xs font-bold flex items-center gap-1">
-                ▶ Video Moby
-              </button>
-            </div>
-            <p id="ex-target" class="text-sm font-semibold text-emerald-400 mt-1">Target: 3 x 1'</p>
-            <p id="ex-note" class="text-xs text-slate-400 mt-2 italic hidden"></p>
-          </div>
-
-          <!-- Player YouTube integrato -->
-          <div id="youtube-box" class="hidden p-2 bg-slate-900 rounded-2xl border border-red-500/30 space-y-2">
-            <div class="aspect-video w-full">
-              <iframe id="youtube-iframe" class="w-full h-full rounded-xl" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-            <p class="text-3xs text-slate-400 text-center">"Bring Sally Down" $\rightarrow$ Scendi | "Bring Sally Up" $\rightarrow$ Sali</p>
-          </div>
-
-          <!-- Timer Esercizio (es. 1 Minuto o EMOM) -->
-          <div id="work-timer-box" class="hidden p-3 bg-slate-900 rounded-2xl border border-slate-800 text-center space-y-1">
-            <span id="work-timer-label" class="text-3xs font-mono text-slate-400 uppercase">Timer Esercizio</span>
-            <div id="work-timer-display" class="text-3xl font-extrabold font-mono text-amber-400">01:00</div>
-            <button onclick="startWorkTimer(60)" class="w-full py-1.5 bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold text-xs rounded-xl">
-              AVVIA TEMPO
-            </button>
-          </div>
-
-          <!-- Timer Defaticamento (Partenza automatica) -->
-          <div class="p-3 bg-slate-900 rounded-2xl border border-slate-800 text-center space-y-1">
-            <span id="rest-label" class="text-3xs font-mono text-slate-400 uppercase">Timer Recupero Serie (90s)</span>
-            <div id="rest-timer-display" class="text-3xl font-extrabold font-mono text-emerald-400">01:30</div>
-          </div>
-
-          <!-- TABELLA SERIE -->
-          <div class="space-y-2">
-            <div class="grid grid-cols-4 gap-2 text-center text-3xs font-mono text-slate-400 px-1">
-              <span>SERIE</span>
-              <span>KG/VAR</span>
-              <span>REPS/SEC</span>
-              <span>AZIONI</span>
-            </div>
-            <div id="sets-container" class="space-y-2"></div>
-          </div>
-        </div>
 
       </div>
 
-      <!-- SCHERMATA 4: SUMMARY -->
-      <div id="screen-summary" class="hidden space-y-4">
-        <h2 class="font-bold text-lg text-emerald-400">Sessione Completata! 🎉</h2>
+      <!-- SCHERMATA 3: FINE WORKOUT & CHAT -->
+      <div id="screen-summary" class="hidden space-y-4 py-6">
+        <h2 class="font-black text-2xl text-emerald-400 text-center">SESSIONE COMPLETATA! 🎉</h2>
         
         <div class="p-4 bg-slate-800/40 border border-slate-800 rounded-2xl space-y-2">
-          <label class="text-xs font-bold text-slate-300 uppercase">Note Sessione:</label>
-          <textarea id="workout-notes" placeholder="Sensazioni, fatica, esecuzione EMOM..." class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white outline-none h-20 focus:border-emerald-500"></textarea>
+          <label class="text-xs font-bold text-slate-300 uppercase">Note Allenamento:</label>
+          <textarea id="workout-notes" placeholder="Sensazioni, fatica..." class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white outline-none h-20 focus:border-emerald-500"></textarea>
         </div>
 
-        <button onclick="finishWorkoutAndSend()" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm rounded-xl">
+        <button onclick="finishWorkoutAndSend()" class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-base rounded-xl">
           💾 SALVA SU GOOGLE SHEETS & IA
         </button>
 
@@ -132,7 +80,7 @@
             </div>
             <div id="chat-messages" class="space-y-2 max-h-60 overflow-y-auto text-xs text-slate-200"></div>
             <div class="flex gap-2 pt-2">
-              <input type="text" id="chat-input" placeholder="Chiedi modifiche..." class="flex-1 bg-slate-800 p-2.5 rounded-xl border border-slate-700 text-xs text-white outline-none focus:border-emerald-500">
+              <input type="text" id="chat-input" placeholder="Chiedi al coach..." class="flex-1 bg-slate-800 p-2.5 rounded-xl border border-slate-700 text-xs text-white outline-none focus:border-emerald-500">
               <button onclick="sendChatMessage()" class="px-3 bg-emerald-500 text-slate-950 font-bold rounded-xl text-xs">Invia</button>
             </div>
           </div>
@@ -141,26 +89,15 @@
 
     </main>
 
-    <!-- MODAL DIFFICOLTÀ (1-10) -->
-    <div id="diff-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 text-center">
-        <h4 class="font-bold text-base text-white">Esercizio Completato!</h4>
-        <p class="text-xs text-slate-400">Valuta la difficoltà complessiva (1-10):</p>
-        
-        <div class="grid grid-cols-5 gap-2">
-          <button onclick="submitDifficulty(1)" class="py-2.5 bg-slate-800 hover:bg-emerald-500/30 border border-slate-700 rounded-xl font-bold text-xs">1</button>
-          <button onclick="submitDifficulty(2)" class="py-2.5 bg-slate-800 hover:bg-emerald-500/30 border border-slate-700 rounded-xl font-bold text-xs">2</button>
-          <button onclick="submitDifficulty(3)" class="py-2.5 bg-slate-800 hover:bg-emerald-500/30 border border-slate-700 rounded-xl font-bold text-xs">3</button>
-          <button onclick="submitDifficulty(4)" class="py-2.5 bg-slate-800 hover:bg-emerald-500/30 border border-slate-700 rounded-xl font-bold text-xs">4</button>
-          <button onclick="submitDifficulty(5)" class="py-2.5 bg-slate-800 hover:bg-emerald-500/30 border border-slate-700 rounded-xl font-bold text-xs">5</button>
-          <button onclick="submitDifficulty(6)" class="py-2.5 bg-slate-800 hover:bg-amber-500/30 border border-slate-700 rounded-xl font-bold text-xs text-amber-400">6</button>
-          <button onclick="submitDifficulty(7)" class="py-2.5 bg-slate-800 hover:bg-amber-500/30 border border-slate-700 rounded-xl font-bold text-xs text-amber-400">7</button>
-          <button onclick="submitDifficulty(8)" class="py-2.5 bg-slate-800 hover:bg-amber-500/30 border border-slate-700 rounded-xl font-bold text-xs text-amber-400">8</button>
-          <button onclick="submitDifficulty(9)" class="py-2.5 bg-slate-800 hover:bg-red-500/30 border border-slate-700 rounded-xl font-bold text-xs text-red-400">9</button>
-          <button onclick="submitDifficulty(10)" class="py-2.5 bg-slate-800 hover:bg-red-500/30 border border-slate-700 rounded-xl font-bold text-xs text-red-400">10</button>
-        </div>
-      </div>
-    </div>
+    <!-- FRECCE DI NAVIGAZIONE IN CALCE -->
+    <footer id="footer-nav" class="hidden fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-slate-900/95 border-t border-slate-800 p-3 flex justify-between items-center backdrop-blur">
+      <button onclick="prevExercise()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl flex items-center gap-1">
+        ← Precedente
+      </button>
+      <button onclick="nextExercise()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl flex items-center gap-1">
+        Successivo →
+      </button>
+    </footer>
 
   </div>
 
@@ -168,15 +105,55 @@
     const GOOGLE_SHEET_URL = "INCOLLA_QUI_IL_TUO_URL_DI_GOOGLE"; 
     const GEMINI_API_KEY = "INCOLLA_QUI_LA_TUA_GEMINI_API_KEY";
 
+    function getEmbedUrl(videoId, autoplay = false) {
+      if (!videoId || videoId.startsWith("ID_")) return "";
+      return `https://www.youtube.com/embed/${videoId}${autoplay ? '?autoplay=1' : ''}`;
+    }
+
+    // Struttura Dati Routine
+    const routineData = [
+      { name: "1. Skip ginocchia alte", target: "3 serie x 1'", totalSets: 3, isTimer: true, workTime: 60, restTime: 90, videoId: "ID_SKIP" },
+      { name: "1. Squat rana", target: "3 serie x 10-14 reps", totalSets: 3, isTimer: false, restTime: 90, videoId: "ID_SQUAT_RANA" },
+      { name: "1. Montagna -> Stretching", target: "3 serie x 3-5 per lato", totalSets: 3, isTimer: false, restTime: 90, videoId: "ID_MONTAGNA" },
+      { name: "2. Jumping Jacks", target: "3 serie x 1'", totalSets: 3, isTimer: true, workTime: 60, restTime: 90, videoId: "ID_JUMPING" },
+      { name: "2. Affondi alternati indietro", target: "3 serie x 8-16 per lato", totalSets: 3, isTimer: false, restTime: 90, videoId: "ID_AFFONDI" },
+      { name: "2. Piegamenti stretti / Thruster", target: "3 serie x 5-9 reps", totalSets: 3, isTimer: false, restTime: 90, videoId: "ID_PIEGAMENTI" },
+      { name: "2. Crunch gambe tese", target: "3 serie x 15-25 reps", totalSets: 3, isTimer: false, restTime: 90, videoId: "ID_CRUNCH" },
+      { 
+        name: "3. Squat: Moby - Flower", 
+        target: "1 volta (Bring Sally Up)", 
+        totalSets: 1, 
+        isTimer: false, 
+        restTime: 90, 
+        videoId: "6A2V9Bu80J4", 
+        autoplay: true,
+        note: "'Bring Sally Down' -> Scendi | 'Bring Sally Up' -> Sali." 
+      },
+      { name: "4. Mountain climber", target: "3 serie x 1'", totalSets: 3, isTimer: true, workTime: 60, restTime: 90, videoId: "ID_MOUNTAIN" },
+      { name: "4. Trazioni facilitata / Rematore", target: "3 serie x 10-15 reps", totalSets: 3, isTimer: false, restTime: 90, videoId: "ID_TRAZIONI" },
+      { name: "4. Criss Cross", target: "3 serie x 6-10 per lato", totalSets: 3, isTimer: false, restTime: 90, videoId: "ID_CRISS_CROSS" },
+      { 
+        name: "5. Piegamenti braccia - EMOM", 
+        target: "10 serie x 1' (3-4 reps/min)", 
+        totalSets: 10, 
+        isTimer: true, 
+        workTime: 60, 
+        restTime: 0, 
+        videoId: "ID_EMOM",
+        note: "EMOM: Fai le rep all'inizio di ogni minuto." 
+      },
+      { name: "6. Stretching: Cane basso & alto", target: "3 serie x 3 (10'' tenuta)", totalSets: 3, isTimer: false, restTime: 60, videoId: "ID_STRETCHING" }
+    ];
+
+    let currentIndex = 0;
+    let currentSet = 1;
+    let mainTimer = null;
     let audioCtx = null;
+    let state = "IDLE"; // IDLE, WORKING, RESTING
 
     function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
     function playBeep(freq = 600, duration = 0.15) {
@@ -192,9 +169,7 @@
         gain.connect(audioCtx.destination);
         osc.start();
         osc.stop(audioCtx.currentTime + duration);
-      } catch (e) {
-        console.log("Audio non abilitato", e);
-      }
+      } catch (e) {}
     }
 
     function playTripleBeep() {
@@ -203,105 +178,25 @@
       setTimeout(() => playBeep(1100, 0.25), 400);
     }
 
-    const defaultRoutines = {
-      CHALLENGE_EMOM: [
-        { name: "1. Cardio: Skip ginocchia alte", target: "3 x 1'", totalSets: 3, defaultKg: 0, defaultReps: 60, hasWorkTimer: true, workTime: 60 },
-        { name: "1. Squat rana (Super-set)", target: "3 x 10-14 reps", totalSets: 3, defaultKg: 0, defaultReps: 10, hasWorkTimer: false },
-        { name: "1. Montagna -> Stretching del mondo", target: "3 x 3-5 per lato", totalSets: 3, defaultKg: 0, defaultReps: 3, hasWorkTimer: false },
-        { name: "2. Cardio: Jumping Jacks", target: "3 x 1'", totalSets: 3, defaultKg: 0, defaultReps: 60, hasWorkTimer: true, workTime: 60 },
-        { name: "2. Affondi alternati indietro", target: "3 x 8-16 per lato", totalSets: 3, defaultKg: 0, defaultReps: 8, hasWorkTimer: false },
-        { name: "2. Piegamenti stretti / Thruster", target: "3 x 5-9 reps", totalSets: 3, defaultKg: 0, defaultReps: 5, hasWorkTimer: false },
-        { name: "2. Crunch gambe tese", target: "3 x 15-25 reps", totalSets: 3, defaultKg: 0, defaultReps: 15, hasWorkTimer: false },
-        { 
-          name: "3. Squat: Moby - Flower (Bring Sally Up)", 
-          target: "1 volta (Segui la canzone)", 
-          totalSets: 1, 
-          defaultKg: 0, 
-          defaultReps: 1, 
-          hasWorkTimer: false,
-          youtubeUrl: "https://www.youtube.com/embed/6A2V9Bu80J4?autoplay=1",
-          note: "Segui il testo: 'Bring Sally Down' -> Scendi e mantieni lo squat. 'Bring Sally Up' -> Sali in piedi."
-        },
-        { name: "4. Cardio: Mountain climber", target: "3 x 1'", totalSets: 3, defaultKg: 0, defaultReps: 60, hasWorkTimer: true, workTime: 60 },
-        { name: "4. Trazioni sbarra facilitata / Rematore", target: "3 x 10-15 reps", totalSets: 3, defaultKg: 0, defaultReps: 10, hasWorkTimer: false },
-        { name: "4. Criss Cross", target: "3 x 6-10 per lato", totalSets: 3, defaultKg: 0, defaultReps: 6, hasWorkTimer: false },
-        { 
-          name: "5. Piegamenti sulle braccia - EMOM", 
-          target: "10 x 1' (3-4 reps al min)", 
-          totalSets: 10, 
-          defaultKg: 0, 
-          defaultReps: 3, 
-          hasWorkTimer: true, 
-          workTime: 60,
-          note: "EMOM 10 Minuti: Fai le rep all'inizio di ogni minuto, riposa il tempo restante."
-        },
-        { name: "6. Stretching: Cane basso & Cane alto", target: "3 x 3 (10'' tenuta)", totalSets: 3, defaultKg: 0, defaultReps: 10, hasWorkTimer: false }
-      ],
-      GIORNO_A: [
-        { name: "Panca Piana (Bilanciere)", target: "4 x 10 @ 40 kg", totalSets: 4, defaultKg: 40, defaultReps: 10, hasWorkTimer: false },
-        { name: "Goblet Squat (Light/Tecnico)", target: "4 x 12 @ 10 kg", totalSets: 4, defaultKg: 10, defaultReps: 12, hasWorkTimer: false },
-        { name: "TRX Chest Press", target: "3 x 10-12", totalSets: 3, defaultKg: 0, defaultReps: 12, hasWorkTimer: false },
-        { name: "Military Press (Seduto)", target: "4 x 12 @ 6 kg/manubrio", totalSets: 4, defaultKg: 6, defaultReps: 12, hasWorkTimer: false },
-        { name: "Alzate Laterali (Seduto)", target: "4 x 8 @ 6 kg/manubrio", totalSets: 4, defaultKg: 6, defaultReps: 8, hasWorkTimer: false }
-      ],
-      GIORNO_B: [
-        { name: "Panca Inclinata a 45° (Bilanciere)", target: "4 x 8 @ 40 kg", totalSets: 4, defaultKg: 40, defaultReps: 8, hasWorkTimer: false },
-        { name: "Goblet Squat (Heavy)", target: "4 x 12 @ 15 kg", totalSets: 4, defaultKg: 15, defaultReps: 12, hasWorkTimer: false },
-        { name: "Rematore Manubrio su Panca", target: "4 x 10 @ 15 kg", totalSets: 4, defaultKg: 15, defaultReps: 10, hasWorkTimer: false },
-        { name: "Flessioni (Push-ups)", target: "4 x 10", totalSets: 4, defaultKg: 0, defaultReps: 10, hasWorkTimer: false },
-        { name: "Curl Alternato Manubri (Seduto)", target: "3 x 12 @ 5 kg/braccio", totalSets: 3, defaultKg: 5, defaultReps: 12, hasWorkTimer: false },
-        { name: "Plank", target: "3 x 60 secondi", totalSets: 3, defaultKg: 0, defaultReps: 60, hasWorkTimer: true, workTime: 60 }
-      ]
-    };
-
-    let routines = JSON.parse(localStorage.getItem('my_routines')) || defaultRoutines;
-    let currentRoutineKey = "";
-    let currentExercises = [];
-    let currentIndex = 0;
-    let completedWorkoutData = [];
-    let currentExerciseSetsData = [];
-    let chatHistory = [];
-    let restTimer, workTimer;
-
     function startWorkout() {
       initAudio();
       document.getElementById('screen-home').classList.add('hidden');
-      document.getElementById('screen-selection').classList.remove('hidden');
-    }
-
-    function selectRoutine(key) {
-      initAudio();
-      currentRoutineKey = key;
-      document.getElementById('screen-selection').classList.add('hidden');
-
-      if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL.startsWith("http")) {
-        fetch(GOOGLE_SHEET_URL, {
-          method: 'POST', mode: 'no-cors',
-          body: JSON.stringify({ action: "START", routine: key })
-        }).catch(err => console.log(err));
-      }
-
-      if (key === 'LIBERO') {
-        document.getElementById('screen-summary').classList.remove('hidden');
-        return;
-      }
-
-      currentExercises = routines[key];
-      currentIndex = 0;
-      completedWorkoutData = [];
-      
-      document.getElementById('routine-title').textContent = key.replace('_', ' ');
       document.getElementById('screen-workout').classList.remove('hidden');
+      document.getElementById('footer-nav').classList.remove('hidden');
+      currentIndex = 0;
       loadExercise();
     }
 
     function loadExercise() {
-      const ex = currentExercises[currentIndex];
-      document.getElementById('ex-name').textContent = ex.name;
-      document.getElementById('ex-target').textContent = `Target: ${ex.target}`;
-      document.getElementById('exercise-step').textContent = `Esercizio ${currentIndex + 1}/${currentExercises.length}`;
-      document.getElementById('rest-label').textContent = "Timer Recupero Serie (90s)";
+      clearInterval(mainTimer);
+      state = "IDLE";
+      currentSet = 1;
+      const ex = routineData[currentIndex];
 
+      document.getElementById('ex-number').textContent = `ESERCIZIO ${currentIndex + 1} DE ${routineData.length}`;
+      document.getElementById('ex-name').textContent = ex.name;
+      document.getElementById('ex-details').textContent = `${ex.target} (Serie 1 di ${ex.totalSets})`;
+      
       const noteEl = document.getElementById('ex-note');
       if (ex.note) {
         noteEl.textContent = ex.note;
@@ -310,168 +205,184 @@
         noteEl.classList.add('hidden');
       }
 
-      const ytBtn = document.getElementById('youtube-btn');
-      const ytBox = document.getElementById('youtube-box');
-      const ytIframe = document.getElementById('youtube-iframe');
-
-      if (ex.youtubeUrl) {
-        ytBtn.classList.remove('hidden');
-        ytIframe.src = ex.youtubeUrl;
-        ytBox.classList.remove('hidden');
+      // Video YouTube Embed
+      const iframe = document.getElementById('youtube-iframe');
+      if (ex.videoId && !ex.videoId.startsWith("ID_")) {
+        iframe.src = getEmbedUrl(ex.videoId, ex.autoplay || false);
+        document.getElementById('youtube-container').classList.remove('hidden');
       } else {
-        ytBtn.classList.add('hidden');
-        ytBox.classList.add('hidden');
-        ytIframe.src = "";
+        iframe.src = "";
+        document.getElementById('youtube-container').classList.add('hidden');
       }
 
-      document.getElementById('rest-timer-display').textContent = "01:30";
-      clearInterval(restTimer);
-      clearInterval(workTimer);
+      // Reset Timer Display & Main Button
+      const timerDisplay = document.getElementById('timer-display');
+      const timerLabel = document.getElementById('timer-label');
+      const actionBtn = document.getElementById('main-action-btn');
 
-      const workBox = document.getElementById('work-timer-box');
-      if (ex.hasWorkTimer) {
-        workBox.classList.remove('hidden');
-        document.getElementById('work-timer-display').textContent = `00:${ex.workTime}`;
-      } else {
-        workBox.classList.add('hidden');
-      }
-
-      currentExerciseSetsData = [];
-      const container = document.getElementById('sets-container');
-      container.innerHTML = "";
-
-      for (let i = 1; i <= ex.totalSets; i++) {
-        const isFirst = i === 1;
-        container.innerHTML += `
-          <div id="set-row-${i}" class="grid grid-cols-4 gap-2 items-center bg-slate-900 p-2.5 rounded-2xl border border-slate-800 ${isFirst ? '' : 'opacity-40'}">
-            <span class="font-bold text-xs text-center ${isFirst ? 'text-emerald-400' : 'text-slate-500'}">${i}</span>
-            <input type="number" id="input-kg-${i}" value="${ex.defaultKg}" ${isFirst ? '' : 'disabled'} class="bg-slate-800 text-center rounded-lg py-1 text-xs font-bold text-white border border-slate-700 w-full outline-none">
-            <input type="number" id="input-reps-${i}" value="${ex.defaultReps}" ${isFirst ? '' : 'disabled'} class="bg-slate-800 text-center rounded-lg py-1 text-xs font-bold text-white border border-slate-700 w-full outline-none">
-            <button id="set-btn-${i}" onclick="finishSet(${i}, ${ex.totalSets})" ${isFirst ? '' : 'disabled'} 
-              class="py-1.5 ${isFirst ? 'bg-emerald-500 text-slate-950 hover:bg-emerald-400' : 'bg-slate-800 text-slate-500'} font-bold text-3xs rounded-lg transition">
-              FINE
-            </button>
-          </div>
-        `;
-      }
-    }
-
-    function toggleYouTubeModal() {
-      const box = document.getElementById('youtube-box');
-      box.classList.toggle('hidden');
-    }
-
-    function finishSet(setNum, totalSets) {
-      initAudio();
-      const kg = document.getElementById(`input-kg-${setNum}`).value;
-      const reps = document.getElementById(`input-reps-${setNum}`).value;
-
-      currentExerciseSetsData.push({ setNum: setNum, weight: kg, reps: reps });
-
-      const currentRow = document.getElementById(`set-row-${setNum}`);
-      const currentBtn = document.getElementById(`set-btn-${setNum}`);
+      timerDisplay.className = "text-5xl font-black font-mono text-slate-200";
+      timerLabel.textContent = "PRONTO";
       
-      currentRow.classList.add('bg-emerald-950/30', 'border-emerald-500/40');
-      currentBtn.disabled = true;
-      currentBtn.textContent = "✓";
-      currentBtn.className = "py-1.5 bg-slate-800 text-emerald-400 font-bold text-3xs rounded-lg";
-
-      if (setNum < totalSets) {
-        // AVVIO AUTOMATICO RECUPERO (90s)
-        startRestTimer(90, "Timer Recupero Serie (90s)");
-        
-        const nextNum = setNum + 1;
-        const nextRow = document.getElementById(`set-row-${nextNum}`);
-        const nextBtn = document.getElementById(`set-btn-${nextNum}`);
-
-        nextRow.classList.remove('opacity-40');
-        document.getElementById(`input-kg-${nextNum}`).disabled = false;
-        document.getElementById(`input-reps-${nextNum}`).disabled = false;
-        nextBtn.disabled = false;
-        nextBtn.className = "py-1.5 bg-emerald-500 text-slate-950 hover:bg-emerald-400 font-bold text-3xs rounded-lg transition";
+      if (ex.isTimer) {
+        timerDisplay.textContent = formatTime(ex.workTime);
       } else {
-        setTimeout(() => {
-          document.getElementById('diff-modal').classList.remove('hidden');
-        }, 500);
+        timerDisplay.textContent = "00:00";
       }
+
+      actionBtn.textContent = "VIA";
+      actionBtn.className = "w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xl rounded-2xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider";
     }
 
-    function startRestTimer(seconds, labelText = "Timer Recupero (90s)") {
-      clearInterval(restTimer);
-      let time = seconds;
-      const display = document.getElementById('rest-timer-display');
-      document.getElementById('rest-label').textContent = labelText;
+    function handleMainAction() {
+      initAudio();
+      const ex = routineData[currentIndex];
 
-      restTimer = setInterval(() => {
-        let m = Math.floor(time / 60), s = time % 60;
-        display.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-        
-        if (time <= 5 && time > 0) {
-          playBeep(600, 0.12);
+      if (state === "IDLE") {
+        if (ex.isTimer) {
+          // Esercizio a Tempo -> Avvia Timer Rosso
+          startWorkTimer(ex.workTime);
+        } else {
+          // Esercizio a Reps -> Pulsante diventa FATTO
+          state = "WORKING";
+          const actionBtn = document.getElementById('main-action-btn');
+          actionBtn.textContent = "FATTO";
+          actionBtn.className = "w-full py-5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xl rounded-2xl transition shadow-lg uppercase tracking-wider";
         }
-
-        if (--time < 0) { 
-          clearInterval(restTimer); 
-          display.textContent = "RECUPERATO!"; 
-          playTripleBeep();
-        }
-      }, 1000);
+      } 
+      else if (state === "WORKING" && !ex.isTimer) {
+        // Premuto FATTO -> Fai partire riposo Verde
+        startRestTimer(ex.restTime);
+      }
+      else if (state === "FINISHED_EXERCISE") {
+        nextExercise();
+      }
     }
 
     function startWorkTimer(seconds) {
-      initAudio();
-      clearInterval(workTimer);
+      state = "WORKING";
+      clearInterval(mainTimer);
       let time = seconds;
-      const display = document.getElementById('work-timer-display');
 
-      workTimer = setInterval(() => {
-        let m = Math.floor(time / 60), s = time % 60;
-        display.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      const display = document.getElementById('timer-display');
+      const label = document.getElementById('timer-label');
+      const btn = document.getElementById('main-action-btn');
+
+      label.textContent = "TEMPO ESERCIZIO";
+      display.className = "text-5xl font-black font-mono text-red-500 animate-pulse";
+      btn.textContent = "IN ESECUZIONE...";
+      btn.className = "w-full py-5 bg-slate-800 text-slate-500 font-black text-xl rounded-2xl cursor-not-allowed uppercase tracking-wider";
+
+      const update = () => {
+        display.textContent = formatTime(time);
+        if (time <= 5 && time > 0) playBeep(700, 0.12);
         
-        if (time <= 5 && time > 0) {
-          playBeep(700, 0.12);
-        }
-
-        if (--time < 0) { 
-          clearInterval(workTimer); 
-          display.textContent = "FINE!"; 
+        if (time <= 0) {
+          clearInterval(mainTimer);
           playTripleBeep();
+          // Passa in automatico al riposo verde
+          startRestTimer(routineData[currentIndex].restTime);
+        } else {
+          time--;
         }
-      }, 1000);
+      };
+
+      update();
+      mainTimer = setInterval(update, 1000);
     }
 
-    function submitDifficulty(score) {
-      initAudio();
-      document.getElementById('diff-modal').classList.add('hidden');
+    function startRestTimer(seconds) {
+      if (seconds <= 0) {
+        advanceSetOrExercise();
+        return;
+      }
+
+      state = "RESTING";
+      clearInterval(mainTimer);
+      let time = seconds;
+
+      const display = document.getElementById('timer-display');
+      const label = document.getElementById('timer-label');
+      const btn = document.getElementById('main-action-btn');
+
+      label.textContent = "RECUPERO";
+      display.className = "text-5xl font-black font-mono text-emerald-400";
+      btn.textContent = "RIPOSO IN CORSO...";
+      btn.className = "w-full py-5 bg-slate-800 text-slate-500 font-black text-xl rounded-2xl cursor-not-allowed uppercase tracking-wider";
+
+      const update = () => {
+        display.textContent = formatTime(time);
+        if (time <= 5 && time > 0) playBeep(600, 0.12);
+
+        if (time <= 0) {
+          clearInterval(mainTimer);
+          playTripleBeep();
+          advanceSetOrExercise();
+        } else {
+          time--;
+        }
+      };
+
+      update();
+      mainTimer = setInterval(update, 1000);
+    }
+
+    function advanceSetOrExercise() {
+      const ex = routineData[currentIndex];
       
-      completedWorkoutData.push({
-        exerciseName: currentExercises[currentIndex].name,
-        setsData: currentExerciseSetsData,
-        difficulty: score
-      });
-
-      currentIndex++;
-
-      if (currentIndex < currentExercises.length) {
-        loadExercise();
-        // AVVIO AUTOMATICO RECUPERO CAMBIO ESERCIZIO (90s)
-        startRestTimer(90, "🔄 Cambio Esercizio - Recupero (90s)");
+      if (currentSet < ex.totalSets) {
+        currentSet++;
+        state = "IDLE";
+        document.getElementById('ex-details').textContent = `${ex.target} (Serie ${currentSet} di ${ex.totalSets})`;
+        
+        const btn = document.getElementById('main-action-btn');
+        btn.textContent = "VIA";
+        btn.className = "w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xl rounded-2xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider";
+        
+        const display = document.getElementById('timer-display');
+        display.className = "text-5xl font-black font-mono text-slate-200";
+        display.textContent = ex.isTimer ? formatTime(ex.workTime) : "00:00";
+        document.getElementById('timer-label').textContent = "PRONTO";
       } else {
+        // Fine tutte le serie dell'esercizio
+        state = "FINISHED_EXERCISE";
+        const btn = document.getElementById('main-action-btn');
+        btn.textContent = "PROSSIMO ESERCIZIO";
+        btn.className = "w-full py-5 bg-blue-500 hover:bg-blue-400 text-slate-950 font-black text-xl rounded-2xl transition shadow-lg uppercase tracking-wider";
+      }
+    }
+
+    function nextExercise() {
+      if (currentIndex < routineData.length - 1) {
+        currentIndex++;
+        loadExercise();
+      } else {
+        // Fine Scheda -> Vai a Summary
         document.getElementById('screen-workout').classList.add('hidden');
+        document.getElementById('footer-nav').classList.add('hidden');
         document.getElementById('screen-summary').classList.remove('hidden');
       }
     }
 
+    function prevExercise() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        loadExercise();
+      }
+    }
+
+    function formatTime(sec) {
+      let m = Math.floor(sec / 60), s = sec % 60;
+      return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    }
+
+    // Chat Gemini IA Finale
     function finishWorkoutAndSend() {
       const notes = document.getElementById('workout-notes').value;
 
       if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL.startsWith("http")) {
         fetch(GOOGLE_SHEET_URL, {
           method: 'POST', mode: 'no-cors',
-          body: JSON.stringify({
-            action: "FINISH", routine: currentRoutineKey,
-            completedData: completedWorkoutData, notes: notes
-          })
+          body: JSON.stringify({ action: "FINISH", routine: "CHALLENGE", notes: notes })
         }).catch(err => console.log(err));
       }
 
@@ -480,19 +391,14 @@
     }
 
     async function initAIChat(notes) {
-      const prompt = `Sei il mio IA Coach. Ho completato l'allenamento (${currentRoutineKey}).
-Dati sessione:
-${JSON.stringify(completedWorkoutData, null, 2)}
-Note: ${notes || "Nessuna"}`;
-
-      addChatMessage("IA", "Sto analizzando i dati del tuo allenamento...");
+      const prompt = `Ho appena completato la scheda Challenge. Note: ${notes || "Nessuna"}. Proponi aggiustamenti per la prossima volta.`;
+      addChatMessage("IA", "Sto analizzando l'allenamento...");
       callGemini(prompt);
     }
 
     async function callGemini(userText) {
       const statusEl = document.getElementById('chat-status');
       statusEl.textContent = "Gemini sta pensando...";
-      chatHistory.push({ role: "user", parts: [{ text: userText }] });
 
       if (!GEMINI_API_KEY || GEMINI_API_KEY.includes("INCOLLA")) {
         statusEl.textContent = "Chiave Mancante";
@@ -504,17 +410,15 @@ Note: ${notes || "Nessuna"}`;
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: chatHistory })
+          body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: userText }] }] })
         });
         const data = await response.json();
         const aiReply = data.candidates[0].content.parts[0].text;
-
-        chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
         statusEl.textContent = "In ascolto...";
         addChatMessage("IA", aiReply);
       } catch (e) {
         statusEl.textContent = "Errore Connessione";
-        addChatMessage("IA", "❌ Errore di connessione.");
+        addChatMessage("IA", "❌ Errore di connessione con Gemini.");
       }
     }
 
