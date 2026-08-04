@@ -26,7 +26,7 @@
         <p class="text-xs text-slate-400 font-mono">Superserie compattate in schermata unica</p>
       </div>
 
-      <!-- SCHERMATA 2: EXECUTION WORKOUT (SINGLE SCREEN WITHOUT SCROLL) -->
+      <!-- SCHERMATA 2: EXECUTION WORKOUT -->
       <div id="screen-workout" class="hidden flex-1 flex flex-col justify-between space-y-2 overflow-hidden">
         
         <!-- BADGE BLOCCO E GIRO -->
@@ -37,7 +37,7 @@
 
         <!-- 1. TIMER DISPLAY (COMPATTO) -->
         <div id="timer-box" class="py-2 px-3 bg-slate-950 rounded-xl border border-slate-800 text-center space-y-0.5 shrink-0 shadow-inner">
-          <span id="timer-label" class="text-4xs font-mono text-slate-400 uppercase tracking-widest block">PRONTO</span>
+          <span id="timer-label" class="text-4xs font-mono text-slate-400 uppercase tracking-widest">PRONTO</span>
           <div id="timer-display" class="text-4xl font-black font-mono text-slate-200">00:00</div>
         </div>
 
@@ -48,8 +48,8 @@
           </button>
         </div>
 
-        <!-- 3. CONTENITORE ESERCIZI (RIGHE SOTTILI AD ALTA LEGGIBILITÀ) -->
-        <div id="exercises-list" class="flex-1 flex flex-col justify-center gap-2 overflow-hidden py-1"></div>
+        <!-- 3. CONTENITORE ESERCIZI DEL BLOCCO -->
+        <div id="exercises-list" class="flex-1 flex flex-col justify-center gap-2 overflow-y-auto py-1"></div>
 
       </div>
 
@@ -125,10 +125,10 @@
           videoId = url.split("youtube.com/embed/")[1].split("?")[0];
         }
       } catch (e) { return ""; }
-      return videoId ? `https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=1` : "";
+      return videoId ? `https://www.youtube.com/embed/${videoId}?enablejsapi=1${autoplay ? '&autoplay=1' : ''}` : "";
     }
 
-    // DEFINIZIONE BLOCCHI DI ALLENAMENTO CON TUTTI I TUOI LINK E NOMI CORRETTI
+    // DEFINIZIONE BLOCCHI DI ALLENAMENTO
     const workoutBlocks = [
       {
         id: 1,
@@ -158,6 +158,7 @@
         title: "BLOCCO 3: CHALLENGE MOBY",
         totalSets: 1,
         restAfterSet: 90,
+        isMobyBlock: true, // Flag per mostrare il video di Moby in grande
         exercises: [
           { 
             name: "3. Squat: Moby - Flower", target: "1 volta (Bring Sally Up)", isTimer: false, 
@@ -259,32 +260,60 @@
       const listContainer = document.getElementById('exercises-list');
       listContainer.innerHTML = "";
 
-      // Genera righe orizzontali super compatte ad altissima visibilità
       block.exercises.forEach((ex) => {
-        let html = `
-          <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between gap-2 shadow-sm">
-            <div class="min-w-0 flex-1">
-              <h3 class="font-black text-white text-sm truncate tracking-wide">${ex.name}</h3>
-              <div class="flex items-center gap-2 mt-0.5">
-                <span class="text-xs font-black text-amber-300 uppercase bg-slate-900 px-2 py-0.5 rounded border border-slate-800">${ex.target}</span>
-                ${ex.note ? `<span class="text-4xs text-amber-400/90 italic truncate">${ex.note}</span>` : ''}
+        let html = "";
+
+        if (block.isMobyBlock) {
+          // Layout specifico per Blocco Moby: Video grande canzone + Bottone Tecnica
+          const mainEmbed = parseYouTubeEmbedUrl(ex.videoUrl, true);
+
+          html = `
+            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2 shadow-sm">
+              <div class="flex justify-between items-center">
+                <h3 class="font-black text-white text-sm tracking-wide">${ex.name}</h3>
+                ${ex.secondaryVideoUrl ? `
+                  <button onclick="openVideoModal('${ex.name} (Tecnica)', '${ex.secondaryVideoUrl}')" class="px-2.5 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg text-2xs font-extrabold flex items-center gap-1">
+                    ▶ Tecnica
+                  </button>
+                ` : ''}
+              </div>
+              <p class="text-xs font-black text-amber-300 uppercase bg-slate-900 px-2 py-0.5 rounded border border-slate-800 inline-block">${ex.target}</p>
+              ${ex.note ? `<p class="text-4xs text-amber-400/90 italic">${ex.note}</p>` : ''}
+              
+              <!-- VIDEO CANZONE MOBY GRANDE IN-APP -->
+              <div class="aspect-video w-full bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-md">
+                <iframe class="w-full h-full" src="${mainEmbed}" title="${ex.name}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
               </div>
             </div>
-            
-            <div class="flex gap-1 shrink-0">
-              ${ex.videoUrl ? `
-                <button onclick="openVideoModal('${ex.name}', '${ex.videoUrl}')" class="px-2.5 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 rounded-lg text-2xs font-extrabold flex items-center gap-1">
-                  ▶ Tutorial
-                </button>
-              ` : ''}
-              ${ex.secondaryVideoUrl ? `
-                <button onclick="openVideoModal('${ex.name} (Tecnica)', '${ex.secondaryVideoUrl}')" class="px-2.5 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg text-2xs font-extrabold flex items-center gap-1">
-                  ▶ Tecnica
-                </button>
-              ` : ''}
+          `;
+        } else {
+          // Layout standard per altre superserie (righe sottili + bottone pop-up)
+          html = `
+            <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between gap-2 shadow-sm">
+              <div class="min-w-0 flex-1">
+                <h3 class="font-black text-white text-sm truncate tracking-wide">${ex.name}</h3>
+                <div class="flex items-center gap-2 mt-0.5">
+                  <span class="text-xs font-black text-amber-300 uppercase bg-slate-900 px-2 py-0.5 rounded border border-slate-800">${ex.target}</span>
+                  ${ex.note ? `<span class="text-4xs text-amber-400/90 italic truncate">${ex.note}</span>` : ''}
+                </div>
+              </div>
+              
+              <div class="flex gap-1 shrink-0">
+                ${ex.videoUrl ? `
+                  <button onclick="openVideoModal('${ex.name}', '${ex.videoUrl}')" class="px-2.5 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 rounded-lg text-2xs font-extrabold flex items-center gap-1">
+                    ▶ Tutorial
+                  </button>
+                ` : ''}
+                ${ex.secondaryVideoUrl ? `
+                  <button onclick="openVideoModal('${ex.name} (Tecnica)', '${ex.secondaryVideoUrl}')" class="px-2.5 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg text-2xs font-extrabold flex items-center gap-1">
+                    ▶ Tecnica
+                  </button>
+                ` : ''}
+              </div>
             </div>
-          </div>
-        `;
+          `;
+        }
+
         listContainer.innerHTML += html;
       });
 
@@ -431,7 +460,7 @@
       label.textContent = "RECUPERO SUPERSERIE";
       display.className = "text-4xl font-black font-mono text-emerald-400";
       btn.textContent = "RIPOSO IN CORSO...";
-      btn.className = "w-full py-3 bg-slate-800 text-slate-500 font-black text-lg rounded-xl cursor-not-allowed uppercase tracking-wider";
+      btn.className = "w-full py-3 bg-slate-800 text-slate-500 font-black text-xl rounded-xl cursor-not-allowed uppercase tracking-wider";
 
       const update = () => {
         display.textContent = formatTime(time);
