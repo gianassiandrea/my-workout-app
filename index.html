@@ -6,76 +6,76 @@
   <title>PUMP // LAB</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex justify-center">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex justify-center overflow-hidden">
 
-  <div class="w-full max-w-md bg-slate-900 border-x border-slate-800 flex flex-col min-h-screen relative pb-20">
+  <div class="w-full max-w-md bg-slate-900 border-x border-slate-800 flex flex-col h-screen relative pb-16">
     
     <!-- Header App -->
-    <header class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/90 sticky top-0 z-10 backdrop-blur">
-      <h1 class="text-xl font-extrabold tracking-wider text-emerald-400">PUMP // LAB</h1>
-      <span id="routine-tag" class="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full font-mono">SUPERSERIE</span>
+    <header class="p-3 border-b border-slate-800 flex justify-between items-center bg-slate-900/90 shrink-0">
+      <h1 class="text-lg font-extrabold tracking-wider text-emerald-400">PUMP // LAB</h1>
+      <span id="routine-tag" class="text-xs bg-slate-800 text-slate-400 px-2.5 py-0.5 rounded-full font-mono">SUPERSERIE</span>
     </header>
 
-    <main class="flex-1 p-4 flex flex-col justify-between">
+    <main class="flex-1 p-3 flex flex-col justify-between overflow-hidden">
 
       <!-- SCHERMATA 1: HOME -->
-      <div id="screen-home" class="flex-1 flex flex-col items-center justify-center py-12 space-y-6">
-        <button onclick="startWorkout()" class="w-64 h-64 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-3xl tracking-widest shadow-2xl shadow-emerald-500/20 active:scale-95 transition flex items-center justify-center text-center p-4">
+      <div id="screen-home" class="flex-1 flex flex-col items-center justify-center py-6 space-y-6">
+        <button onclick="startWorkout()" class="w-56 h-56 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-2xl tracking-widest shadow-2xl shadow-emerald-500/20 active:scale-95 transition flex items-center justify-center text-center p-4">
           ALLENIAMOCI
         </button>
-        <p class="text-xs text-slate-400 font-mono">Superserie in pagina unica & EMOM automatico</p>
+        <p class="text-xs text-slate-400 font-mono">Superserie compattate in schermata unica</p>
       </div>
 
-      <!-- SCHERMATA 2: EXECUTION WORKOUT -->
-      <div id="screen-workout" class="hidden space-y-4 flex-1 flex flex-col">
+      <!-- SCHERMATA 2: EXECUTION WORKOUT (SINGLE SCREEN WITHOUT SCROLL) -->
+      <div id="screen-workout" class="hidden flex-1 flex flex-col justify-between space-y-2 overflow-hidden">
         
         <!-- BADGE BLOCCO E GIRO -->
-        <div class="border-b border-slate-800 pb-2 flex justify-between items-center gap-2">
-          <span id="block-number" class="text-xs font-mono font-black text-slate-300 uppercase tracking-wider">BLOCCO 1 DE 6</span>
-          <span id="set-counter" class="text-sm font-black bg-emerald-400 text-slate-950 px-3 py-1.5 rounded-xl shadow-md tracking-wide">GIRO 1 DI 3</span>
+        <div class="border-b border-slate-800 pb-1.5 flex justify-between items-center shrink-0">
+          <span id="block-number" class="text-3xs font-mono font-black text-slate-300 uppercase tracking-wider">BLOCCO 1 DE 6</span>
+          <span id="set-counter" class="text-xs font-black bg-emerald-400 text-slate-950 px-2.5 py-0.5 rounded-lg shadow-md tracking-wide">GIRO 1 DI 3</span>
         </div>
 
-        <!-- 1. TIMER DISPLAY (IN ALTO) -->
-        <div id="timer-box" class="p-4 bg-slate-950 rounded-2xl border border-slate-800 text-center space-y-1 shadow-lg">
-          <span id="timer-label" class="text-3xs font-mono text-slate-400 uppercase tracking-widest">PRONTO</span>
-          <div id="timer-display" class="text-5xl font-black font-mono text-slate-200">00:00</div>
+        <!-- 1. TIMER DISPLAY (COMPATTO) -->
+        <div id="timer-box" class="py-2 px-3 bg-slate-950 rounded-xl border border-slate-800 text-center space-y-0.5 shrink-0 shadow-inner">
+          <span id="timer-label" class="text-4xs font-mono text-slate-400 uppercase tracking-widest block">PRONTO</span>
+          <div id="timer-display" class="text-4xl font-black font-mono text-slate-200">00:00</div>
         </div>
 
-        <!-- 2. PULSANTE PRINCIPALE (SUBITO SOTTO IL TIMER) -->
-        <div>
-          <button id="main-action-btn" onclick="handleMainAction()" class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xl rounded-2xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider">
+        <!-- 2. PULSANTE PRINCIPALE -->
+        <div class="shrink-0">
+          <button id="main-action-btn" onclick="handleMainAction()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-lg rounded-xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider">
             VIA
           </button>
         </div>
 
-        <!-- 3. CONTENITORE DINAMICO ESERCIZI DEL BLOCCO (SOTTO AL BOTTONE) -->
-        <div id="exercises-list" class="space-y-3 overflow-y-auto max-h-[calc(100vh-320px)] pr-1 pt-2"></div>
+        <!-- 3. CONTENITORE ESERCIZI (RIGHE SOTTILI AD ALTA LEGGIBILITÀ) -->
+        <div id="exercises-list" class="flex-1 flex flex-col justify-center gap-2 overflow-hidden py-1"></div>
 
       </div>
 
       <!-- SCHERMATA 3: FINE WORKOUT & CHAT -->
-      <div id="screen-summary" class="hidden space-y-4 py-6">
-        <h2 class="font-black text-2xl text-emerald-400 text-center">SESSIONE COMPLETATA! 🎉</h2>
+      <div id="screen-summary" class="hidden space-y-4 py-4 overflow-y-auto">
+        <h2 class="font-black text-xl text-emerald-400 text-center">SESSIONE COMPLETATA! 🎉</h2>
         
-        <div class="p-4 bg-slate-800/40 border border-slate-800 rounded-2xl space-y-2">
+        <div class="p-3 bg-slate-800/40 border border-slate-800 rounded-xl space-y-1">
           <label class="text-xs font-bold text-slate-300 uppercase">Note Allenamento:</label>
-          <textarea id="workout-notes" placeholder="Sensazioni, fatica..." class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white outline-none h-20 focus:border-emerald-500"></textarea>
+          <textarea id="workout-notes" placeholder="Sensazioni, fatica..." class="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white outline-none h-16 focus:border-emerald-500"></textarea>
         </div>
 
-        <button onclick="finishWorkoutAndSend()" class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-base rounded-xl">
+        <button onclick="finishWorkoutAndSend()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm rounded-xl">
           💾 SALVA SU GOOGLE SHEETS & IA
         </button>
 
-        <div id="ai-chat-box" class="hidden space-y-3 pt-2">
-          <div class="p-4 bg-slate-900 border border-emerald-500/30 rounded-2xl space-y-3">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+        <div id="ai-chat-box" class="hidden space-y-2 pt-1">
+          <div class="p-3 bg-slate-900 border border-emerald-500/30 rounded-xl space-y-2">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-1">
               <span class="font-bold text-xs text-emerald-400">🤖 GEMINI COACH IA</span>
-              <span id="chat-status" class="text-3xs text-slate-400">In ascolto...</span>
+              <span id="chat-status" class="text-4xs text-slate-400">In ascolto...</span>
             </div>
-            <div id="chat-messages" class="space-y-2 max-h-60 overflow-y-auto text-xs text-slate-200"></div>
-            <div class="flex gap-2 pt-2">
-              <input type="text" id="chat-input" placeholder="Chiedi al coach..." class="flex-1 bg-slate-800 p-2.5 rounded-xl border border-slate-700 text-xs text-white outline-none focus:border-emerald-500">
-              <button onclick="sendChatMessage()" class="px-3 bg-emerald-500 text-slate-950 font-bold rounded-xl text-xs">Invia</button>
+            <div id="chat-messages" class="space-y-1.5 max-h-48 overflow-y-auto text-xs text-slate-200"></div>
+            <div class="flex gap-2 pt-1">
+              <input type="text" id="chat-input" placeholder="Chiedi al coach..." class="flex-1 bg-slate-800 p-2 rounded-lg border border-slate-700 text-xs text-white outline-none focus:border-emerald-500">
+              <button onclick="sendChatMessage()" class="px-3 bg-emerald-500 text-slate-950 font-bold rounded-lg text-xs">Invia</button>
             </div>
           </div>
         </div>
@@ -85,23 +85,23 @@
 
     <!-- MODAL / POP-UP VIDEO A TUTTO SCHERMO -->
     <div id="video-modal" class="hidden fixed inset-0 z-50 bg-black/95 backdrop-blur flex flex-col justify-center items-center p-4">
-      <div class="w-full max-w-lg flex justify-between items-center pb-3">
-        <h3 id="modal-video-title" class="text-sm font-bold text-white truncate">Tutorial Video</h3>
+      <div class="w-full max-w-lg flex justify-between items-center pb-2">
+        <h3 id="modal-video-title" class="text-xs font-bold text-white truncate">Tutorial Video</h3>
         <button onclick="closeVideoModal()" class="px-3 py-1 bg-red-600 hover:bg-red-500 text-white font-black text-xs rounded-lg uppercase">
           ✕ Chiudi
         </button>
       </div>
-      <div class="w-full aspect-video bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
+      <div class="w-full aspect-video bg-slate-950 rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
         <iframe id="modal-iframe" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
     </div>
 
     <!-- FRECCE DI NAVIGAZIONE IN CALCE -->
-    <footer id="footer-nav" class="hidden fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-slate-900/95 border-t border-slate-800 p-3 flex justify-between items-center backdrop-blur z-30">
-      <button onclick="prevStep()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl flex items-center gap-1">
+    <footer id="footer-nav" class="hidden fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-slate-900/95 border-t border-slate-800 p-2.5 flex justify-between items-center backdrop-blur z-30">
+      <button onclick="prevStep()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-lg flex items-center gap-1">
         ← Precedente
       </button>
-      <button onclick="nextStep()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl flex items-center gap-1">
+      <button onclick="nextStep()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-lg flex items-center gap-1">
         Successivo →
       </button>
     </footer>
@@ -125,25 +125,10 @@
           videoId = url.split("youtube.com/embed/")[1].split("?")[0];
         }
       } catch (e) { return ""; }
-      // enablejsapi=1 permette la gestione avanzata, volume ridotto tramite autoplay param
       return videoId ? `https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=1` : "";
     }
 
-    function getYouTubeThumbnail(url) {
-      if (!url) return "";
-      let videoId = "";
-      try {
-        if (url.includes("youtu.be/")) {
-          videoId = url.split("youtu.be/")[1].split("?")[0].split("&")[0];
-        } else if (url.includes("youtube.com/watch")) {
-          const urlParams = new URLSearchParams(url.split("?")[1]);
-          videoId = urlParams.get("v");
-        }
-      } catch (e) { return ""; }
-      return videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : "";
-    }
-
-    // DEFINIZIONE BLOCCHI DI ALLENAMENTO CON NOMI CORRETTI
+    // DEFINIZIONE BLOCCHI DI ALLENAMENTO CON TUTTI I TUOI LINK E NOMI CORRETTI
     const workoutBlocks = [
       {
         id: 1,
@@ -202,9 +187,9 @@
         restAfterSet: 0,
         exercises: [
           { 
-            name: "5. Piegamenti braccia - EMOM", target: "3-4 reps/min (Ogni minuto per 10')", isTimer: true, workTime: 60, 
+            name: "5. Piegamenti braccia - EMOM", target: "3-4 reps/min (10')", isTimer: true, workTime: 60, 
             videoUrl: "https://youtu.be/mSGhSN6DgnA?si=4vZss6eZCc_XKm8t",
-            note: "EMOM: Fai 3-4 rep all'inizio di ogni minuto. Il timer riparte da solo 10 volte consecutivamente!" 
+            note: "EMOM: 3-4 rep all'inizio di ogni minuto per 10 minuti." 
           }
         ]
       },
@@ -214,8 +199,8 @@
         totalSets: 3,
         restAfterSet: 60,
         exercises: [
-          { name: "6. Stretching: Cane basso (Downward Dog)", target: "10'' tenuta", isTimer: false, videoUrl: "https://youtu.be/mSGhSN6DgnA?si=4vZss6eZCc_XKm8t" },
-          { name: "6. Stretching: Cane alto (Upward Dog)", target: "10'' tenuta", isTimer: false, videoUrl: "https://youtu.be/kMXLAK7BAWk?si=YRKXLASpDMcPLVyK" }
+          { name: "6. Stretching: Cane basso", target: "10'' tenuta", isTimer: false, videoUrl: "https://youtu.be/mSGhSN6DgnA?si=4vZss6eZCc_XKm8t" },
+          { name: "6. Stretching: Cane alto", target: "10'' tenuta", isTimer: false, videoUrl: "https://youtu.be/kMXLAK7BAWk?si=YRKXLASpDMcPLVyK" }
         ]
       }
     ];
@@ -274,42 +259,28 @@
       const listContainer = document.getElementById('exercises-list');
       listContainer.innerHTML = "";
 
-      // Genera lista esercizi con anteprima video apribile a tutto schermo
+      // Genera righe orizzontali super compatte ad altissima visibilità
       block.exercises.forEach((ex) => {
-        const thumbUrl = getYouTubeThumbnail(ex.videoUrl);
-        const secThumbUrl = getYouTubeThumbnail(ex.secondaryVideoUrl);
-
         let html = `
-          <div class="p-3 bg-slate-950 rounded-2xl border border-slate-800 space-y-2 shadow-md">
-            <div class="flex justify-between items-start gap-2">
-              <div>
-                <h3 class="font-extrabold text-white text-base tracking-wide">${ex.name}</h3>
-                <p class="text-xs font-black text-amber-300 mt-1 uppercase tracking-wider bg-slate-900 px-2.5 py-0.5 rounded-lg inline-block border border-slate-800">${ex.target}</p>
-                ${ex.note ? `<p class="text-3xs text-amber-400/90 italic mt-1 leading-tight">${ex.note}</p>` : ''}
+          <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between gap-2 shadow-sm">
+            <div class="min-w-0 flex-1">
+              <h3 class="font-black text-white text-sm truncate tracking-wide">${ex.name}</h3>
+              <div class="flex items-center gap-2 mt-0.5">
+                <span class="text-xs font-black text-amber-300 uppercase bg-slate-900 px-2 py-0.5 rounded border border-slate-800">${ex.target}</span>
+                ${ex.note ? `<span class="text-4xs text-amber-400/90 italic truncate">${ex.note}</span>` : ''}
               </div>
             </div>
             
-            <div class="flex gap-2 pt-1">
-              ${thumbUrl ? `
-                <div onclick="openVideoModal('${ex.name}', '${ex.videoUrl}')" class="relative cursor-pointer group flex-1 aspect-video bg-slate-900 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
-                  <img src="${thumbUrl}" class="w-full h-full object-cover group-hover:opacity-80 transition" alt="Anteprima">
-                  <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
-                    <span class="bg-emerald-500 text-slate-950 text-xs font-bold px-2 py-1 rounded-lg flex items-center gap-1 shadow">
-                      ▶ Tutorial
-                    </span>
-                  </div>
-                </div>
+            <div class="flex gap-1 shrink-0">
+              ${ex.videoUrl ? `
+                <button onclick="openVideoModal('${ex.name}', '${ex.videoUrl}')" class="px-2.5 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 rounded-lg text-2xs font-extrabold flex items-center gap-1">
+                  ▶ Tutorial
+                </button>
               ` : ''}
-
-              ${secThumbUrl ? `
-                <div onclick="openVideoModal('${ex.name} (Tecnica)', '${ex.secondaryVideoUrl}')" class="relative cursor-pointer group flex-1 aspect-video bg-slate-900 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
-                  <img src="${secThumbUrl}" class="w-full h-full object-cover group-hover:opacity-80 transition" alt="Anteprima Tecnica">
-                  <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
-                    <span class="bg-amber-400 text-slate-950 text-xs font-bold px-2 py-1 rounded-lg flex items-center gap-1 shadow">
-                      ▶ Tecnica
-                    </span>
-                  </div>
-                </div>
+              ${ex.secondaryVideoUrl ? `
+                <button onclick="openVideoModal('${ex.name} (Tecnica)', '${ex.secondaryVideoUrl}')" class="px-2.5 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg text-2xs font-extrabold flex items-center gap-1">
+                  ▶ Tecnica
+                </button>
               ` : ''}
             </div>
           </div>
@@ -323,7 +294,7 @@
       const timerLabel = document.getElementById('timer-label');
       const actionBtn = document.getElementById('main-action-btn');
 
-      timerDisplay.className = "text-5xl font-black font-mono text-slate-200";
+      timerDisplay.className = "text-4xl font-black font-mono text-slate-200";
       timerLabel.textContent = "PRONTO";
       
       if (firstTimerEx) {
@@ -333,10 +304,9 @@
       }
 
       actionBtn.textContent = "VIA";
-      actionBtn.className = "w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xl rounded-2xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider";
+      actionBtn.className = "w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-lg rounded-xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider";
     }
 
-    // GESTIONE MODAL VIDEO POP-UP A TUTTO SCHERMO
     function openVideoModal(title, url) {
       const modal = document.getElementById('video-modal');
       const modalTitle = document.getElementById('modal-video-title');
@@ -368,7 +338,7 @@
           state = "WORKING";
           const actionBtn = document.getElementById('main-action-btn');
           actionBtn.textContent = "FATTO (INIZIA RIPOSO)";
-          actionBtn.className = "w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xl rounded-2xl transition shadow-lg uppercase tracking-wider";
+          actionBtn.className = "w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-lg rounded-xl transition shadow-lg uppercase tracking-wider";
         }
       } 
       else if (state === "WORKING") {
@@ -390,9 +360,9 @@
       const btn = document.getElementById('main-action-btn');
 
       label.textContent = "TEMPO ESERCIZIO IN CORSO";
-      display.className = "text-5xl font-black font-mono text-red-500 animate-pulse";
+      display.className = "text-4xl font-black font-mono text-red-500 animate-pulse";
       btn.textContent = "FATTO (COMPLETA GIRO)";
-      btn.className = "w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xl rounded-2xl transition shadow-lg uppercase tracking-wider";
+      btn.className = "w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-lg rounded-xl transition shadow-lg uppercase tracking-wider";
 
       const update = () => {
         display.textContent = formatTime(time);
@@ -421,9 +391,9 @@
       const btn = document.getElementById('main-action-btn');
 
       label.textContent = `EMOM: MINUTO ${currentSetIndex} DI 10`;
-      display.className = "text-5xl font-black font-mono text-red-500 animate-pulse";
+      display.className = "text-4xl font-black font-mono text-red-500 animate-pulse";
       btn.textContent = "IN ESECUZIONE EMOM...";
-      btn.className = "w-full py-4 bg-slate-800 text-slate-500 font-black text-xl rounded-2xl cursor-not-allowed uppercase tracking-wider";
+      btn.className = "w-full py-3 bg-slate-800 text-slate-500 font-black text-lg rounded-xl cursor-not-allowed uppercase tracking-wider";
 
       const update = () => {
         display.textContent = formatTime(time);
@@ -459,9 +429,9 @@
       const btn = document.getElementById('main-action-btn');
 
       label.textContent = "RECUPERO SUPERSERIE";
-      display.className = "text-5xl font-black font-mono text-emerald-400";
+      display.className = "text-4xl font-black font-mono text-emerald-400";
       btn.textContent = "RIPOSO IN CORSO...";
-      btn.className = "w-full py-4 bg-slate-800 text-slate-500 font-black text-xl rounded-2xl cursor-not-allowed uppercase tracking-wider";
+      btn.className = "w-full py-3 bg-slate-800 text-slate-500 font-black text-lg rounded-xl cursor-not-allowed uppercase tracking-wider";
 
       const update = () => {
         display.textContent = formatTime(time);
@@ -579,7 +549,7 @@
       const box = document.getElementById('chat-messages');
       const isUser = sender === "TU";
       box.innerHTML += `
-        <div class="p-2.5 rounded-xl text-xs ${isUser ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 self-end ml-4' : 'bg-slate-800 text-slate-200 mr-4'}">
+        <div class="p-2 rounded-xl text-xs ${isUser ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 self-end ml-4' : 'bg-slate-800 text-slate-200 mr-4'}">
           <strong>${sender}:</strong> <span class="whitespace-pre-line">${text}</span>
         </div>
       `;
