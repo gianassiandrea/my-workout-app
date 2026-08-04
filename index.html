@@ -8,7 +8,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex justify-center">
 
-  <div class="w-full max-w-md bg-slate-900 border-x border-slate-800 flex flex-col min-h-screen relative pb-28">
+  <div class="w-full max-w-md bg-slate-900 border-x border-slate-800 flex flex-col min-h-screen relative pb-20">
     
     <!-- Header App -->
     <header class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/90 sticky top-0 z-10 backdrop-blur">
@@ -27,31 +27,29 @@
       </div>
 
       <!-- SCHERMATA 2: EXECUTION WORKOUT -->
-      <div id="screen-workout" class="hidden space-y-4 flex-1 flex flex-col justify-between">
+      <div id="screen-workout" class="hidden space-y-4 flex-1 flex flex-col">
         
-        <div class="space-y-4 overflow-y-auto max-h-[calc(100vh-220px)] pr-1">
-          <!-- 1. NUMERO BLOCCO E GIRO (HIGH VISIBILITY BADGE) -->
-          <div class="border-b border-slate-800 pb-3 flex justify-between items-center gap-2">
-            <span id="block-number" class="text-xs font-mono font-black text-slate-300 uppercase tracking-wider">BLOCCO 1 DE 6</span>
-            <span id="set-counter" class="text-sm font-black bg-emerald-400 text-slate-950 px-3 py-1.5 rounded-xl shadow-md tracking-wide">GIRO 1 DI 3</span>
-          </div>
-
-          <!-- 2. TIMER DISPLAY -->
-          <div id="timer-box" class="p-4 bg-slate-950 rounded-2xl border border-slate-800 text-center space-y-1">
-            <span id="timer-label" class="text-3xs font-mono text-slate-400 uppercase tracking-widest">PRONTO</span>
-            <div id="timer-display" class="text-5xl font-black font-mono text-slate-200">00:00</div>
-          </div>
-
-          <!-- 3. CONTENITORE DINAMICO ESERCIZI DEL BLOCCO -->
-          <div id="exercises-list" class="space-y-4"></div>
+        <!-- BADGE BLOCCO E GIRO -->
+        <div class="border-b border-slate-800 pb-2 flex justify-between items-center gap-2">
+          <span id="block-number" class="text-xs font-mono font-black text-slate-300 uppercase tracking-wider">BLOCCO 1 DE 6</span>
+          <span id="set-counter" class="text-sm font-black bg-emerald-400 text-slate-950 px-3 py-1.5 rounded-xl shadow-md tracking-wide">GIRO 1 DI 3</span>
         </div>
 
-        <!-- 4. PULSANTE PRINCIPALE -->
-        <div class="pt-2 sticky bottom-14 z-20 bg-slate-900/90 backdrop-blur pb-1">
+        <!-- 1. TIMER DISPLAY (IN ALTO) -->
+        <div id="timer-box" class="p-4 bg-slate-950 rounded-2xl border border-slate-800 text-center space-y-1 shadow-lg">
+          <span id="timer-label" class="text-3xs font-mono text-slate-400 uppercase tracking-widest">PRONTO</span>
+          <div id="timer-display" class="text-5xl font-black font-mono text-slate-200">00:00</div>
+        </div>
+
+        <!-- 2. PULSANTE PRINCIPALE (SUBITO SOTTO IL TIMER) -->
+        <div>
           <button id="main-action-btn" onclick="handleMainAction()" class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xl rounded-2xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider">
             VIA
           </button>
         </div>
+
+        <!-- 3. CONTENITORE DINAMICO ESERCIZI DEL BLOCCO (SOTTO AL BOTTONE) -->
+        <div id="exercises-list" class="space-y-3 overflow-y-auto max-h-[calc(100vh-320px)] pr-1 pt-2"></div>
 
       </div>
 
@@ -85,6 +83,19 @@
 
     </main>
 
+    <!-- MODAL / POP-UP VIDEO A TUTTO SCHERMO -->
+    <div id="video-modal" class="hidden fixed inset-0 z-50 bg-black/95 backdrop-blur flex flex-col justify-center items-center p-4">
+      <div class="w-full max-w-lg flex justify-between items-center pb-3">
+        <h3 id="modal-video-title" class="text-sm font-bold text-white truncate">Tutorial Video</h3>
+        <button onclick="closeVideoModal()" class="px-3 py-1 bg-red-600 hover:bg-red-500 text-white font-black text-xs rounded-lg uppercase">
+          ✕ Chiudi
+        </button>
+      </div>
+      <div class="w-full aspect-video bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
+        <iframe id="modal-iframe" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+
     <!-- FRECCE DI NAVIGAZIONE IN CALCE -->
     <footer id="footer-nav" class="hidden fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-slate-900/95 border-t border-slate-800 p-3 flex justify-between items-center backdrop-blur z-30">
       <button onclick="prevStep()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl flex items-center gap-1">
@@ -114,10 +125,25 @@
           videoId = url.split("youtube.com/embed/")[1].split("?")[0];
         }
       } catch (e) { return ""; }
-      return videoId ? `https://www.youtube.com/embed/${videoId}${autoplay ? '?autoplay=1' : ''}` : "";
+      // enablejsapi=1 permette la gestione avanzata, volume ridotto tramite autoplay param
+      return videoId ? `https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=1` : "";
     }
 
-    // DEFINIZIONE BLOCCHI DI ALLENAMENTO
+    function getYouTubeThumbnail(url) {
+      if (!url) return "";
+      let videoId = "";
+      try {
+        if (url.includes("youtu.be/")) {
+          videoId = url.split("youtu.be/")[1].split("?")[0].split("&")[0];
+        } else if (url.includes("youtube.com/watch")) {
+          const urlParams = new URLSearchParams(url.split("?")[1]);
+          videoId = urlParams.get("v");
+        }
+      } catch (e) { return ""; }
+      return videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : "";
+    }
+
+    // DEFINIZIONE BLOCCHI DI ALLENAMENTO CON NOMI CORRETTI
     const workoutBlocks = [
       {
         id: 1,
@@ -127,7 +153,7 @@
         exercises: [
           { name: "1. Skip ginocchia alte", target: "1'", isTimer: true, workTime: 60, videoUrl: "https://youtu.be/-KmKv52IvXc?si=_Z7VsEkombf7Ey35" },
           { name: "1. Squat rana", target: "10-14 reps", isTimer: false, videoUrl: "https://youtu.be/-KmKv52IvXc?si=D3qCRADwSVcO1u4S" },
-          { name: "1. Montagna -> Stretching del mondo", target: "3-5 per lato", isTimer: false, videoUrl: "https://youtu.be/MfpvCWi85LE?si=5e927jxQltIEFxwy" }
+          { name: "1. Montagna", target: "3-5 per lato", isTimer: false, videoUrl: "https://youtu.be/MfpvCWi85LE?si=5e927jxQltIEFxwy" }
         ]
       },
       {
@@ -138,7 +164,7 @@
         exercises: [
           { name: "2. Jumping Jacks", target: "1'", isTimer: true, workTime: 60, videoUrl: "https://youtu.be/Vfg_vxxAwIU?si=Dfiad4AviIDBs_50" },
           { name: "2. Affondi alternati indietro", target: "8-16 per lato", isTimer: false, videoUrl: "https://youtu.be/Yqd9cPs3Z3E?si=fLScoIwPJqi7tPnV" },
-          { name: "2. Piegamenti stretti / Thruster", target: "5-9 reps", isTimer: false, videoUrl: "https://youtu.be/cuQM0ETk2E8?si=8jcGRu_tiBkT8vH6" },
+          { name: "2. Piegamenti stretti", target: "5-9 reps", isTimer: false, videoUrl: "https://youtu.be/cuQM0ETk2E8?si=8jcGRu_tiBkT8vH6" },
           { name: "2. Crunch gambe tese", target: "15-25 reps", isTimer: false, videoUrl: "https://youtu.be/AMku5hdoLoM?si=yXi1OnanY0hneOTJ" }
         ]
       },
@@ -153,7 +179,7 @@
             videoUrl: "https://youtu.be/6A2V9Bu80J4?si=zNy6BcOgIki9Z0O-", 
             secondaryVideoUrl: "https://youtu.be/XQLmIWrDPnc?si=iE8nixKUqVCcUQuo", 
             autoplay: true,
-            note: "🎵 CANZONE IN ALTO: 'Bring Sally Down' -> Scendi | 'Bring Sally Up' -> Sali.\n🎥 TUTORIAL TECNICO IN BASSO." 
+            note: "🎵 CANZONE: 'Bring Sally Down' -> Scendi | 'Bring Sally Up' -> Sali." 
           }
         ]
       },
@@ -248,30 +274,44 @@
       const listContainer = document.getElementById('exercises-list');
       listContainer.innerHTML = "";
 
-      // Genera la lista degli esercizi con font ad alta leggibilità
+      // Genera lista esercizi con anteprima video apribile a tutto schermo
       block.exercises.forEach((ex) => {
-        const embedUrl = parseYouTubeEmbedUrl(ex.videoUrl, ex.autoplay || false);
-        const secEmbedUrl = parseYouTubeEmbedUrl(ex.secondaryVideoUrl, false);
+        const thumbUrl = getYouTubeThumbnail(ex.videoUrl);
+        const secThumbUrl = getYouTubeThumbnail(ex.secondaryVideoUrl);
 
         let html = `
-          <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-3 shadow-md">
-            <div>
-              <h3 class="font-extrabold text-white text-lg tracking-wide">${ex.name}</h3>
-              <p class="text-base font-black text-amber-300 mt-1 uppercase tracking-wider bg-slate-900/80 px-3 py-1 rounded-lg inline-block border border-slate-800">${ex.target}</p>
-              ${ex.note ? `<p class="text-xs text-amber-400/90 italic mt-2 leading-relaxed bg-amber-500/10 p-2 rounded-lg border border-amber-500/20">${ex.note}</p>` : ''}
+          <div class="p-3 bg-slate-950 rounded-2xl border border-slate-800 space-y-2 shadow-md">
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <h3 class="font-extrabold text-white text-base tracking-wide">${ex.name}</h3>
+                <p class="text-xs font-black text-amber-300 mt-1 uppercase tracking-wider bg-slate-900 px-2.5 py-0.5 rounded-lg inline-block border border-slate-800">${ex.target}</p>
+                ${ex.note ? `<p class="text-3xs text-amber-400/90 italic mt-1 leading-tight">${ex.note}</p>` : ''}
+              </div>
             </div>
             
-            ${embedUrl ? `
-              <div class="aspect-video w-full max-h-44 bg-slate-900 rounded-xl overflow-hidden border border-slate-800">
-                <iframe class="w-full h-full" src="${embedUrl}" title="${ex.name}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-              </div>
-            ` : ''}
+            <div class="flex gap-2 pt-1">
+              ${thumbUrl ? `
+                <div onclick="openVideoModal('${ex.name}', '${ex.videoUrl}')" class="relative cursor-pointer group flex-1 aspect-video bg-slate-900 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
+                  <img src="${thumbUrl}" class="w-full h-full object-cover group-hover:opacity-80 transition" alt="Anteprima">
+                  <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <span class="bg-emerald-500 text-slate-950 text-xs font-bold px-2 py-1 rounded-lg flex items-center gap-1 shadow">
+                      ▶ Tutorial
+                    </span>
+                  </div>
+                </div>
+              ` : ''}
 
-            ${secEmbedUrl ? `
-              <div class="aspect-video w-full max-h-44 bg-slate-900 rounded-xl overflow-hidden border border-slate-800 mt-2">
-                <iframe class="w-full h-full" src="${secEmbedUrl}" title="Tutorial Tecnico" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-              </div>
-            ` : ''}
+              ${secThumbUrl ? `
+                <div onclick="openVideoModal('${ex.name} (Tecnica)', '${ex.secondaryVideoUrl}')" class="relative cursor-pointer group flex-1 aspect-video bg-slate-900 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
+                  <img src="${secThumbUrl}" class="w-full h-full object-cover group-hover:opacity-80 transition" alt="Anteprima Tecnica">
+                  <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <span class="bg-amber-400 text-slate-950 text-xs font-bold px-2 py-1 rounded-lg flex items-center gap-1 shadow">
+                      ▶ Tecnica
+                    </span>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
           </div>
         `;
         listContainer.innerHTML += html;
@@ -294,6 +334,24 @@
 
       actionBtn.textContent = "VIA";
       actionBtn.className = "w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xl rounded-2xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider";
+    }
+
+    // GESTIONE MODAL VIDEO POP-UP A TUTTO SCHERMO
+    function openVideoModal(title, url) {
+      const modal = document.getElementById('video-modal');
+      const modalTitle = document.getElementById('modal-video-title');
+      const modalIframe = document.getElementById('modal-iframe');
+
+      modalTitle.textContent = title;
+      modalIframe.src = parseYouTubeEmbedUrl(url, true);
+      modal.classList.remove('hidden');
+    }
+
+    function closeVideoModal() {
+      const modal = document.getElementById('video-modal');
+      const modalIframe = document.getElementById('modal-iframe');
+      modalIframe.src = "";
+      modal.classList.add('hidden');
     }
 
     function handleMainAction() {
