@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GIANXFIT LAB 1.0</title>
+  <title>PUMP // LAB</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex justify-center overflow-hidden">
@@ -12,7 +12,7 @@
     
     <!-- Header App -->
     <header class="p-3 border-b border-slate-800 flex justify-between items-center bg-slate-900/90 shrink-0">
-      <h1 class="text-lg font-extrabold tracking-wider text-emerald-400">GIANXFIT LAB 1.0</h1>
+      <h1 class="text-lg font-extrabold tracking-wider text-emerald-400">PUMP // LAB</h1>
       <span id="routine-tag" class="text-xs bg-slate-800 text-slate-400 px-2.5 py-0.5 rounded-full font-mono">SUPERSERIE</span>
     </header>
 
@@ -23,7 +23,7 @@
         <button onclick="startWorkout()" class="w-56 h-56 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-2xl tracking-widest shadow-2xl shadow-emerald-500/20 active:scale-95 transition flex items-center justify-center text-center p-4">
           ALLENIAMOCI
         </button>
-        <p class="text-xs text-slate-400 font-mono">Superserie compattate in schermata unica</p>
+        <p class="text-xs text-slate-400 font-mono">Stretching cadenzato e automatizzato</p>
       </div>
 
       <!-- SCHERMATA 2: EXECUTION WORKOUT -->
@@ -158,7 +158,7 @@
         title: "BLOCCO 3: CHALLENGE MOBY",
         totalSets: 1,
         restAfterSet: 90,
-        isMobyBlock: true, // Flag per mostrare il video di Moby in grande
+        isMobyBlock: true,
         exercises: [
           { 
             name: "3. Squat: Moby - Flower", target: "1 volta (Bring Sally Up)", isTimer: false, 
@@ -185,29 +185,30 @@
         title: "BLOCCO 5: EMOM PIEGAMENTI",
         totalSets: 10,
         isEmom: true,
-        restAfterSet: 0,
+        restAfterSet: 90,
         exercises: [
           { 
             name: "5. Piegamenti braccia - EMOM", target: "3-4 reps/min (10')", isTimer: true, workTime: 60, 
             videoUrl: "https://youtu.be/mSGhSN6DgnA?si=4vZss6eZCc_XKm8t",
-            note: "EMOM: 3-4 rep all'inizio di ogni minuto per 10 minuti." 
+            note: "EMOM: 3-4 rep all'inizio di ogni minuto per 10 minuti + 90s recupero automatico finale." 
           }
         ]
       },
       {
         id: 6,
         title: "BLOCCO 6: STRETCHING",
-        totalSets: 3,
-        restAfterSet: 60,
+        totalSets: 1,
+        isStretching: true,
         exercises: [
-          { name: "6. Stretching: Cane basso", target: "10'' tenuta", isTimer: false, videoUrl: "https://youtu.be/mSGhSN6DgnA?si=4vZss6eZCc_XKm8t" },
-          { name: "6. Stretching: Cane alto", target: "10'' tenuta", isTimer: false, videoUrl: "https://youtu.be/kMXLAK7BAWk?si=YRKXLASpDMcPLVyK" }
+          { name: "6. Stretching: Cane basso", target: "3x (10'' tenuta + 5'' pausa) + 30'' recupero", isTimer: true, videoUrl: "https://youtu.be/mSGhSN6DgnA?si=4vZss6eZCc_XKm8t" },
+          { name: "6. Stretching: Cane alto", target: "2x (10'' + 5'' + 10'' + 30'' defat) + 1x (10'' + 5'' + 10'')", isTimer: true, videoUrl: "https://youtu.be/kMXLAK7BAWk?si=YRKXLASpDMcPLVyK" }
         ]
       }
     ];
 
     let currentBlockIndex = 0;
     let currentSetIndex = 1;
+    let currentStretchExIndex = 0;
     let mainTimer = null;
     let audioCtx = null;
     let state = "IDLE"; // IDLE, WORKING, RESTING
@@ -246,6 +247,7 @@
       document.getElementById('footer-nav').classList.remove('hidden');
       currentBlockIndex = 0;
       currentSetIndex = 1;
+      currentStretchExIndex = 0;
       loadBlock();
     }
 
@@ -255,18 +257,23 @@
       const block = workoutBlocks[currentBlockIndex];
 
       document.getElementById('block-number').textContent = `${block.title}`;
-      document.getElementById('set-counter').textContent = `GIRO ${currentSetIndex} DI ${block.totalSets}`;
+      
+      if (block.isStretching) {
+        document.getElementById('set-counter').textContent = `ESERCIZIO ${currentStretchExIndex + 1} DI 2`;
+      } else {
+        document.getElementById('set-counter').textContent = `GIRO ${currentSetIndex} DI ${block.totalSets}`;
+      }
 
       const listContainer = document.getElementById('exercises-list');
       listContainer.innerHTML = "";
 
-      block.exercises.forEach((ex) => {
+      const displayedExercises = block.isStretching ? [block.exercises[currentStretchExIndex]] : block.exercises;
+
+      displayedExercises.forEach((ex) => {
         let html = "";
 
         if (block.isMobyBlock) {
-          // Layout specifico per Blocco Moby: Video grande canzone + Bottone Tecnica
           const mainEmbed = parseYouTubeEmbedUrl(ex.videoUrl, true);
-
           html = `
             <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2 shadow-sm">
               <div class="flex justify-between items-center">
@@ -279,15 +286,12 @@
               </div>
               <p class="text-xs font-black text-amber-300 uppercase bg-slate-900 px-2 py-0.5 rounded border border-slate-800 inline-block">${ex.target}</p>
               ${ex.note ? `<p class="text-4xs text-amber-400/90 italic">${ex.note}</p>` : ''}
-              
-              <!-- VIDEO CANZONE MOBY GRANDE IN-APP -->
               <div class="aspect-video w-full bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-md">
                 <iframe class="w-full h-full" src="${mainEmbed}" title="${ex.name}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
               </div>
             </div>
           `;
         } else {
-          // Layout standard per altre superserie (righe sottili + bottone pop-up)
           html = `
             <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between gap-2 shadow-sm">
               <div class="min-w-0 flex-1">
@@ -304,11 +308,6 @@
                     ▶ Tutorial
                   </button>
                 ` : ''}
-                ${ex.secondaryVideoUrl ? `
-                  <button onclick="openVideoModal('${ex.name} (Tecnica)', '${ex.secondaryVideoUrl}')" class="px-2.5 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg text-2xs font-extrabold flex items-center gap-1">
-                    ▶ Tecnica
-                  </button>
-                ` : ''}
               </div>
             </div>
           `;
@@ -317,8 +316,6 @@
         listContainer.innerHTML += html;
       });
 
-      // Reset Display & Bottone VIA
-      const firstTimerEx = block.exercises.find(e => e.isTimer);
       const timerDisplay = document.getElementById('timer-display');
       const timerLabel = document.getElementById('timer-label');
       const actionBtn = document.getElementById('main-action-btn');
@@ -326,10 +323,11 @@
       timerDisplay.className = "text-4xl font-black font-mono text-slate-200";
       timerLabel.textContent = "PRONTO";
       
-      if (firstTimerEx) {
-        timerDisplay.textContent = formatTime(firstTimerEx.workTime);
+      if (block.isStretching) {
+        timerDisplay.textContent = "00:10";
       } else {
-        timerDisplay.textContent = "00:00";
+        const firstTimerEx = block.exercises.find(e => e.isTimer);
+        timerDisplay.textContent = firstTimerEx ? formatTime(firstTimerEx.workTime) : "00:00";
       }
 
       actionBtn.textContent = "VIA";
@@ -356,27 +354,178 @@
     function handleMainAction() {
       initAudio();
       const block = workoutBlocks[currentBlockIndex];
-      const timerEx = block.exercises.find(e => e.isTimer);
 
       if (state === "IDLE") {
-        if (block.isEmom) {
+        if (block.isStretching) {
+          if (currentStretchExIndex === 0) {
+            startStretchingBlock1(1); // Sequenza Cane Basso
+          } else {
+            startStretchingBlock2(1); // Sequenza Cane Alto
+          }
+        } else if (block.isEmom) {
           startEmomTimer(60);
-        } else if (timerEx) {
-          startWorkTimer(timerEx.workTime);
         } else {
-          state = "WORKING";
-          const actionBtn = document.getElementById('main-action-btn');
-          actionBtn.textContent = "FATTO (INIZIA RIPOSO)";
-          actionBtn.className = "w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-lg rounded-xl transition shadow-lg uppercase tracking-wider";
+          const timerEx = block.exercises.find(e => e.isTimer);
+          if (timerEx) {
+            startWorkTimer(timerEx.workTime);
+          } else {
+            state = "WORKING";
+            const actionBtn = document.getElementById('main-action-btn');
+            actionBtn.textContent = "FATTO (INIZIA RIPOSO)";
+            actionBtn.className = "w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-lg rounded-xl transition shadow-lg uppercase tracking-wider";
+          }
         }
       } 
-      else if (state === "WORKING") {
+      else if (state === "WORKING" && !block.isStretching) {
         if (block.restAfterSet > 0) {
           startRestTimer(block.restAfterSet);
         } else {
           advanceWorkout();
         }
       }
+    }
+
+    // STRETCHING ESERCIZIO 1 (Cane Basso): 3x (10s tenuta + 5s pausa) + 30s recupero finale
+    function startStretchingBlock1(repNum) {
+      state = "WORKING";
+      clearInterval(mainTimer);
+      let time = 10;
+
+      const display = document.getElementById('timer-display');
+      const label = document.getElementById('timer-label');
+      const btn = document.getElementById('main-action-btn');
+
+      label.textContent = `CANE BASSO: TENUTA ${repNum} DI 3 (10s)`;
+      display.className = "text-4xl font-black font-mono text-red-500 animate-pulse";
+      btn.textContent = "IN ESECUZIONE STRETCHING...";
+      btn.className = "w-full py-3 bg-slate-800 text-slate-500 font-black text-lg rounded-xl cursor-not-allowed uppercase tracking-wider";
+
+      const updateTenuta = () => {
+        display.textContent = formatTime(time);
+        if (time <= 3 && time > 0) playBeep(700, 0.12);
+
+        if (time <= 0) {
+          clearInterval(mainTimer);
+          playBeep(900, 0.2);
+
+          if (repNum < 3) {
+            startStretchPausaGeneric(5, () => startStretchingBlock1(repNum + 1));
+          } else {
+            playTripleBeep();
+            startRestTimer(30); // 30s recupero prima di passare a Cane Alto
+          }
+        } else {
+          time--;
+        }
+      };
+
+      updateTenuta();
+      mainTimer = setInterval(updateTenuta, 1000);
+    }
+
+    // STRETCHING ESERCIZIO 2 (Cane Alto): Sequenza specifica con Defaticamento 30s intermedi
+    function startStretchingBlock2(stepIndex) {
+      // Step Index:
+      // 1: 10s Tenuta 1 -> 5s Pausa
+      // 2: 10s Tenuta 2 -> 30s Defaticamento
+      // 3: 10s Tenuta 3 -> 5s Pausa
+      // 4: 10s Tenuta 4 -> 30s Defaticamento
+      // 5: 10s Tenuta 5 -> 5s Pausa
+      // 6: 10s Tenuta 6 -> FINE WORKOUT!
+
+      state = "WORKING";
+      clearInterval(mainTimer);
+      let time = 10;
+
+      const display = document.getElementById('timer-display');
+      const label = document.getElementById('timer-label');
+      const btn = document.getElementById('main-action-btn');
+
+      label.textContent = `CANE ALTO: TENUTA ${Math.ceil(stepIndex/2)} DI 3 (10s)`;
+      display.className = "text-4xl font-black font-mono text-red-500 animate-pulse";
+      btn.textContent = "IN ESECUZIONE STRETCHING...";
+      btn.className = "w-full py-3 bg-slate-800 text-slate-500 font-black text-lg rounded-xl cursor-not-allowed uppercase tracking-wider";
+
+      const updateTenuta = () => {
+        display.textContent = formatTime(time);
+        if (time <= 3 && time > 0) playBeep(700, 0.12);
+
+        if (time <= 0) {
+          clearInterval(mainTimer);
+          playBeep(900, 0.2);
+
+          if (stepIndex === 1 || stepIndex === 3 || stepIndex === 5) {
+            // Pausa da 5s
+            startStretchPausaGeneric(5, () => startStretchingBlock2(stepIndex + 1));
+          } else if (stepIndex === 2 || stepIndex === 4) {
+            // Defaticamento da 30s
+            startStretchDefaticamentoGeneric(30, () => startStretchingBlock2(stepIndex + 1));
+          } else if (stepIndex === 6) {
+            // Fine Ultima Tenuta del Cane Alto -> FINE WORKOUT
+            playTripleBeep();
+            advanceWorkout();
+          }
+        } else {
+          time--;
+        }
+      };
+
+      updateTenuta();
+      mainTimer = setInterval(updateTenuta, 1000);
+    }
+
+    function startStretchPausaGeneric(seconds, onComplete) {
+      clearInterval(mainTimer);
+      let time = seconds;
+
+      const display = document.getElementById('timer-display');
+      const label = document.getElementById('timer-label');
+
+      label.textContent = `PAUSA / CAMBIO POSIZIONE (${seconds}s)`;
+      display.className = "text-4xl font-black font-mono text-amber-400";
+
+      const updatePausa = () => {
+        display.textContent = formatTime(time);
+        if (time <= 2 && time > 0) playBeep(600, 0.12);
+
+        if (time <= 0) {
+          clearInterval(mainTimer);
+          playBeep(800, 0.2);
+          onComplete();
+        } else {
+          time--;
+        }
+      };
+
+      updatePausa();
+      mainTimer = setInterval(updatePausa, 1000);
+    }
+
+    function startStretchDefaticamentoGeneric(seconds, onComplete) {
+      clearInterval(mainTimer);
+      let time = seconds;
+
+      const display = document.getElementById('timer-display');
+      const label = document.getElementById('timer-label');
+
+      label.textContent = `DEFATICAMENTO / RECUPERO (${seconds}s)`;
+      display.className = "text-4xl font-black font-mono text-emerald-400";
+
+      const updateDefaticamento = () => {
+        display.textContent = formatTime(time);
+        if (time <= 5 && time > 0) playBeep(600, 0.12);
+
+        if (time <= 0) {
+          clearInterval(mainTimer);
+          playBeep(800, 0.2);
+          onComplete();
+        } else {
+          time--;
+        }
+      };
+
+      updateDefaticamento();
+      mainTimer = setInterval(updateDefaticamento, 1000);
     }
 
     function startWorkTimer(seconds) {
@@ -437,7 +586,7 @@
             document.getElementById('set-counter').textContent = `GIRO ${currentSetIndex} DI 10`;
             startEmomTimer(60);
           } else {
-            advanceWorkout();
+            startRestTimer(workoutBlocks[currentBlockIndex].restAfterSet || 90);
           }
         } else {
           time--;
@@ -457,7 +606,7 @@
       const label = document.getElementById('timer-label');
       const btn = document.getElementById('main-action-btn');
 
-      label.textContent = "RECUPERO SUPERSERIE";
+      label.textContent = "RECUPERO SUPERSERIE / DEFATICAMENTO";
       display.className = "text-4xl font-black font-mono text-emerald-400";
       btn.textContent = "RIPOSO IN CORSO...";
       btn.className = "w-full py-3 bg-slate-800 text-slate-500 font-black text-xl rounded-xl cursor-not-allowed uppercase tracking-wider";
@@ -482,18 +631,31 @@
     function advanceWorkout() {
       const block = workoutBlocks[currentBlockIndex];
 
-      if (currentSetIndex < block.totalSets) {
-        currentSetIndex++;
-        loadBlock();
-      } else {
-        if (currentBlockIndex < workoutBlocks.length - 1) {
-          currentBlockIndex++;
-          currentSetIndex = 1;
+      if (block.isStretching) {
+        if (currentStretchExIndex === 0) {
+          currentStretchExIndex = 1;
           loadBlock();
         } else {
+          // Fine allenamento definitivo
           document.getElementById('screen-workout').classList.add('hidden');
           document.getElementById('footer-nav').classList.add('hidden');
           document.getElementById('screen-summary').classList.remove('hidden');
+        }
+      } else {
+        if (currentSetIndex < block.totalSets) {
+          currentSetIndex++;
+          loadBlock();
+        } else {
+          if (currentBlockIndex < workoutBlocks.length - 1) {
+            currentBlockIndex++;
+            currentSetIndex = 1;
+            currentStretchExIndex = 0;
+            loadBlock();
+          } else {
+            document.getElementById('screen-workout').classList.add('hidden');
+            document.getElementById('footer-nav').classList.add('hidden');
+            document.getElementById('screen-summary').classList.remove('hidden');
+          }
         }
       }
     }
@@ -503,12 +665,17 @@
     }
 
     function prevStep() {
-      if (currentSetIndex > 1) {
+      const block = workoutBlocks[currentBlockIndex];
+      if (block.isStretching && currentStretchExIndex > 0) {
+        currentStretchExIndex--;
+        loadBlock();
+      } else if (currentSetIndex > 1) {
         currentSetIndex--;
         loadBlock();
       } else if (currentBlockIndex > 0) {
         currentBlockIndex--;
         currentSetIndex = workoutBlocks[currentBlockIndex].totalSets;
+        currentStretchExIndex = 0;
         loadBlock();
       }
     }
