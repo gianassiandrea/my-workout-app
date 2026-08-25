@@ -23,27 +23,27 @@
         <button onclick="startWorkout()" class="w-56 h-56 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-2xl tracking-widest shadow-2xl shadow-emerald-500/20 active:scale-95 transition flex items-center justify-center text-center p-4">
           ALLENIAMOCI
         </button>
-        <p class="text-xs text-slate-400 font-mono">Stretching cadenzato e automatizzato</p>
+        <p class="text-xs text-slate-400 font-mono">EMOM progressivo & Stretching unificato</p>
       </div>
 
       <!-- SCHERMATA 2: EXECUTION WORKOUT -->
       <div id="screen-workout" class="hidden flex-1 flex flex-col justify-between space-y-2 overflow-hidden">
         
-        <!-- BADGE BLOCCO E GIRO -->
-        <div class="border-b border-slate-800 pb-1.5 flex justify-between items-center shrink-0">
-          <span id="block-number" class="text-3xs font-mono font-black text-slate-300 uppercase tracking-wider">BLOCCO 1 DE 6</span>
-          <span id="set-counter" class="text-xs font-black bg-emerald-400 text-slate-950 px-2.5 py-0.5 rounded-lg shadow-md tracking-wide">GIRO 1 DI 3</span>
+        <!-- BADGE BLOCCO E GIRO (MOLTO PIÙ VISIBILE) -->
+        <div class="border-b border-slate-800 pb-2 flex justify-between items-center shrink-0">
+          <span id="block-number" class="text-xs font-mono font-black text-slate-300 uppercase tracking-wider">BLOCCO 1 DE 6</span>
+          <span id="set-counter" class="text-base font-black bg-emerald-400 text-slate-950 px-3 py-1 rounded-xl shadow-lg tracking-wide border border-emerald-300">GIRO 1 DI 3</span>
         </div>
 
-        <!-- 1. TIMER DISPLAY (COMPATTO) -->
-        <div id="timer-box" class="py-2 px-3 bg-slate-950 rounded-xl border border-slate-800 text-center space-y-0.5 shrink-0 shadow-inner">
-          <span id="timer-label" class="text-4xs font-mono text-slate-400 uppercase tracking-widest">PRONTO</span>
-          <div id="timer-display" class="text-4xl font-black font-mono text-slate-200">00:00</div>
+        <!-- 1. TIMER DISPLAY (GRANDE & AD ALTO CONTRASTO) -->
+        <div id="timer-box" class="py-3 px-4 bg-slate-950 rounded-2xl border-2 border-slate-800 text-center space-y-1 shrink-0 shadow-2xl">
+          <span id="timer-label" class="text-xs font-mono font-bold text-slate-400 uppercase tracking-widest">PRONTO</span>
+          <div id="timer-display" class="text-6xl font-black font-mono text-slate-100 tracking-tight">00:00</div>
         </div>
 
         <!-- 2. PULSANTE PRINCIPALE -->
         <div class="shrink-0">
-          <button id="main-action-btn" onclick="handleMainAction()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-lg rounded-xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider">
+          <button id="main-action-btn" onclick="handleMainAction()" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xl rounded-xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider">
             VIA
           </button>
         </div>
@@ -188,27 +188,25 @@
         restAfterSet: 90,
         exercises: [
           { 
-            name: "5. Piegamenti braccia - EMOM", target: "3-4 reps/min (10')", isTimer: true, workTime: 60, 
+            name: "5. Piegamenti braccia - EMOM", target: "5 REPS (+1 ogni 2 giri)", isTimer: true, workTime: 60, 
             videoUrl: "https://youtu.be/mSGhSN6DgnA?si=4vZss6eZCc_XKm8t",
-            note: "EMOM: 3-4 rep all'inizio di ogni minuto per 10 minuti + 90s recupero automatico finale." 
+            note: "EMOM: 5 rep nei giri 1-2, poi +1 ogni due giri per 10 minuti totali." 
           }
         ]
       },
       {
         id: 6,
-        title: "BLOCCO 6: STRETCHING",
+        title: "BLOCCO 6: STRETCHING COMPLETO",
         totalSets: 1,
         isStretching: true,
         exercises: [
-          { name: "6. Stretching: Cane basso", target: "3x (10'' tenuta + 5'' pausa) + 30'' recupero", isTimer: true, videoUrl: "https://youtu.be/mSGhSN6DgnA?si=4vZss6eZCc_XKm8t" },
-          { name: "6. Stretching: Cane alto", target: "2x (10'' + 5'' + 10'' + 30'' defat) + 1x (10'' + 5'' + 10'')", isTimer: true, videoUrl: "https://youtu.be/kMXLAK7BAWk?si=YRKXLASpDMcPLVyK" }
+          { name: "6. Stretching: Cane Basso + Cane Alto", target: "6 Tenute x 10'' (senza defaticamento intermedio)", isTimer: true, videoUrl: "https://youtu.be/mSGhSN6DgnA?si=4vZss6eZCc_XKm8t" }
         ]
       }
     ];
 
     let currentBlockIndex = 0;
     let currentSetIndex = 1;
-    let currentStretchExIndex = 0;
     let mainTimer = null;
     let audioCtx = null;
     let state = "IDLE"; // IDLE, WORKING, RESTING
@@ -247,7 +245,6 @@
       document.getElementById('footer-nav').classList.remove('hidden');
       currentBlockIndex = 0;
       currentSetIndex = 1;
-      currentStretchExIndex = 0;
       loadBlock();
     }
 
@@ -257,19 +254,12 @@
       const block = workoutBlocks[currentBlockIndex];
 
       document.getElementById('block-number').textContent = `${block.title}`;
-      
-      if (block.isStretching) {
-        document.getElementById('set-counter').textContent = `ESERCIZIO ${currentStretchExIndex + 1} DI 2`;
-      } else {
-        document.getElementById('set-counter').textContent = `GIRO ${currentSetIndex} DI ${block.totalSets}`;
-      }
+      document.getElementById('set-counter').textContent = `GIRO ${currentSetIndex} DI ${block.totalSets}`;
 
       const listContainer = document.getElementById('exercises-list');
       listContainer.innerHTML = "";
 
-      const displayedExercises = block.isStretching ? [block.exercises[currentStretchExIndex]] : block.exercises;
-
-      displayedExercises.forEach((ex) => {
+      block.exercises.forEach((ex) => {
         let html = "";
 
         if (block.isMobyBlock) {
@@ -297,7 +287,7 @@
               <div class="min-w-0 flex-1">
                 <h3 class="font-black text-white text-sm truncate tracking-wide">${ex.name}</h3>
                 <div class="flex items-center gap-2 mt-0.5">
-                  <span class="text-xs font-black text-amber-300 uppercase bg-slate-900 px-2 py-0.5 rounded border border-slate-800">${ex.target}</span>
+                  <span id="ex-target-label" class="text-xs font-black text-amber-300 uppercase bg-slate-900 px-2 py-0.5 rounded border border-slate-800">${ex.target}</span>
                   ${ex.note ? `<span class="text-4xs text-amber-400/90 italic truncate">${ex.note}</span>` : ''}
                 </div>
               </div>
@@ -320,18 +310,18 @@
       const timerLabel = document.getElementById('timer-label');
       const actionBtn = document.getElementById('main-action-btn');
 
-      timerDisplay.className = "text-4xl font-black font-mono text-slate-200";
+      timerDisplay.className = "text-6xl font-black font-mono text-slate-100 tracking-tight";
       timerLabel.textContent = "PRONTO";
       
       if (block.isStretching) {
-        timerDisplay.textContent = "00:10";
+        timerDisplay.textContent = "00:05";
       } else {
         const firstTimerEx = block.exercises.find(e => e.isTimer);
         timerDisplay.textContent = firstTimerEx ? formatTime(firstTimerEx.workTime) : "00:00";
       }
 
       actionBtn.textContent = "VIA";
-      actionBtn.className = "w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-lg rounded-xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider";
+      actionBtn.className = "w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xl rounded-xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider";
     }
 
     function openVideoModal(title, url) {
@@ -357,11 +347,7 @@
 
       if (state === "IDLE") {
         if (block.isStretching) {
-          if (currentStretchExIndex === 0) {
-            startStretchingBlock1(1); // Sequenza Cane Basso
-          } else {
-            startStretchingBlock2(1); // Sequenza Cane Alto
-          }
+          startStretchingUnifiedSequence();
         } else if (block.isEmom) {
           startEmomTimer(60);
         } else {
@@ -372,7 +358,7 @@
             state = "WORKING";
             const actionBtn = document.getElementById('main-action-btn');
             actionBtn.textContent = "FATTO (INIZIA RIPOSO)";
-            actionBtn.className = "w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-lg rounded-xl transition shadow-lg uppercase tracking-wider";
+            actionBtn.className = "w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xl rounded-xl transition shadow-lg uppercase tracking-wider";
           }
         }
       } 
@@ -385,66 +371,52 @@
       }
     }
 
-    // STRETCHING ESERCIZIO 1 (Cane Basso): 3x (10s tenuta + 5s pausa) + 30s recupero finale
-    function startStretchingBlock1(repNum) {
+    // UNIFICAZIONE STRETCHING: 5s Preparazione -> 6x (10s Tenuta + 5s Pausa) Senza Defaticamento
+    function startStretchingUnifiedSequence() {
       state = "WORKING";
       clearInterval(mainTimer);
-      let time = 10;
+      let prepTime = 5; // 5 Secondi di Preparazione iniziale
 
       const display = document.getElementById('timer-display');
       const label = document.getElementById('timer-label');
       const btn = document.getElementById('main-action-btn');
 
-      label.textContent = `CANE BASSO: TENUTA ${repNum} DI 3 (10s)`;
-      display.className = "text-4xl font-black font-mono text-red-500 animate-pulse";
+      label.textContent = "PREPARATI ALLO STRETCHING (5s)";
+      display.className = "text-6xl font-black font-mono text-amber-400 animate-pulse";
       btn.textContent = "IN ESECUZIONE STRETCHING...";
-      btn.className = "w-full py-3 bg-slate-800 text-slate-500 font-black text-lg rounded-xl cursor-not-allowed uppercase tracking-wider";
+      btn.className = "w-full py-3.5 bg-slate-800 text-slate-500 font-black text-xl rounded-xl cursor-not-allowed uppercase tracking-wider";
 
-      const updateTenuta = () => {
-        display.textContent = formatTime(time);
-        if (time <= 3 && time > 0) playBeep(700, 0.12);
+      const updatePrep = () => {
+        display.textContent = formatTime(prepTime);
+        if (prepTime <= 3 && prepTime > 0) playBeep(600, 0.12);
 
-        if (time <= 0) {
+        if (prepTime <= 0) {
           clearInterval(mainTimer);
-          playBeep(900, 0.2);
-
-          if (repNum < 3) {
-            startStretchPausaGeneric(5, () => startStretchingBlock1(repNum + 1));
-          } else {
-            playTripleBeep();
-            startRestTimer(30); // 30s recupero prima di passare a Cane Alto
-          }
+          playBeep(900, 0.25);
+          executeStretchStep(1); // Inizia dalla Tenuta 1
         } else {
-          time--;
+          prepTime--;
         }
       };
 
-      updateTenuta();
-      mainTimer = setInterval(updateTenuta, 1000);
+      updatePrep();
+      mainTimer = setInterval(updatePrep, 1000);
     }
 
-    // STRETCHING ESERCIZIO 2 (Cane Alto): Sequenza specifica con Defaticamento 30s intermedi
-    function startStretchingBlock2(stepIndex) {
-      // Step Index:
-      // 1: 10s Tenuta 1 -> 5s Pausa
-      // 2: 10s Tenuta 2 -> 30s Defaticamento
-      // 3: 10s Tenuta 3 -> 5s Pausa
-      // 4: 10s Tenuta 4 -> 30s Defaticamento
-      // 5: 10s Tenuta 5 -> 5s Pausa
-      // 6: 10s Tenuta 6 -> FINE WORKOUT!
+    function executeStretchStep(stepNum) {
+      // 1-3: Cane Basso (Tenute 1, 2, 3)
+      // 4-6: Cane Alto (Tenute 1, 2, 3)
+      let exName = stepNum <= 3 ? "CANE BASSO" : "CANE ALTO";
+      let exTenutaNum = stepNum <= 3 ? stepNum : stepNum - 3;
 
-      state = "WORKING";
       clearInterval(mainTimer);
-      let time = 10;
+      let time = 10; // 10s di Tenuta
 
       const display = document.getElementById('timer-display');
       const label = document.getElementById('timer-label');
-      const btn = document.getElementById('main-action-btn');
 
-      label.textContent = `CANE ALTO: TENUTA ${Math.ceil(stepIndex/2)} DI 3 (10s)`;
-      display.className = "text-4xl font-black font-mono text-red-500 animate-pulse";
-      btn.textContent = "IN ESECUZIONE STRETCHING...";
-      btn.className = "w-full py-3 bg-slate-800 text-slate-500 font-black text-lg rounded-xl cursor-not-allowed uppercase tracking-wider";
+      label.textContent = `${exName}: TENUTA ${exTenutaNum} DI 3 (10s)`;
+      display.className = "text-6xl font-black font-mono text-red-500 animate-pulse";
 
       const updateTenuta = () => {
         display.textContent = formatTime(time);
@@ -454,14 +426,10 @@
           clearInterval(mainTimer);
           playBeep(900, 0.2);
 
-          if (stepIndex === 1 || stepIndex === 3 || stepIndex === 5) {
-            // Pausa da 5s
-            startStretchPausaGeneric(5, () => startStretchingBlock2(stepIndex + 1));
-          } else if (stepIndex === 2 || stepIndex === 4) {
-            // Defaticamento da 30s
-            startStretchDefaticamentoGeneric(30, () => startStretchingBlock2(stepIndex + 1));
-          } else if (stepIndex === 6) {
-            // Fine Ultima Tenuta del Cane Alto -> FINE WORKOUT
+          if (stepNum < 6) {
+            startStretchPausaGeneric(5, () => executeStretchStep(stepNum + 1));
+          } else {
+            // Fine Ultima Tenuta dello Stretching -> FINE WORKOUT
             playTripleBeep();
             advanceWorkout();
           }
@@ -482,7 +450,7 @@
       const label = document.getElementById('timer-label');
 
       label.textContent = `PAUSA / CAMBIO POSIZIONE (${seconds}s)`;
-      display.className = "text-4xl font-black font-mono text-amber-400";
+      display.className = "text-6xl font-black font-mono text-amber-400";
 
       const updatePausa = () => {
         display.textContent = formatTime(time);
@@ -501,33 +469,6 @@
       mainTimer = setInterval(updatePausa, 1000);
     }
 
-    function startStretchDefaticamentoGeneric(seconds, onComplete) {
-      clearInterval(mainTimer);
-      let time = seconds;
-
-      const display = document.getElementById('timer-display');
-      const label = document.getElementById('timer-label');
-
-      label.textContent = `DEFATICAMENTO / RECUPERO (${seconds}s)`;
-      display.className = "text-4xl font-black font-mono text-emerald-400";
-
-      const updateDefaticamento = () => {
-        display.textContent = formatTime(time);
-        if (time <= 5 && time > 0) playBeep(600, 0.12);
-
-        if (time <= 0) {
-          clearInterval(mainTimer);
-          playBeep(800, 0.2);
-          onComplete();
-        } else {
-          time--;
-        }
-      };
-
-      updateDefaticamento();
-      mainTimer = setInterval(updateDefaticamento, 1000);
-    }
-
     function startWorkTimer(seconds) {
       state = "WORKING";
       clearInterval(mainTimer);
@@ -538,9 +479,9 @@
       const btn = document.getElementById('main-action-btn');
 
       label.textContent = "TEMPO ESERCIZIO IN CORSO";
-      display.className = "text-4xl font-black font-mono text-red-500 animate-pulse";
+      display.className = "text-6xl font-black font-mono text-red-500 animate-pulse";
       btn.textContent = "FATTO (COMPLETA GIRO)";
-      btn.className = "w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-lg rounded-xl transition shadow-lg uppercase tracking-wider";
+      btn.className = "w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xl rounded-xl transition shadow-lg uppercase tracking-wider";
 
       const update = () => {
         display.textContent = formatTime(time);
@@ -559,19 +500,29 @@
       mainTimer = setInterval(update, 1000);
     }
 
+    // EMOM PROGRESSIVO (+1 REPETIZIONE OGNI 2 GIRI DA 5 FINO A 9 REPS)
     function startEmomTimer(seconds) {
       state = "WORKING";
       clearInterval(mainTimer);
       let time = seconds;
 
+      // Calcola le ripetizioni: 5 nei giri 1-2, 6 nei 3-4, 7 nei 5-6, 8 nei 7-8, 9 nei 9-10
+      let currentReps = 5 + Math.floor((currentSetIndex - 1) / 2);
+
       const display = document.getElementById('timer-display');
       const label = document.getElementById('timer-label');
       const btn = document.getElementById('main-action-btn');
+      
+      const targetLabel = document.getElementById('ex-target-label');
+      if (targetLabel) {
+        targetLabel.textContent = `⚡ FAI ${currentReps} REPETIZIONI`;
+        targetLabel.className = "text-sm font-black text-amber-300 uppercase bg-slate-900 px-3 py-1 rounded border border-amber-500/50 animate-bounce";
+      }
 
-      label.textContent = `EMOM: MINUTO ${currentSetIndex} DI 10`;
-      display.className = "text-4xl font-black font-mono text-red-500 animate-pulse";
-      btn.textContent = "IN ESECUZIONE EMOM...";
-      btn.className = "w-full py-3 bg-slate-800 text-slate-500 font-black text-lg rounded-xl cursor-not-allowed uppercase tracking-wider";
+      label.textContent = `EMOM: MINUTO ${currentSetIndex} DI 10 ➔ FAI ${currentReps} REPS!`;
+      display.className = "text-6xl font-black font-mono text-red-500 animate-pulse";
+      btn.textContent = `IN ESECUZIONE EMOM (${currentReps} REPS)...`;
+      btn.className = "w-full py-3.5 bg-slate-800 text-amber-400 font-black text-xl rounded-xl cursor-not-allowed uppercase tracking-wider";
 
       const update = () => {
         display.textContent = formatTime(time);
@@ -607,9 +558,9 @@
       const btn = document.getElementById('main-action-btn');
 
       label.textContent = "RECUPERO SUPERSERIE / DEFATICAMENTO";
-      display.className = "text-4xl font-black font-mono text-emerald-400";
+      display.className = "text-6xl font-black font-mono text-emerald-400";
       btn.textContent = "RIPOSO IN CORSO...";
-      btn.className = "w-full py-3 bg-slate-800 text-slate-500 font-black text-xl rounded-xl cursor-not-allowed uppercase tracking-wider";
+      btn.className = "w-full py-3.5 bg-slate-800 text-slate-500 font-black text-xl rounded-xl cursor-not-allowed uppercase tracking-wider";
 
       const update = () => {
         display.textContent = formatTime(time);
@@ -632,15 +583,10 @@
       const block = workoutBlocks[currentBlockIndex];
 
       if (block.isStretching) {
-        if (currentStretchExIndex === 0) {
-          currentStretchExIndex = 1;
-          loadBlock();
-        } else {
-          // Fine allenamento definitivo
-          document.getElementById('screen-workout').classList.add('hidden');
-          document.getElementById('footer-nav').classList.add('hidden');
-          document.getElementById('screen-summary').classList.remove('hidden');
-        }
+        // Fine allenamento definitivo
+        document.getElementById('screen-workout').classList.add('hidden');
+        document.getElementById('footer-nav').classList.add('hidden');
+        document.getElementById('screen-summary').classList.remove('hidden');
       } else {
         if (currentSetIndex < block.totalSets) {
           currentSetIndex++;
@@ -649,7 +595,6 @@
           if (currentBlockIndex < workoutBlocks.length - 1) {
             currentBlockIndex++;
             currentSetIndex = 1;
-            currentStretchExIndex = 0;
             loadBlock();
           } else {
             document.getElementById('screen-workout').classList.add('hidden');
@@ -665,17 +610,12 @@
     }
 
     function prevStep() {
-      const block = workoutBlocks[currentBlockIndex];
-      if (block.isStretching && currentStretchExIndex > 0) {
-        currentStretchExIndex--;
-        loadBlock();
-      } else if (currentSetIndex > 1) {
+      if (currentSetIndex > 1) {
         currentSetIndex--;
         loadBlock();
       } else if (currentBlockIndex > 0) {
         currentBlockIndex--;
         currentSetIndex = workoutBlocks[currentBlockIndex].totalSets;
-        currentStretchExIndex = 0;
         loadBlock();
       }
     }
