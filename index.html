@@ -142,7 +142,7 @@
           videoId = url.split("youtube.com/embed/")[1].split("?")[0];
         }
       } catch (e) { return ""; }
-      return videoId ? `https://www.youtube.com/embed/${videoId}?enablejsapi=1${autoplay ? '&autoplay=1' : ''}` : "";
+      return videoId ? `https://www.youtube.com/embed/${videoId}?enablejsapi=1${autoplay ? '&autoplay=1&mute=0' : ''}` : "";
     }
 
     const workoutBlocks = [
@@ -311,15 +311,17 @@
           html = `
             <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2 shadow-sm">
               <div class="flex justify-between items-center">
-                <h3 class="font-black text-white text-sm tracking-wide">${ex.name}</h3>
+                <h3 class="font-black text-white text-base tracking-wide">${ex.name}</h3>
                 ${ex.secondaryVideoUrl ? `
                   <button onclick="openVideoModal('${ex.name} (Tecnica)', '${ex.secondaryVideoUrl}')" class="px-2.5 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg text-xs font-black flex items-center gap-1">
-                    ▶
+                    ▶ Tecnica
                   </button>
                 ` : ''}
               </div>
-              <p class="text-sm font-black text-amber-300 uppercase bg-slate-900 px-2.5 py-1 rounded border border-slate-800 inline-block tracking-wide">${ex.target}</p>
-              ${ex.note ? `<p class="text-4xs text-amber-400/90 italic">${ex.note}</p>` : ''}
+              <div>
+                <span class="text-base font-black text-amber-300 uppercase bg-amber-500/20 px-3 py-1 rounded-xl border border-amber-400/50 inline-block tracking-wider shadow-md">${ex.target}</span>
+              </div>
+              ${ex.note ? `<p class="text-3xs text-amber-400/90 italic font-semibold">${ex.note}</p>` : ''}
               <div class="aspect-video w-full bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-md">
                 <iframe class="w-full h-full" src="${mainEmbed}" title="${ex.name}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
               </div>
@@ -328,17 +330,17 @@
         } else {
           html = `
             <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between gap-2 shadow-sm">
-              <div class="min-w-0 flex-1">
+              <div class="min-w-0 flex-1 space-y-1">
                 <h3 class="font-black text-white text-sm truncate tracking-wide">${ex.name}</h3>
-                <div class="flex items-center gap-2 mt-1">
-                  <span class="text-sm font-black text-amber-300 bg-amber-500/10 px-2.5 py-0.5 rounded-lg border border-amber-500/30 shadow-sm">${ex.target}</span>
+                <div class="flex items-center gap-2">
+                  <span class="text-base font-black text-amber-300 bg-amber-500/20 px-3 py-1 rounded-xl border border-amber-400/50 shadow-md tracking-wider inline-block">${ex.target}</span>
                   ${ex.note ? `<span class="text-4xs text-amber-400/90 italic truncate">${ex.note}</span>` : ''}
                 </div>
               </div>
               
               <div class="flex gap-1 shrink-0">
                 ${ex.videoUrl ? `
-                  <button onclick="openVideoModal('${ex.name}', '${ex.videoUrl}')" class="px-2 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 rounded-lg text-sm font-black flex items-center justify-center">
+                  <button onclick="openVideoModal('${ex.name}', '${ex.videoUrl}')" class="px-3 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 rounded-xl text-base font-black flex items-center justify-center">
                     ▶
                   </button>
                 ` : ''}
