@@ -23,22 +23,39 @@
         <button onclick="startWorkout()" class="w-56 h-56 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-2xl tracking-widest shadow-2xl shadow-emerald-500/20 active:scale-95 transition flex items-center justify-center text-center p-4">
           ALLENIAMOCI
         </button>
-        <p class="text-xs text-slate-400 font-mono">EMOM progressivo & Stretching unificato</p>
+        <p class="text-xs text-slate-400 font-mono">EMOM personalizzabile & Stretching unificato</p>
       </div>
 
       <!-- SCHERMATA 2: EXECUTION WORKOUT -->
       <div id="screen-workout" class="hidden flex-1 flex flex-col justify-between space-y-2 overflow-hidden">
         
-        <!-- BADGE BLOCCO E GIRO (MOLTO PIÙ VISIBILE) -->
+        <!-- BADGE BLOCCO E GIRO -->
         <div class="border-b border-slate-800 pb-2 flex justify-between items-center shrink-0">
           <span id="block-number" class="text-xs font-mono font-black text-slate-300 uppercase tracking-wider">BLOCCO 1 DE 6</span>
           <span id="set-counter" class="text-base font-black bg-emerald-400 text-slate-950 px-3 py-1 rounded-xl shadow-lg tracking-wide border border-emerald-300">GIRO 1 DI 3</span>
         </div>
 
-        <!-- 1. TIMER DISPLAY (GRANDE & AD ALTO CONTRASTO) -->
+        <!-- 1. TIMER DISPLAY -->
         <div id="timer-box" class="py-3 px-4 bg-slate-950 rounded-2xl border-2 border-slate-800 text-center space-y-1 shrink-0 shadow-2xl">
           <span id="timer-label" class="text-xs font-mono font-bold text-slate-400 uppercase tracking-widest">PRONTO</span>
           <div id="timer-display" class="text-6xl font-black font-mono text-slate-100 tracking-tight">00:00</div>
+        </div>
+
+        <!-- BOX TARGET EMOM GIGANTE E SUPER VISIBILE -->
+        <div id="emom-target-banner" class="hidden py-2 px-3 bg-amber-500 text-slate-950 rounded-xl text-center border-2 border-amber-300 shadow-xl">
+          <span class="text-3xs font-black uppercase tracking-widest text-slate-900 block">OBIETTIVO MINUTO CORRENTE</span>
+          <div id="emom-reps-count" class="text-3xl font-black tracking-tight">5 FLESSIONS</div>
+        </div>
+
+        <!-- SELETTORE REPS INIZIALI EMOM (4, 5, 6, 7) -->
+        <div id="emom-selector-box" class="hidden bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex flex-col items-center space-y-1.5 shrink-0">
+          <span class="text-4xs font-mono font-extrabold text-amber-300 uppercase tracking-wider">SELEZIONA FLESSIONI DI PARTENZA (GIRO 1-2):</span>
+          <div class="flex gap-2 w-full justify-center">
+            <button onclick="setEmomStartReps(4)" id="btn-reps-4" class="emom-rep-btn flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 text-white font-black text-sm rounded-lg border border-slate-700">4</button>
+            <button onclick="setEmomStartReps(5)" id="btn-reps-5" class="emom-rep-btn flex-1 py-1.5 bg-amber-500 text-slate-950 font-black text-sm rounded-lg border border-amber-400">5</button>
+            <button onclick="setEmomStartReps(6)" id="btn-reps-6" class="emom-rep-btn flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 text-white font-black text-sm rounded-lg border border-slate-700">6</button>
+            <button onclick="setEmomStartReps(7)" id="btn-reps-7" class="emom-rep-btn flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 text-white font-black text-sm rounded-lg border border-slate-700">7</button>
+          </div>
         </div>
 
         <!-- 2. PULSANTE PRINCIPALE -->
@@ -128,7 +145,6 @@
       return videoId ? `https://www.youtube.com/embed/${videoId}?enablejsapi=1${autoplay ? '&autoplay=1' : ''}` : "";
     }
 
-    // DEFINIZIONE BLOCCHI DI ALLENAMENTO
     const workoutBlocks = [
       {
         id: 1,
@@ -188,9 +204,9 @@
         restAfterSet: 90,
         exercises: [
           { 
-            name: "5. Piegamenti braccia - EMOM", target: "5 REPS (+1 ogni 2 giri)", isTimer: true, workTime: 60, 
+            name: "5. Piegamenti braccia - EMOM", target: "PROGRESSIVO (+1 ogni 2 giri)", isTimer: true, workTime: 60, 
             videoUrl: "https://youtu.be/mSGhSN6DgnA?si=4vZss6eZCc_XKm8t",
-            note: "EMOM: 5 rep nei giri 1-2, poi +1 ogni due giri per 10 minuti totali." 
+            note: "EMOM AUTOMATICO: +1 rep ogni 2 giri per 10 minuti." 
           }
         ]
       },
@@ -207,9 +223,10 @@
 
     let currentBlockIndex = 0;
     let currentSetIndex = 1;
+    let emomStartReps = 5; // Ripetizioni iniziali EMOM di default
     let mainTimer = null;
     let audioCtx = null;
-    let state = "IDLE"; // IDLE, WORKING, RESTING
+    let state = "IDLE"; 
 
     function initAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -248,6 +265,21 @@
       loadBlock();
     }
 
+    function setEmomStartReps(reps) {
+      emomStartReps = reps;
+      [4, 5, 6, 7].forEach(r => {
+        const btn = document.getElementById(`btn-reps-${r}`);
+        if (btn) {
+          if (r === reps) {
+            btn.className = "emom-rep-btn flex-1 py-1.5 bg-amber-500 text-slate-950 font-black text-sm rounded-lg border border-amber-400";
+          } else {
+            btn.className = "emom-rep-btn flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 text-white font-black text-sm rounded-lg border border-slate-700";
+          }
+        }
+      });
+      document.getElementById('emom-reps-count').textContent = `${reps} FLESSIONI`;
+    }
+
     function loadBlock() {
       clearInterval(mainTimer);
       state = "IDLE";
@@ -255,6 +287,18 @@
 
       document.getElementById('block-number').textContent = `${block.title}`;
       document.getElementById('set-counter').textContent = `GIRO ${currentSetIndex} DI ${block.totalSets}`;
+
+      const targetBanner = document.getElementById('emom-target-banner');
+      const selectorBox = document.getElementById('emom-selector-box');
+
+      if (block.isEmom) {
+        targetBanner.classList.remove('hidden');
+        selectorBox.classList.remove('hidden');
+        document.getElementById('emom-reps-count').textContent = `${emomStartReps} FLESSIONI`;
+      } else {
+        targetBanner.classList.add('hidden');
+        selectorBox.classList.add('hidden');
+      }
 
       const listContainer = document.getElementById('exercises-list');
       listContainer.innerHTML = "";
@@ -287,7 +331,7 @@
               <div class="min-w-0 flex-1">
                 <h3 class="font-black text-white text-sm truncate tracking-wide">${ex.name}</h3>
                 <div class="flex items-center gap-2 mt-0.5">
-                  <span id="ex-target-label" class="text-xs font-black text-amber-300 uppercase bg-slate-900 px-2 py-0.5 rounded border border-slate-800">${ex.target}</span>
+                  <span class="text-xs font-black text-amber-300 uppercase bg-slate-900 px-2 py-0.5 rounded border border-slate-800">${ex.target}</span>
                   ${ex.note ? `<span class="text-4xs text-amber-400/90 italic truncate">${ex.note}</span>` : ''}
                 </div>
               </div>
@@ -349,6 +393,7 @@
         if (block.isStretching) {
           startStretchingUnifiedSequence();
         } else if (block.isEmom) {
+          document.getElementById('emom-selector-box').classList.add('hidden');
           startEmomTimer(60);
         } else {
           const timerEx = block.exercises.find(e => e.isTimer);
@@ -362,7 +407,7 @@
           }
         }
       } 
-      else if (state === "WORKING" && !block.isStretching) {
+      else if (state === "WORKING" && !block.isStretching && !block.isEmom) {
         if (block.restAfterSet > 0) {
           startRestTimer(block.restAfterSet);
         } else {
@@ -371,11 +416,10 @@
       }
     }
 
-    // UNIFICAZIONE STRETCHING: 5s Preparazione -> 6x (10s Tenuta + 5s Pausa) Senza Defaticamento
     function startStretchingUnifiedSequence() {
       state = "WORKING";
       clearInterval(mainTimer);
-      let prepTime = 5; // 5 Secondi di Preparazione iniziale
+      let prepTime = 5;
 
       const display = document.getElementById('timer-display');
       const label = document.getElementById('timer-label');
@@ -393,7 +437,7 @@
         if (prepTime <= 0) {
           clearInterval(mainTimer);
           playBeep(900, 0.25);
-          executeStretchStep(1); // Inizia dalla Tenuta 1
+          executeStretchStep(1);
         } else {
           prepTime--;
         }
@@ -404,13 +448,11 @@
     }
 
     function executeStretchStep(stepNum) {
-      // 1-3: Cane Basso (Tenute 1, 2, 3)
-      // 4-6: Cane Alto (Tenute 1, 2, 3)
       let exName = stepNum <= 3 ? "CANE BASSO" : "CANE ALTO";
       let exTenutaNum = stepNum <= 3 ? stepNum : stepNum - 3;
 
       clearInterval(mainTimer);
-      let time = 10; // 10s di Tenuta
+      let time = 10;
 
       const display = document.getElementById('timer-display');
       const label = document.getElementById('timer-label');
@@ -429,7 +471,6 @@
           if (stepNum < 6) {
             startStretchPausaGeneric(5, () => executeStretchStep(stepNum + 1));
           } else {
-            // Fine Ultima Tenuta dello Stretching -> FINE WORKOUT
             playTripleBeep();
             advanceWorkout();
           }
@@ -500,28 +541,26 @@
       mainTimer = setInterval(update, 1000);
     }
 
-    // EMOM PROGRESSIVO (+1 REPETIZIONE OGNI 2 GIRI DA 5 FINO A 9 REPS)
     function startEmomTimer(seconds) {
       state = "WORKING";
       clearInterval(mainTimer);
       let time = seconds;
 
-      // Calcola le ripetizioni: 5 nei giri 1-2, 6 nei 3-4, 7 nei 5-6, 8 nei 7-8, 9 nei 9-10
-      let currentReps = 5 + Math.floor((currentSetIndex - 1) / 2);
+      let currentReps = emomStartReps + Math.floor((currentSetIndex - 1) / 2);
 
       const display = document.getElementById('timer-display');
       const label = document.getElementById('timer-label');
       const btn = document.getElementById('main-action-btn');
       
-      const targetLabel = document.getElementById('ex-target-label');
-      if (targetLabel) {
-        targetLabel.textContent = `⚡ FAI ${currentReps} REPETIZIONI`;
-        targetLabel.className = "text-sm font-black text-amber-300 uppercase bg-slate-900 px-3 py-1 rounded border border-amber-500/50 animate-bounce";
-      }
+      const targetBanner = document.getElementById('emom-target-banner');
+      const repsCountEl = document.getElementById('emom-reps-count');
 
-      label.textContent = `EMOM: MINUTO ${currentSetIndex} DI 10 ➔ FAI ${currentReps} REPS!`;
+      targetBanner.classList.remove('hidden');
+      repsCountEl.textContent = `${currentReps} FLESSIONI`;
+
+      label.textContent = `EMOM: MINUTO ${currentSetIndex} DI 10`;
       display.className = "text-6xl font-black font-mono text-red-500 animate-pulse";
-      btn.textContent = `IN ESECUZIONE EMOM (${currentReps} REPS)...`;
+      btn.textContent = `EMOM AUTOMATICO IN CORSO...`;
       btn.className = "w-full py-3.5 bg-slate-800 text-amber-400 font-black text-xl rounded-xl cursor-not-allowed uppercase tracking-wider";
 
       const update = () => {
@@ -537,6 +576,7 @@
             document.getElementById('set-counter').textContent = `GIRO ${currentSetIndex} DI 10`;
             startEmomTimer(60);
           } else {
+            targetBanner.classList.add('hidden');
             startRestTimer(workoutBlocks[currentBlockIndex].restAfterSet || 90);
           }
         } else {
@@ -583,7 +623,6 @@
       const block = workoutBlocks[currentBlockIndex];
 
       if (block.isStretching) {
-        // Fine allenamento definitivo
         document.getElementById('screen-workout').classList.add('hidden');
         document.getElementById('footer-nav').classList.add('hidden');
         document.getElementById('screen-summary').classList.remove('hidden');
