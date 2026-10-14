@@ -369,7 +369,8 @@
         startPreparationCountdown(() => {
           if (block.isEmom) {
             document.getElementById('emom-selector-box').classList.add('hidden');
-            workoutLogs["Piegamenti braccia - EMOM"] = `Start: ${emomStartReps} reps (+1 ogni 2 min)`;
+            // Salva solo il numero iniziale di partenza per l'EMOM
+            workoutLogs["Piegamenti braccia - EMOM"] = emomStartReps;
             startEmomTimer(60);
           } else {
             const timerEx = block.exercises.find(e => e.isTimer);
@@ -460,6 +461,7 @@
       clearInterval(mainTimer);
       let time = seconds;
 
+      // Incrementa di +1 ogni 2 giri sullo schermo dell'app durante l'esecuzione
       let currentReps = emomStartReps + Math.floor((currentSetIndex - 1) / 2);
 
       const display = document.getElementById('timer-display');
