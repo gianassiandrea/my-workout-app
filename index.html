@@ -19,11 +19,16 @@
     <main class="flex-1 p-3 flex flex-col justify-between overflow-hidden">
 
       <!-- SCHERMATA 1: HOME -->
-      <div id="screen-home" class="flex-1 flex flex-col items-center justify-center py-6 space-y-6">
-        <button onclick="startWorkout()" class="w-56 h-56 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-2xl tracking-widest shadow-2xl shadow-emerald-500/20 active:scale-95 transition flex items-center justify-center text-center p-4">
+      <div id="screen-home" class="flex-1 flex flex-col items-center justify-center py-6 space-y-6 text-center px-4">
+        <!-- FRASE MOTIVAZIONALE DINAMICA -->
+        <div class="p-4 bg-slate-950/80 border border-emerald-500/30 rounded-2xl shadow-lg">
+          <p id="motivational-quote" class="text-sm italic font-medium text-emerald-300">"Ogni ripetizione ti avvicina al tuo obiettivo."</p>
+        </div>
+
+        <button onclick="startWorkout()" class="w-52 h-52 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-2xl tracking-widest shadow-2xl shadow-emerald-500/20 active:scale-95 transition flex items-center justify-center text-center p-4">
           ALLENIAMOCI
         </button>
-        <p class="text-xs text-slate-400 font-mono">EMOM personalizzabile & Stretching unificato</p>
+        <p class="text-xs text-slate-400 font-mono">EMOM personalizzabile & Prep 5s</p>
       </div>
 
       <!-- SCHERMATA 2: EXECUTION WORKOUT -->
@@ -47,14 +52,13 @@
           <div id="emom-reps-count" class="text-3xl font-black tracking-tight">5 FLESSIONI</div>
         </div>
 
-        <!-- SELETTORE REPS INIZIALI EMOM (4, 5, 6, 7) -->
+        <!-- INPUT REPS INIZIALI EMOM PERSONALIZZABILE -->
         <div id="emom-selector-box" class="hidden bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex flex-col items-center space-y-1.5 shrink-0">
-          <span class="text-4xs font-mono font-extrabold text-amber-300 uppercase tracking-wider">SELEZIONA FLESSIONI DI PARTENZA (GIRO 1-2):</span>
-          <div class="flex gap-2 w-full justify-center">
-            <button onclick="setEmomStartReps(4)" id="btn-reps-4" class="emom-rep-btn flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 text-white font-black text-sm rounded-lg border border-slate-700">4</button>
-            <button onclick="setEmomStartReps(5)" id="btn-reps-5" class="emom-rep-btn flex-1 py-1.5 bg-amber-500 text-slate-950 font-black text-sm rounded-lg border border-amber-400">5</button>
-            <button onclick="setEmomStartReps(6)" id="btn-reps-6" class="emom-rep-btn flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 text-white font-black text-sm rounded-lg border border-slate-700">6</button>
-            <button onclick="setEmomStartReps(7)" id="btn-reps-7" class="emom-rep-btn flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 text-white font-black text-sm rounded-lg border border-slate-700">7</button>
+          <span class="text-4xs font-mono font-extrabold text-amber-300 uppercase tracking-wider">INSERISCI FLESSIONI DI PARTENZA:</span>
+          <div class="flex items-center gap-3 w-full justify-center">
+            <button onclick="changeEmomInputReps(-1)" class="w-10 h-10 bg-slate-800 hover:bg-slate-700 text-amber-400 font-black text-xl rounded-xl border border-slate-700 flex items-center justify-center active:scale-95">-</button>
+            <input type="number" id="emom-input-reps" value="5" min="1" max="100" oninput="updateEmomStartRepsFromInput()" class="w-20 py-1.5 bg-slate-900 border-2 border-amber-400 text-amber-300 font-black text-xl rounded-xl text-center outline-none focus:border-emerald-400">
+            <button onclick="changeEmomInputReps(1)" class="w-10 h-10 bg-slate-800 hover:bg-slate-700 text-amber-400 font-black text-xl rounded-xl border border-slate-700 flex items-center justify-center active:scale-95">+</button>
           </div>
         </div>
 
@@ -70,17 +74,22 @@
 
       </div>
 
-      <!-- SCHERMATA 3: FINE WORKOUT & CHAT -->
+      <!-- SCHERMATA 3: FINE WORKOUT & REGISTRAZIONE DATI -->
       <div id="screen-summary" class="hidden space-y-4 py-4 overflow-y-auto">
         <h2 class="font-black text-xl text-emerald-400 text-center">SESSIONE COMPLETATA! 🎉</h2>
         
+        <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
+          <h3 class="text-xs font-black text-amber-300 uppercase tracking-wider">Registra Ripetizioni e Carichi Totali:</h3>
+          <div id="log-exercises-inputs" class="space-y-2"></div>
+        </div>
+
         <div class="p-3 bg-slate-800/40 border border-slate-800 rounded-xl space-y-1">
           <label class="text-xs font-bold text-slate-300 uppercase">Note Allenamento:</label>
           <textarea id="workout-notes" placeholder="Sensazioni, fatica..." class="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white outline-none h-16 focus:border-emerald-500"></textarea>
         </div>
 
-        <button onclick="finishWorkoutAndSend()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm rounded-xl">
-          💾 SALVA SU GOOGLE SHEETS & IA
+        <button onclick="finishWorkoutAndSend()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm rounded-xl shadow-lg">
+          💾 SALVA SU GOOGLE SHEETS & DRIVE
         </button>
 
         <div id="ai-chat-box" class="hidden space-y-2 pt-1">
@@ -100,19 +109,6 @@
 
     </main>
 
-    <!-- MODAL / POP-UP VIDEO A TUTTO SCHERMO -->
-    <div id="video-modal" class="hidden fixed inset-0 z-50 bg-black/95 backdrop-blur flex flex-col justify-center items-center p-4">
-      <div class="w-full max-w-lg flex justify-between items-center pb-2">
-        <h3 id="modal-video-title" class="text-xs font-bold text-white truncate">Tutorial Video</h3>
-        <button onclick="closeVideoModal()" class="px-3 py-1 bg-red-600 hover:bg-red-500 text-white font-black text-xs rounded-lg uppercase">
-          ✕ Chiudi
-        </button>
-      </div>
-      <div class="w-full aspect-video bg-slate-950 rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
-        <iframe id="modal-iframe" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      </div>
-    </div>
-
     <!-- FRECCE DI NAVIGAZIONE IN CALCE -->
     <footer id="footer-nav" class="hidden fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-slate-900/95 border-t border-slate-800 p-2.5 flex justify-between items-center backdrop-blur z-30">
       <button onclick="prevStep()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-lg flex items-center gap-1">
@@ -128,6 +124,16 @@
   <script>
     const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbw0ZXoojbXZmem0FApJ-q8kNB0C61bzxH4eb56WEgUcD3HiwNvudu_vc5ahiZB7joOk/exec"; 
     const GEMINI_API_KEY = "INCOLLA_QUI_LA_TUA_GEMINI_API_KEY";
+
+    const quotes = [
+      "\"Il sudore di oggi è la forza di domani.\"",
+      "\"Non conta quanto sei lento, l'importante è non fermarsi.\"",
+      "\"La disciplina ti porta dove la motivazione non arriva.\"",
+      "\"Fai oggi quello che gli altri non fanno, per vivere domani come gli altri non possono.\"",
+      "\"Ogni ripetizione ti avvicina al tuo obiettivo.\"",
+      "\"La mente cede sempre prima del corpo. Spingi oltre!\"",
+      "\"Non diventa più facile, sei tu che diventi più forte.\""
+    ];
 
     function parseYouTubeEmbedUrl(url, autoplay = false) {
       if (!url || url.trim() === "") return "";
@@ -152,9 +158,9 @@
         totalSets: 3,
         restAfterSet: 90,
         exercises: [
-          { name: "1. Skip ginocchia alte", target: "1'", isTimer: true, workTime: 60, videoUrl: "https://youtu.be/-KmKv52IvXc?si=_Z7VsEkombf7Ey35" },
-          { name: "1. Squat rana", target: "10-14 reps", isTimer: false, videoUrl: "https://youtu.be/-KmKv52IvXc?si=D3qCRADwSVcO1u4S" },
-          { name: "1. Montagna", target: "3-5 per lato", isTimer: false, videoUrl: "https://youtu.be/MfpvCWi85LE?si=5e927jxQltIEFxwy" }
+          { name: "Salto della corda", isTimer: true, workTime: 60 },
+          { name: "Squat rana", isTimer: false },
+          { name: "Montagna", isTimer: false }
         ]
       },
       {
@@ -163,10 +169,10 @@
         totalSets: 3,
         restAfterSet: 90,
         exercises: [
-          { name: "2. Jumping Jacks", target: "1'", isTimer: true, workTime: 60, videoUrl: "https://youtu.be/Vfg_vxxAwIU?si=Dfiad4AviIDBs_50" },
-          { name: "2. Affondi alternati indietro", target: "8-16 per lato", isTimer: false, videoUrl: "https://youtu.be/Yqd9cPs3Z3E?si=fLScoIwPJqi7tPnV" },
-          { name: "2. Piegamenti stretti", target: "5-9 reps", isTimer: false, videoUrl: "https://youtu.be/cuQM0ETk2E8?si=8jcGRu_tiBkT8vH6" },
-          { name: "2. Crunch gambe tese", target: "15-25 reps", isTimer: false, videoUrl: "https://youtu.be/AMku5hdoLoM?si=yXi1OnanY0hneOTJ" }
+          { name: "Jumping Jacks", isTimer: true, workTime: 60 },
+          { name: "Affondi alternati indietro", isTimer: false },
+          { name: "Piegamenti stretti", isTimer: false },
+          { name: "Crunch gambe tese", isTimer: false }
         ]
       },
       {
@@ -177,9 +183,8 @@
         isMobyBlock: true,
         exercises: [
           { 
-            name: "3. Squat: Moby - Flower", target: "1 volta (Bring Sally Up)", isTimer: false, 
+            name: "Squat: Moby - Flower", isTimer: false, 
             videoUrl: "https://youtu.be/6A2V9Bu80J4?si=zNy6BcOgIki9Z0O-", 
-            secondaryVideoUrl: "https://youtu.be/XQLmIWrDPnc?si=iE8nixKUqVCcUQuo", 
             autoplay: true,
             note: "🎵 CANZONE: 'Bring Sally Down' -> Scendi | 'Bring Sally Up' -> Sali." 
           }
@@ -191,9 +196,9 @@
         totalSets: 3,
         restAfterSet: 90,
         exercises: [
-          { name: "4. Mountain climber", target: "1'", isTimer: true, workTime: 60, videoUrl: "https://youtu.be/2YFqDhghiSI?si=lRGdudbHfR1VYKdX" },
-          { name: "4. Rematore", target: "10-15 reps", isTimer: false, videoUrl: "https://youtu.be/H9ikfHG-hVw?si=t-wgS9dAeEtYeOxi" },
-          { name: "4. Criss Cross", target: "6-10 per lato", isTimer: false, videoUrl: "https://youtu.be/SV4GrHcginQ?si=R33Y1yxleYWYEIzQ" }
+          { name: "Mountain climber", isTimer: true, workTime: 60 },
+          { name: "Rematore", isTimer: false },
+          { name: "Criss Cross", isTimer: false }
         ]
       },
       {
@@ -203,11 +208,7 @@
         isEmom: true,
         restAfterSet: 90,
         exercises: [
-          { 
-            name: "5. Piegamenti braccia - EMOM", target: "PROGRESSIVO (+1 ogni 2 giri)", isTimer: true, workTime: 60, 
-            videoUrl: "https://youtu.be/mSGhSN6DgnA?si=4vZss6eZCc_XKm8t",
-            note: "EMOM AUTOMATICO: +1 rep ogni 2 giri per 10 minuti." 
-          }
+          { name: "Piegamenti braccia - EMOM", isTimer: true, workTime: 60, note: "+1 rep ogni 2 giri per 10 minuti." }
         ]
       },
       {
@@ -216,7 +217,7 @@
         totalSets: 1,
         isStretching: true,
         exercises: [
-          { name: "6. Stretching: Cane Basso + Cane Alto", target: "6 Tenute x 10'' (senza defaticamento intermedio)", isTimer: true, videoUrl: "https://youtu.be/mSGhSN6DgnA?si=4vZss6eZCc_XKm8t" }
+          { name: "Stretching: Cane Basso + Cane Alto", isTimer: true }
         ]
       }
     ];
@@ -227,6 +228,11 @@
     let mainTimer = null;
     let audioCtx = null;
     let state = "IDLE"; 
+
+    window.onload = function() {
+      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+      document.getElementById('motivational-quote').textContent = randomQuote;
+    };
 
     function initAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -265,19 +271,21 @@
       loadBlock();
     }
 
-    function setEmomStartReps(reps) {
-      emomStartReps = reps;
-      [4, 5, 6, 7].forEach(r => {
-        const btn = document.getElementById(`btn-reps-${r}`);
-        if (btn) {
-          if (r === reps) {
-            btn.className = "emom-rep-btn flex-1 py-1.5 bg-amber-500 text-slate-950 font-black text-sm rounded-lg border border-amber-400";
-          } else {
-            btn.className = "emom-rep-btn flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 text-white font-black text-sm rounded-lg border border-slate-700";
-          }
-        }
-      });
-      document.getElementById('emom-reps-count').textContent = `${reps} FLESSIONI`;
+    function updateEmomStartRepsFromInput() {
+      const inputEl = document.getElementById('emom-input-reps');
+      let val = parseInt(inputEl.value) || 1;
+      if (val < 1) val = 1;
+      emomStartReps = val;
+      const repsCountEl = document.getElementById('emom-reps-count');
+      if (repsCountEl) repsCountEl.textContent = `${emomStartReps} FLESSIONI`;
+    }
+
+    function changeEmomInputReps(delta) {
+      const inputEl = document.getElementById('emom-input-reps');
+      let val = (parseInt(inputEl.value) || 1) + delta;
+      if (val < 1) val = 1;
+      inputEl.value = val;
+      updateEmomStartRepsFromInput();
     }
 
     function loadBlock() {
@@ -294,7 +302,7 @@
       if (block.isEmom) {
         targetBanner.classList.remove('hidden');
         selectorBox.classList.remove('hidden');
-        document.getElementById('emom-reps-count').textContent = `${emomStartReps} FLESSIONI`;
+        updateEmomStartRepsFromInput();
       } else {
         targetBanner.classList.add('hidden');
         selectorBox.classList.add('hidden');
@@ -310,18 +318,8 @@
           const mainEmbed = parseYouTubeEmbedUrl(ex.videoUrl, true);
           html = `
             <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2 shadow-sm">
-              <div class="flex justify-between items-center">
-                <h3 class="font-black text-white text-base tracking-wide">${ex.name}</h3>
-                ${ex.secondaryVideoUrl ? `
-                  <button onclick="openVideoModal('${ex.name} (Tecnica)', '${ex.secondaryVideoUrl}')" class="px-2.5 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg text-xs font-black flex items-center gap-1">
-                    ▶ Tecnica
-                  </button>
-                ` : ''}
-              </div>
-              <div>
-                <span class="text-base font-black text-amber-300 uppercase bg-amber-500/20 px-3 py-1 rounded-xl border border-amber-400/50 inline-block tracking-wider shadow-md">${ex.target}</span>
-              </div>
-              ${ex.note ? `<p class="text-3xs text-amber-400/90 italic font-semibold">${ex.note}</p>` : ''}
+              <h3 class="font-black text-white text-base tracking-wide">${ex.name}</h3>
+              ${ex.note ? `<p class="text-xs text-amber-400/90 italic font-semibold">\${ex.note}</p>` : ''}
               <div class="aspect-video w-full bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-md">
                 <iframe class="w-full h-full" src="${mainEmbed}" title="${ex.name}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
               </div>
@@ -329,21 +327,10 @@
           `;
         } else {
           html = `
-            <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between gap-2 shadow-sm">
-              <div class="min-w-0 flex-1 space-y-1">
-                <h3 class="font-black text-white text-sm truncate tracking-wide">${ex.name}</h3>
-                <div class="flex items-center gap-2">
-                  <span class="text-base font-black text-amber-300 bg-amber-500/20 px-3 py-1 rounded-xl border border-amber-400/50 shadow-md tracking-wider inline-block">${ex.target}</span>
-                  ${ex.note ? `<span class="text-4xs text-amber-400/90 italic truncate">${ex.note}</span>` : ''}
-                </div>
-              </div>
-              
-              <div class="flex gap-1 shrink-0">
-                ${ex.videoUrl ? `
-                  <button onclick="openVideoModal('${ex.name}', '${ex.videoUrl}')" class="px-3 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 rounded-xl text-base font-black flex items-center justify-center">
-                    ▶
-                  </button>
-                ` : ''}
+            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between gap-2 shadow-sm">
+              <div class="min-w-0 flex-1">
+                <h3 class="font-black text-white text-base truncate tracking-wide">${ex.name}</h3>
+                ${ex.note ? `<p class="text-xs text-amber-400/90 italic truncate mt-0.5">\${ex.note}</p>` : ''}
               </div>
             </div>
           `;
@@ -370,44 +357,29 @@
       actionBtn.className = "w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xl rounded-xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider";
     }
 
-    function openVideoModal(title, url) {
-      const modal = document.getElementById('video-modal');
-      const modalTitle = document.getElementById('modal-video-title');
-      const modalIframe = document.getElementById('modal-iframe');
-
-      modalTitle.textContent = title;
-      modalIframe.src = parseYouTubeEmbedUrl(url, true);
-      modal.classList.remove('hidden');
-    }
-
-    function closeVideoModal() {
-      const modal = document.getElementById('video-modal');
-      const modalIframe = document.getElementById('modal-iframe');
-      modalIframe.src = "";
-      modal.classList.add('hidden');
-    }
-
     function handleMainAction() {
       initAudio();
       const block = workoutBlocks[currentBlockIndex];
 
       if (state === "IDLE") {
-        if (block.isStretching) {
-          startStretchingUnifiedSequence();
-        } else if (block.isEmom) {
-          document.getElementById('emom-selector-box').classList.add('hidden');
-          startEmomTimer(60);
-        } else {
-          const timerEx = block.exercises.find(e => e.isTimer);
-          if (timerEx) {
-            startWorkTimer(timerEx.workTime);
+        startPreparationCountdown(() => {
+          if (block.isStretching) {
+            startStretchingUnifiedSequence();
+          } else if (block.isEmom) {
+            document.getElementById('emom-selector-box').classList.add('hidden');
+            startEmomTimer(60);
           } else {
-            state = "WORKING";
-            const actionBtn = document.getElementById('main-action-btn');
-            actionBtn.textContent = "FATTO (INIZIA RIPOSO)";
-            actionBtn.className = "w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xl rounded-xl transition shadow-lg uppercase tracking-wider";
+            const timerEx = block.exercises.find(e => e.isTimer);
+            if (timerEx) {
+              startWorkTimer(timerEx.workTime);
+            } else {
+              state = "WORKING";
+              const actionBtn = document.getElementById('main-action-btn');
+              actionBtn.textContent = "FATTO (INIZIA RIPOSO)";
+              actionBtn.className = "w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xl rounded-xl transition shadow-lg uppercase tracking-wider";
+            }
           }
-        }
+        });
       } 
       else if (state === "WORKING" && !block.isStretching && !block.isEmom) {
         if (block.restAfterSet > 0) {
@@ -418,8 +390,8 @@
       }
     }
 
-    function startStretchingUnifiedSequence() {
-      state = "WORKING";
+    function startPreparationCountdown(onComplete) {
+      state = "PREPARING";
       clearInterval(mainTimer);
       let prepTime = 5;
 
@@ -427,9 +399,9 @@
       const label = document.getElementById('timer-label');
       const btn = document.getElementById('main-action-btn');
 
-      label.textContent = "PREPARATI ALLO STRETCHING (5s)";
+      label.textContent = "PREPARATI (5s)";
       display.className = "text-6xl font-black font-mono text-amber-400 animate-pulse";
-      btn.textContent = "IN ESECUZIONE STRETCHING...";
+      btn.textContent = "PREPARAZIONE...";
       btn.className = "w-full py-3.5 bg-slate-800 text-slate-500 font-black text-xl rounded-xl cursor-not-allowed uppercase tracking-wider";
 
       const updatePrep = () => {
@@ -439,7 +411,7 @@
         if (prepTime <= 0) {
           clearInterval(mainTimer);
           playBeep(900, 0.25);
-          executeStretchStep(1);
+          onComplete();
         } else {
           prepTime--;
         }
@@ -447,6 +419,11 @@
 
       updatePrep();
       mainTimer = setInterval(updatePrep, 1000);
+    }
+
+    function startStretchingUnifiedSequence() {
+      state = "WORKING";
+      executeStretchStep(1);
     }
 
     function executeStretchStep(stepNum) {
@@ -625,9 +602,7 @@
       const block = workoutBlocks[currentBlockIndex];
 
       if (block.isStretching) {
-        document.getElementById('screen-workout').classList.add('hidden');
-        document.getElementById('footer-nav').classList.add('hidden');
-        document.getElementById('screen-summary').classList.remove('hidden');
+        showSummaryScreen();
       } else {
         if (currentSetIndex < block.totalSets) {
           currentSetIndex++;
@@ -638,12 +613,34 @@
             currentSetIndex = 1;
             loadBlock();
           } else {
-            document.getElementById('screen-workout').classList.add('hidden');
-            document.getElementById('footer-nav').classList.add('hidden');
-            document.getElementById('screen-summary').classList.remove('hidden');
+            showSummaryScreen();
           }
         }
       }
+    }
+
+    function showSummaryScreen() {
+      document.getElementById('screen-workout').classList.add('hidden');
+      document.getElementById('footer-nav').classList.add('hidden');
+      document.getElementById('screen-summary').classList.remove('hidden');
+
+      const inputsContainer = document.getElementById('log-exercises-inputs');
+      inputsContainer.innerHTML = "";
+
+      const uniqueExercises = [
+        "Salto della corda", "Squat rana", "Montagna",
+        "Jumping Jacks", "Affondi alternati indietro", "Piegamenti stretti", "Crunch gambe tese",
+        "Squat: Moby - Flower", "Mountain climber", "Rematore", "Criss Cross", "Piegamenti braccia - EMOM"
+      ];
+
+      uniqueExercises.forEach((exName, idx) => {
+        inputsContainer.innerHTML += `
+          <div class="flex justify-between items-center bg-slate-900 p-2 rounded-lg border border-slate-800">
+            <span class="text-xs font-bold text-slate-200 truncate pr-2">${exName}</span>
+            <input type="text" id="log-ex-${idx}" data-name="${exName}" placeholder="Reps/Carico" class="w-28 p-1 bg-slate-800 border border-slate-700 rounded text-xs text-amber-300 font-bold outline-none text-center focus:border-amber-400">
+          </div>
+        `;
+      });
     }
 
     function nextStep() {
@@ -669,19 +666,34 @@
     function finishWorkoutAndSend() {
       const notes = document.getElementById('workout-notes').value;
 
+      const exerciseLogs = {};
+      const inputs = document.querySelectorAll('[id^="log-ex-"]');
+      inputs.forEach(input => {
+        const exName = input.getAttribute('data-name');
+        const val = input.value.trim();
+        if (val) exerciseLogs[exName] = val;
+      });
+
       if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL.startsWith("http")) {
         fetch(GOOGLE_SHEET_URL, {
           method: 'POST', mode: 'no-cors',
-          body: JSON.stringify({ action: "FINISH", routine: "CHALLENGE_SUPERSERIE", notes: notes })
+          body: JSON.stringify({ 
+            action: "FINISH", 
+            routine: "CHALLENGE_SUPERSERIE", 
+            date: new Date().toISOString().split('T')[0],
+            exerciseLogs: exerciseLogs,
+            notes: notes 
+          })
         }).catch(err => console.log(err));
       }
 
       document.getElementById('ai-chat-box').classList.remove('hidden');
-      initAIChat(notes);
+      initAIChat(notes, exerciseLogs);
     }
 
-    async function initAIChat(notes) {
-      const prompt = `Ho appena completato la scheda Challenge in superserie. Note: ${notes || "Nessuna"}. Proponi aggiustamenti per la prossima volta.`;
+    async function initAIChat(notes, exerciseLogs) {
+      const logsString = Object.entries(exerciseLogs).map(([k, v]) => `${k}: ${v}`).join(", ");
+      const prompt = `Ho appena completato l'allenamento. Risultati registrati: ${logsString || "Nessun dato inserito"}. Note: ${notes || "Nessuna"}. Proponi analisi e consigli per la prossima volta.`;
       addChatMessage("IA", "Sto analizzando l'allenamento...");
       callGemini(prompt);
     }
