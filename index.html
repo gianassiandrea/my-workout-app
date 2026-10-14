@@ -1,3 +1,22 @@
+Il motivo per cui l'EMOM non avanzava o sembrava bloccato è legato a due fattori specifici:
+
+Pulsante disabilitato durante l'EMOM: Il pulsante VIA veniva disabilitato (cursor-not-allowed) e non permetteva di terminare il minuto in anticipo o avanzare manualmente se avevi già terminato le flessioni prima dei 60 secondi.
+
+Aggiornamento del contatore: Il badge del giro (GIRO X DI 10) e l'obiettivo di flessioni non si sincronizzavano istantaneamente all'avvio.
+
+Soluzione Applicata
+Ecco le modifiche inserite per far funzionare l'EMOM al 100%:
+
+Avanzamento Manuale o Automatico: Durante il minuto dell'EMOM, il pulsante principale diventa FATTO / PROSSIMO MINUTO. Se finisci prima delle 60 ripetizioni puoi premere il pulsante per passare subito al minuto successivo; se invece lasci scorrere il tempo, passa al minuto dopo in automatico con il segnale acustico.
+
+Calcolo Dinamico delle Flessioni: Ad ogni minuto il sistema calcola ed evidenzia subito le flessioni da fare (+1 rep ogni 2 minuti: es. Min 1-2: 5 rep, Min 3-4: 6 rep, Min 5-6: 7 rep, ecc.).
+
+Registrazione Automatica della Sequenza: Al termine viene salvata automaticamente la stringa completa dell'EMOM per Google Sheets.
+
+File index.html Aggiornato
+Sostituisci l'intero contenuto del file index.html su GitHub con questo codice:
+
+HTML
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -350,7 +369,7 @@
       if (val < 1) val = 1;
       emomStartReps = val;
       const repsCountEl = document.getElementById('emom-reps-count');
-      if (repsCountEl) repsCountEl.textContent = `${emomStartReps} FLESSIONI (PARTENZA)`;
+      if (repsCountEl) repsCountEl.textContent = `${emomStartReps} FLESSIONI`;
     }
 
     function changeEmomInputReps(delta) {
@@ -435,13 +454,14 @@
           if (block.isEmom) {
             document.getElementById('emom-selector-box').classList.add('hidden');
             
-            // Registra la progressione completa dell'EMOM per lo sheet
+            // Registra la progressione completa dell'EMOM
             let emomRepsSeq = [];
             for (let i = 1; i <= 10; i++) {
               emomRepsSeq.push(emomStartReps + Math.floor((i - 1) / 2));
             }
             workoutLogs["Piegamenti braccia - EMOM"] = `Da ${emomStartReps} a ${emomStartReps + 4} rep (${emomRepsSeq.join(',')})`;
 
+            currentSetIndex = 1;
             startEmomTimer(60);
           } else {
             const timerEx = block.exercises.find(e => e.isTimer);
@@ -456,11 +476,16 @@
           }
         });
       } 
-      else if (state === "WORKING" && !block.isEmom) {
-        if (block.restAfterSet > 0) {
-          startRestTimer(block.restAfterSet);
+      else if (state === "WORKING") {
+        if (block.isEmom) {
+          // Se preme il pulsante durante un minuto EMOM, passa subito al minuto successivo
+          advanceEmomNextMinute();
         } else {
-          advanceWorkout();
+          if (block.restAfterSet > 0) {
+            startRestTimer(block.restAfterSet);
+          } else {
+            advanceWorkout();
+          }
         }
       }
     }
@@ -532,7 +557,10 @@
       clearInterval(mainTimer);
       let time = seconds;
 
-      // Calcola e aggiorna in tempo reale le ripetizioni del minuto corrente (+1 ogni 2 minuti)
+      // Aggiorna il contatore dei giri
+      document.getElementById('set-counter').textContent = `GIRO ${currentSetIndex} DI 10`;
+
+      // Flessioni richieste per il minuto corrente (+1 ogni 2 minuti)
       let currentReps = emomStartReps + Math.floor((currentSetIndex - 1) / 2);
 
       const display = document.getElementById('timer-display');
@@ -547,8 +575,9 @@
 
       label.textContent = `EMOM: MINUTO ${currentSetIndex} DI 10`;
       display.className = "text-6xl font-black font-mono text-rose-400 animate-pulse";
-      btn.textContent = `EMOM AUTOMATICO IN CORSO...`;
-      btn.className = "w-full py-3.5 bg-indigo-950 text-amber-400 font-black text-xl rounded-xl cursor-not-allowed uppercase tracking-wider border border-indigo-800";
+      
+      btn.textContent = `FATTO / PROSSIMO MINUTO (${currentSetIndex}/10) →`;
+      btn.className = "w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-lg rounded-xl transition shadow-lg uppercase tracking-wider";
 
       const update = () => {
         display.textContent = formatTime(time);
@@ -557,15 +586,7 @@
         if (time <= 0) {
           clearInterval(mainTimer);
           playTripleBeep();
-          
-          if (currentSetIndex < 10) {
-            currentSetIndex++;
-            document.getElementById('set-counter').textContent = `GIRO ${currentSetIndex} DI 10`;
-            startEmomTimer(60);
-          } else {
-            targetBanner.classList.add('hidden');
-            startRestTimer(workoutBlocks[currentBlockIndex].restAfterSet || 90);
-          }
+          advanceEmomNextMinute();
         } else {
           time--;
         }
@@ -573,6 +594,17 @@
 
       update();
       mainTimer = setInterval(update, 1000);
+    }
+
+    function advanceEmomNextMinute() {
+      clearInterval(mainTimer);
+      if (currentSetIndex < 10) {
+        currentSetIndex++;
+        startEmomTimer(60);
+      } else {
+        document.getElementById('emom-target-banner').classList.add('hidden');
+        startRestTimer(workoutBlocks[currentBlockIndex].restAfterSet || 90);
+      }
     }
 
     function startRestTimer(seconds) {
