@@ -18,18 +18,13 @@
 
     <main class="flex-1 p-3 flex flex-col justify-between overflow-hidden relative">
 
-      <!-- SCHERMATA 1: HOME (CON SFONDO PERSONALIZZATO) -->
+      <!-- SCHERMATA 1: HOME (LAYOUT REVISIONATO) -->
       <div id="screen-home" class="flex-1 flex flex-col items-center justify-between py-4 space-y-4 text-center px-4 overflow-y-auto bg-cover bg-center relative rounded-xl" style="background-image: url('sfondo.png');">
         
-        <!-- Overlay Scuro per migliorare la leggibilità -->
+        <!-- Overlay Scuro per leggibilità sfondo -->
         <div class="absolute inset-0 bg-slate-950/60 rounded-xl"></div>
 
-        <!-- FRASE MOTIVAZIONALE DINAMICA -->
-        <div class="relative z-10 p-3 bg-indigo-950/85 border border-amber-500/40 rounded-2xl shadow-xl w-full backdrop-blur-sm">
-          <p id="motivational-quote" class="text-xs italic font-medium text-amber-300">"Ogni ripetizione ti avvicina al tuo obiettivo."</p>
-        </div>
-
-        <!-- SELEZIONE MOTIVAZIONE INIZIALE -->
+        <!-- 1. IN ALTO: SELEZIONE MOTIVAZIONE INIZIALE -->
         <div class="relative z-10 w-full p-3 bg-indigo-950/85 border border-indigo-800/80 rounded-2xl space-y-2 shadow-xl backdrop-blur-sm">
           <span class="text-xs font-black text-amber-300 uppercase tracking-widest block">MOTIVAZIONE</span>
           <div class="flex justify-center gap-6">
@@ -39,12 +34,16 @@
           </div>
         </div>
 
-        <!-- PULSANTE START -->
-        <button onclick="startWorkout()" class="relative z-10 w-44 h-44 rounded-full bg-gradient-to-tr from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-3xl tracking-widest shadow-2xl shadow-amber-500/40 active:scale-95 transition flex items-center justify-center text-center border-4 border-amber-300/80">
+        <!-- 2. AL CENTRO: PULSANTE START -->
+        <button onclick="startWorkout()" class="relative z-10 w-44 h-44 rounded-full bg-gradient-to-tr from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-3xl tracking-widest shadow-2xl shadow-amber-500/40 active:scale-95 transition flex items-center justify-center text-center border-4 border-amber-300/80 my-auto">
           START
         </button>
 
-        <p class="relative z-10 text-3xs text-amber-200/90 font-mono font-bold bg-slate-950/70 px-3 py-1 rounded-full border border-amber-500/30">EMOM personalizzabile & Prep 5s</p>
+        <!-- 3. IN BASSO: FRASE MOTIVAZIONALE DINAMICA -->
+        <div class="relative z-10 p-3 bg-indigo-950/85 border border-amber-500/40 rounded-2xl shadow-xl w-full backdrop-blur-sm">
+          <p id="motivational-quote" class="text-xs italic font-medium text-amber-300">"Ogni ripetizione ti avvicina al tuo obiettivo."</p>
+        </div>
+
       </div>
 
       <!-- SCHERMATA 2: EXECUTION WORKOUT -->
@@ -80,7 +79,7 @@
 
         <!-- 2. PULSANTE PRINCIPALE -->
         <div class="shrink-0">
-          <button id="main-action-btn" onclick="handleMainAction()" class="w-full py-3.5 bg-violet-600 hover:bg-violet-500 text-white font-black text-xl rounded-xl transition shadow-lg shadow-violet-600/30 uppercase tracking-wider border border-violet-400/30">
+          <button id="main-action-btn" onclick="handleMainAction()" class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xl rounded-xl transition shadow-lg uppercase tracking-wider border border-amber-300/40">
             VIA
           </button>
         </div>
