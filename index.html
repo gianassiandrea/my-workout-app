@@ -637,7 +637,7 @@
         const input = document.getElementById(`block-ex-input-${idx}`);
         if (input) {
           const val = input.value.trim();
-          if (val) workoutLogs[ex.name] = val;
+          workoutLogs[ex.name] = val ? val : "/";
         }
       });
 
