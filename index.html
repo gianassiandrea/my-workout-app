@@ -6,44 +6,54 @@
   <title>PUMP // LAB</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex justify-center overflow-hidden">
+<body class="bg-indigo-950 text-indigo-50 font-sans min-h-screen flex justify-center overflow-hidden">
 
-  <div class="w-full max-w-md bg-slate-900 border-x border-slate-800 flex flex-col h-screen relative pb-16">
+  <div class="w-full max-w-md bg-indigo-900/40 border-x border-indigo-800/60 flex flex-col h-screen relative pb-16 shadow-2xl backdrop-blur-md">
     
     <!-- Header App -->
-    <header class="p-3 border-b border-slate-800 flex justify-between items-center bg-slate-900/90 shrink-0">
-      <h1 class="text-lg font-extrabold tracking-wider text-emerald-400">PUMP // LAB</h1>
-      <span id="routine-tag" class="text-xs bg-slate-800 text-slate-400 px-2.5 py-0.5 rounded-full font-mono">SUPERSERIE</span>
+    <header class="p-3 border-b border-indigo-800/60 flex justify-between items-center bg-indigo-950/90 shrink-0">
+      <h1 class="text-lg font-extrabold tracking-wider text-violet-400">PUMP // LAB</h1>
+      <span id="routine-tag" class="text-xs bg-indigo-800/80 text-violet-200 px-2.5 py-0.5 rounded-full font-mono">SUPERSERIE</span>
     </header>
 
     <main class="flex-1 p-3 flex flex-col justify-between overflow-hidden">
 
       <!-- SCHERMATA 1: HOME -->
-      <div id="screen-home" class="flex-1 flex flex-col items-center justify-center py-6 space-y-6 text-center px-4">
+      <div id="screen-home" class="flex-1 flex flex-col items-center justify-between py-4 space-y-4 text-center px-4 overflow-y-auto">
         <!-- FRASE MOTIVAZIONALE DINAMICA -->
-        <div class="p-4 bg-slate-950/80 border border-emerald-500/30 rounded-2xl shadow-lg">
-          <p id="motivational-quote" class="text-sm italic font-medium text-emerald-300">"Ogni ripetizione ti avvicina al tuo obiettivo."</p>
+        <div class="p-3 bg-indigo-950/80 border border-violet-500/30 rounded-2xl shadow-lg w-full">
+          <p id="motivational-quote" class="text-xs italic font-medium text-violet-300">"Ogni ripetizione ti avvicina al tuo obiettivo."</p>
         </div>
 
-        <button onclick="startWorkout()" class="w-52 h-52 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-2xl tracking-widest shadow-2xl shadow-emerald-500/20 active:scale-95 transition flex items-center justify-center text-center p-4">
+        <!-- SELEZIONE MOTIVAZIONE INIZIALE -->
+        <div class="w-full p-3 bg-indigo-950/90 border border-indigo-800/80 rounded-2xl space-y-2 shadow-md">
+          <span class="text-xs font-black text-violet-300 uppercase tracking-widest block">MOTIVAZIONE</span>
+          <div class="flex justify-center gap-6">
+            <button type="button" onclick="selectMood('motivation', '🟢 Alta (Verde)')" id="mot-green" class="mood-btn text-3xl transition duration-200 transform hover:scale-110 active:scale-95" title="Sorridente">😊</button>
+            <button type="button" onclick="selectMood('motivation', '🟡 Media (Gialla)')" id="mot-yellow" class="mood-btn text-3xl transition duration-200 transform hover:scale-110 active:scale-95" title="Neutra">😐</button>
+            <button type="button" onclick="selectMood('motivation', '🔴 Bassa (Rossa)')" id="mot-red" class="mood-btn text-3xl transition duration-200 transform hover:scale-110 active:scale-95" title="Triste">☹️</button>
+          </div>
+        </div>
+
+        <button onclick="startWorkout()" class="w-44 h-44 rounded-full bg-gradient-to-tr from-violet-600 to-indigo-500 hover:from-violet-500 hover:to-indigo-400 text-white font-black text-xl tracking-widest shadow-xl shadow-violet-500/25 active:scale-95 transition flex items-center justify-center text-center p-3 border-2 border-violet-300/40">
           ALLENIAMOCI
         </button>
-        <p class="text-xs text-slate-400 font-mono">EMOM personalizzabile & Prep 5s</p>
+        <p class="text-3xs text-indigo-300/70 font-mono">EMOM personalizzabile & Prep 5s</p>
       </div>
 
       <!-- SCHERMATA 2: EXECUTION WORKOUT -->
       <div id="screen-workout" class="hidden flex-1 flex flex-col justify-between space-y-2 overflow-hidden">
         
         <!-- BADGE BLOCCO E GIRO -->
-        <div class="border-b border-slate-800 pb-2 flex justify-between items-center shrink-0">
-          <span id="block-number" class="text-xs font-mono font-black text-slate-300 uppercase tracking-wider">BLOCCO 1 DE 5</span>
-          <span id="set-counter" class="text-base font-black bg-emerald-400 text-slate-950 px-3 py-1 rounded-xl shadow-lg tracking-wide border border-emerald-300">GIRO 1 DI 3</span>
+        <div class="border-b border-indigo-800/60 pb-2 flex justify-between items-center shrink-0">
+          <span id="block-number" class="text-xs font-mono font-black text-indigo-200 uppercase tracking-wider">BLOCCO 1 DE 5</span>
+          <span id="set-counter" class="text-base font-black bg-violet-500 text-white px-3 py-1 rounded-xl shadow-lg tracking-wide border border-violet-300/50">GIRO 1 DI 3</span>
         </div>
 
         <!-- 1. TIMER DISPLAY -->
-        <div id="timer-box" class="py-3 px-4 bg-slate-950 rounded-2xl border-2 border-slate-800 text-center space-y-1 shrink-0 shadow-2xl">
-          <span id="timer-label" class="text-xs font-mono font-bold text-slate-400 uppercase tracking-widest">PRONTO</span>
-          <div id="timer-display" class="text-6xl font-black font-mono text-slate-100 tracking-tight">00:00</div>
+        <div id="timer-box" class="py-3 px-4 bg-indigo-950/90 rounded-2xl border-2 border-indigo-800 text-center space-y-1 shrink-0 shadow-2xl">
+          <span id="timer-label" class="text-xs font-mono font-bold text-indigo-300 uppercase tracking-widest">PRONTO</span>
+          <div id="timer-display" class="text-6xl font-black font-mono text-indigo-100 tracking-tight">00:00</div>
         </div>
 
         <!-- BOX TARGET EMOM GIGANTE -->
@@ -53,18 +63,18 @@
         </div>
 
         <!-- INPUT REPS INIZIALI EMOM PERSONALIZZABILE -->
-        <div id="emom-selector-box" class="hidden bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex flex-col items-center space-y-1.5 shrink-0">
+        <div id="emom-selector-box" class="hidden bg-indigo-950 p-2.5 rounded-xl border border-indigo-800 flex flex-col items-center space-y-1.5 shrink-0">
           <span class="text-4xs font-mono font-extrabold text-amber-300 uppercase tracking-wider">INSERISCI FLESSIONI DI PARTENZA:</span>
           <div class="flex items-center gap-3 w-full justify-center">
-            <button onclick="changeEmomInputReps(-1)" class="w-10 h-10 bg-slate-800 hover:bg-slate-700 text-amber-400 font-black text-xl rounded-xl border border-slate-700 flex items-center justify-center active:scale-95">-</button>
-            <input type="number" id="emom-input-reps" value="5" min="1" max="100" oninput="updateEmomStartRepsFromInput()" class="w-20 py-1.5 bg-slate-900 border-2 border-amber-400 text-amber-300 font-black text-xl rounded-xl text-center outline-none focus:border-emerald-400">
-            <button onclick="changeEmomInputReps(1)" class="w-10 h-10 bg-slate-800 hover:bg-slate-700 text-amber-400 font-black text-xl rounded-xl border border-slate-700 flex items-center justify-center active:scale-95">+</button>
+            <button onclick="changeEmomInputReps(-1)" class="w-10 h-10 bg-indigo-800 hover:bg-indigo-700 text-amber-400 font-black text-xl rounded-xl border border-indigo-700 flex items-center justify-center active:scale-95">-</button>
+            <input type="number" id="emom-input-reps" value="5" min="1" max="100" oninput="updateEmomStartRepsFromInput()" class="w-20 py-1.5 bg-indigo-900 border-2 border-amber-400 text-amber-300 font-black text-xl rounded-xl text-center outline-none focus:border-violet-400">
+            <button onclick="changeEmomInputReps(1)" class="w-10 h-10 bg-indigo-800 hover:bg-indigo-700 text-amber-400 font-black text-xl rounded-xl border border-indigo-700 flex items-center justify-center active:scale-95">+</button>
           </div>
         </div>
 
         <!-- 2. PULSANTE PRINCIPALE -->
         <div class="shrink-0">
-          <button id="main-action-btn" onclick="handleMainAction()" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xl rounded-xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider">
+          <button id="main-action-btn" onclick="handleMainAction()" class="w-full py-3.5 bg-violet-600 hover:bg-violet-500 text-white font-black text-xl rounded-xl transition shadow-lg shadow-violet-600/30 uppercase tracking-wider border border-violet-400/30">
             VIA
           </button>
         </div>
@@ -76,47 +86,64 @@
 
       <!-- SCHERMATA INTERMEDIA: REGISTRAZIONE FINE BLOCCO -->
       <div id="screen-block-log" class="hidden flex-1 flex flex-col justify-between py-4 space-y-4 overflow-y-auto">
-        <div class="text-center space-y-1 border-b border-slate-800 pb-3">
+        <div class="text-center space-y-1 border-b border-indigo-800/60 pb-3">
           <span class="text-xs font-mono text-amber-400 font-bold uppercase tracking-wider">BLOCCO COMPLETATO 🎉</span>
           <h2 id="block-log-title" class="font-black text-xl text-white">BLOCCO 1</h2>
-          <p class="text-xs text-slate-400">Inserisci ripetizioni e carichi usati per questo blocco:</p>
+          <p class="text-xs text-indigo-300/80">Inserisci ripetizioni e carichi usati per questo blocco:</p>
         </div>
 
         <div id="block-exercises-inputs" class="space-y-3 flex-1 overflow-y-auto py-2"></div>
 
-        <button onclick="saveBlockLogAndContinue()" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-base rounded-xl shadow-lg uppercase tracking-wider">
+        <button onclick="saveBlockLogAndContinue()" class="w-full py-3.5 bg-violet-600 hover:bg-violet-500 text-white font-black text-base rounded-xl shadow-lg uppercase tracking-wider border border-violet-400/30">
           CONFERMA E PROSEGUI →
         </button>
       </div>
 
       <!-- SCHERMATA 3: FINE WORKOUT & REGISTRAZIONE DATI -->
-      <div id="screen-summary" class="hidden space-y-4 py-4 overflow-y-auto">
-        <h2 class="font-black text-xl text-emerald-400 text-center">SESSIONE COMPLETATA! 🎉</h2>
+      <div id="screen-summary" class="hidden space-y-4 py-3 overflow-y-auto">
+        <h2 class="font-black text-xl text-violet-300 text-center">SESSIONE COMPLETATA! 🎉</h2>
+
+        <!-- ORARIO E VALUTAZIONE -->
+        <div class="p-3 bg-indigo-950/90 border border-indigo-800/80 rounded-xl space-y-2">
+          <div class="flex justify-between text-xs text-indigo-300 font-mono">
+            <span>Inizio: <strong id="time-start-display" class="text-white">--:--</strong></span>
+            <span>Fine: <strong id="time-end-display" class="text-white">--:--</strong></span>
+          </div>
+
+          <div class="border-t border-indigo-800/60 pt-2 text-center space-y-1.5">
+            <span class="text-xs font-black text-violet-300 uppercase tracking-widest block">VALUTAZIONE</span>
+            <div class="flex justify-center gap-6">
+              <button type="button" onclick="selectMood('evaluation', '🟢 Ottima (Verde)')" id="eval-green" class="mood-btn text-3xl transition duration-200 transform hover:scale-110 active:scale-95" title="Sorridente">😊</button>
+              <button type="button" onclick="selectMood('evaluation', '🟡 Media (Gialla)')" id="eval-yellow" class="mood-btn text-3xl transition duration-200 transform hover:scale-110 active:scale-95" title="Neutra">😐</button>
+              <button type="button" onclick="selectMood('evaluation', '🔴 Difficile (Rossa)')" id="eval-red" class="mood-btn text-3xl transition duration-200 transform hover:scale-110 active:scale-95" title="Triste">☹️</button>
+            </div>
+          </div>
+        </div>
         
-        <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
+        <div class="p-3 bg-indigo-950/90 border border-indigo-800/80 rounded-xl space-y-2">
           <h3 class="text-xs font-black text-amber-300 uppercase tracking-wider">Riepilogo Dati Registrati:</h3>
-          <div id="summary-logged-data" class="space-y-1 text-xs text-slate-300"></div>
+          <div id="summary-logged-data" class="space-y-1 text-xs text-indigo-200"></div>
         </div>
 
-        <div class="p-3 bg-slate-800/40 border border-slate-800 rounded-xl space-y-1">
-          <label class="text-xs font-bold text-slate-300 uppercase">Note Finali Allenamento:</label>
-          <textarea id="workout-notes" placeholder="Sensazioni, fatica..." class="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white outline-none h-16 focus:border-emerald-500"></textarea>
+        <div class="p-3 bg-indigo-900/60 border border-indigo-800/80 rounded-xl space-y-1">
+          <label class="text-xs font-bold text-indigo-200 uppercase">Note Finali Allenamento:</label>
+          <textarea id="workout-notes" placeholder="Sensazioni, fatica..." class="w-full p-2 bg-indigo-950 border border-indigo-700/80 rounded-lg text-xs text-white outline-none h-14 focus:border-violet-500"></textarea>
         </div>
 
-        <button onclick="finishWorkoutAndSend()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm rounded-xl shadow-lg">
+        <button onclick="finishWorkoutAndSend()" class="w-full py-3 bg-violet-600 hover:bg-violet-500 text-white font-black text-sm rounded-xl shadow-lg border border-violet-400/30 uppercase tracking-wider">
           💾 SALVA SU GOOGLE SHEETS & DRIVE
         </button>
 
         <div id="ai-chat-box" class="hidden space-y-2 pt-1">
-          <div class="p-3 bg-slate-900 border border-emerald-500/30 rounded-xl space-y-2">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-1">
-              <span class="font-bold text-xs text-emerald-400">🤖 GEMINI COACH IA</span>
-              <span id="chat-status" class="text-4xs text-slate-400">In ascolto...</span>
+          <div class="p-3 bg-indigo-950 border border-violet-500/30 rounded-xl space-y-2">
+            <div class="flex justify-between items-center border-b border-indigo-800 pb-1">
+              <span class="font-bold text-xs text-violet-400">🤖 GEMINI COACH IA</span>
+              <span id="chat-status" class="text-4xs text-indigo-400">In ascolto...</span>
             </div>
-            <div id="chat-messages" class="space-y-1.5 max-h-48 overflow-y-auto text-xs text-slate-200"></div>
+            <div id="chat-messages" class="space-y-1.5 max-h-48 overflow-y-auto text-xs text-indigo-100"></div>
             <div class="flex gap-2 pt-1">
-              <input type="text" id="chat-input" placeholder="Chiedi al coach..." class="flex-1 bg-slate-800 p-2 rounded-lg border border-slate-700 text-xs text-white outline-none focus:border-emerald-500">
-              <button onclick="sendChatMessage()" class="px-3 bg-emerald-500 text-slate-950 font-bold rounded-lg text-xs">Invia</button>
+              <input type="text" id="chat-input" placeholder="Chiedi al coach..." class="flex-1 bg-indigo-900 p-2 rounded-lg border border-indigo-700 text-xs text-white outline-none focus:border-violet-500">
+              <button onclick="sendChatMessage()" class="px-3 bg-violet-600 text-white font-bold rounded-lg text-xs">Invia</button>
             </div>
           </div>
         </div>
@@ -125,11 +152,11 @@
     </main>
 
     <!-- FRECCE DI NAVIGAZIONE IN CALCE -->
-    <footer id="footer-nav" class="hidden fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-slate-900/95 border-t border-slate-800 p-2.5 flex justify-between items-center backdrop-blur z-30">
-      <button onclick="prevStep()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-lg flex items-center gap-1">
+    <footer id="footer-nav" class="hidden fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-indigo-950/95 border-t border-indigo-800/60 p-2.5 flex justify-between items-center backdrop-blur z-30">
+      <button onclick="prevStep()" class="px-3 py-1.5 bg-indigo-800 hover:bg-indigo-700 text-indigo-100 font-bold text-xs rounded-lg flex items-center gap-1">
         ← Precedente
       </button>
-      <button onclick="nextStep()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-lg flex items-center gap-1">
+      <button onclick="nextStep()" class="px-3 py-1.5 bg-indigo-800 hover:bg-indigo-700 text-indigo-100 font-bold text-xs rounded-lg flex items-center gap-1">
         Successivo →
       </button>
     </footer>
@@ -149,6 +176,35 @@
       "\"La mente cede sempre prima del corpo. Spingi oltre!\"",
       "\"Non diventa più facile, sei tu che diventi più forte.\""
     ];
+
+    let startTimeString = "";
+    let endTimeString = "";
+    let selectedMotivation = "🟢 Alta (Verde)";
+    let selectedEvaluation = "🟢 Ottima (Verde)";
+
+    function selectMood(type, val) {
+      if (type === 'motivation') {
+        selectedMotivation = val;
+        updateMoodButtons('mot', val);
+      } else if (type === 'evaluation') {
+        selectedEvaluation = val;
+        updateMoodButtons('eval', val);
+      }
+    }
+
+    function updateMoodButtons(prefix, val) {
+      const greenBtn = document.getElementById(`${prefix}-green`);
+      const yellowBtn = document.getElementById(`${prefix}-yellow`);
+      const redBtn = document.getElementById(`${prefix}-red`);
+
+      [greenBtn, yellowBtn, redBtn].forEach(b => {
+        if (b) b.style.opacity = "0.3";
+      });
+
+      if (val.includes('Verde') && greenBtn) greenBtn.style.opacity = "1";
+      if (val.includes('Gialla') && yellowBtn) yellowBtn.style.opacity = "1";
+      if (val.includes('Rossa') && redBtn) redBtn.style.opacity = "1";
+    }
 
     function parseYouTubeEmbedUrl(url, autoplay = false) {
       if (!url || url.trim() === "") return "";
@@ -239,6 +295,8 @@
     window.onload = function() {
       const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
       document.getElementById('motivational-quote').textContent = randomQuote;
+      updateMoodButtons('mot', selectedMotivation);
+      updateMoodButtons('eval', selectedEvaluation);
     };
 
     function initAudio() {
@@ -268,9 +326,16 @@
       setTimeout(() => playBeep(1200, 0.3), 400);
     }
 
+    function getCurrentFormattedTime() {
+      const now = new Date();
+      return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+
     function startWorkout() {
       initAudio();
       workoutLogs = {};
+      startTimeString = getCurrentFormattedTime();
+
       document.getElementById('screen-home').classList.add('hidden');
       document.getElementById('screen-workout').classList.remove('hidden');
       document.getElementById('footer-nav').classList.remove('hidden');
@@ -325,17 +390,17 @@
         if (block.isMobyBlock) {
           const mainEmbed = parseYouTubeEmbedUrl(ex.videoUrl, true);
           html = `
-            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2 shadow-sm">
+            <div class="p-3 bg-indigo-950/90 rounded-xl border border-indigo-800/80 space-y-2 shadow-sm">
               <h3 class="font-black text-white text-base tracking-wide">${ex.name}</h3>
               ${ex.note ? `<p class="text-xs text-amber-400/90 italic font-semibold">\${ex.note}</p>` : ''}
-              <div class="aspect-video w-full bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-md">
+              <div class="aspect-video w-full bg-indigo-900 rounded-xl overflow-hidden border border-indigo-800 shadow-md">
                 <iframe class="w-full h-full" src="${mainEmbed}" title="${ex.name}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
               </div>
             </div>
           `;
         } else {
           html = `
-            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between gap-2 shadow-sm">
+            <div class="p-3 bg-indigo-950/90 rounded-xl border border-indigo-800/80 flex items-center justify-between gap-2 shadow-sm">
               <div class="min-w-0 flex-1">
                 <h3 class="font-black text-white text-base truncate tracking-wide">${ex.name}</h3>
                 ${ex.note ? `<p class="text-xs text-amber-400/90 italic truncate mt-0.5">\${ex.note}</p>` : ''}
@@ -351,14 +416,14 @@
       const timerLabel = document.getElementById('timer-label');
       const actionBtn = document.getElementById('main-action-btn');
 
-      timerDisplay.className = "text-6xl font-black font-mono text-slate-100 tracking-tight";
+      timerDisplay.className = "text-6xl font-black font-mono text-indigo-100 tracking-tight";
       timerLabel.textContent = "PRONTO";
       
       const firstTimerEx = block.exercises.find(e => e.isTimer);
       timerDisplay.textContent = firstTimerEx ? formatTime(firstTimerEx.workTime) : "00:00";
 
       actionBtn.textContent = "VIA";
-      actionBtn.className = "w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xl rounded-xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider";
+      actionBtn.className = "w-full py-3.5 bg-violet-600 hover:bg-violet-500 text-white font-black text-xl rounded-xl transition shadow-lg shadow-violet-600/30 uppercase tracking-wider border border-violet-400/30";
     }
 
     function handleMainAction() {
@@ -369,7 +434,6 @@
         startPreparationCountdown(() => {
           if (block.isEmom) {
             document.getElementById('emom-selector-box').classList.add('hidden');
-            // Salva solo il numero iniziale di partenza per l'EMOM
             workoutLogs["Piegamenti braccia - EMOM"] = emomStartReps;
             startEmomTimer(60);
           } else {
@@ -406,7 +470,7 @@
       label.textContent = "PREPARATI (5s)";
       display.className = "text-6xl font-black font-mono text-amber-400 animate-pulse";
       btn.textContent = "PREPARAZIONE...";
-      btn.className = "w-full py-3.5 bg-slate-800 text-slate-500 font-black text-xl rounded-xl cursor-not-allowed uppercase tracking-wider";
+      btn.className = "w-full py-3.5 bg-indigo-950 text-indigo-400 font-black text-xl rounded-xl cursor-not-allowed uppercase tracking-wider border border-indigo-800";
 
       const updatePrep = () => {
         display.textContent = formatTime(prepTime);
@@ -435,7 +499,7 @@
       const btn = document.getElementById('main-action-btn');
 
       label.textContent = "TEMPO ESERCIZIO IN CORSO";
-      display.className = "text-6xl font-black font-mono text-red-500 animate-pulse";
+      display.className = "text-6xl font-black font-mono text-rose-400 animate-pulse";
       btn.textContent = "FATTO (COMPLETA GIRO)";
       btn.className = "w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xl rounded-xl transition shadow-lg uppercase tracking-wider";
 
@@ -461,7 +525,6 @@
       clearInterval(mainTimer);
       let time = seconds;
 
-      // Incrementa di +1 ogni 2 giri sullo schermo dell'app durante l'esecuzione
       let currentReps = emomStartReps + Math.floor((currentSetIndex - 1) / 2);
 
       const display = document.getElementById('timer-display');
@@ -475,9 +538,9 @@
       repsCountEl.textContent = `${currentReps} FLESSIONI`;
 
       label.textContent = `EMOM: MINUTO ${currentSetIndex} DI 10`;
-      display.className = "text-6xl font-black font-mono text-red-500 animate-pulse";
+      display.className = "text-6xl font-black font-mono text-rose-400 animate-pulse";
       btn.textContent = `EMOM AUTOMATICO IN CORSO...`;
-      btn.className = "w-full py-3.5 bg-slate-800 text-amber-400 font-black text-xl rounded-xl cursor-not-allowed uppercase tracking-wider";
+      btn.className = "w-full py-3.5 bg-indigo-950 text-amber-400 font-black text-xl rounded-xl cursor-not-allowed uppercase tracking-wider border border-indigo-800";
 
       const update = () => {
         display.textContent = formatTime(time);
@@ -514,9 +577,9 @@
       const btn = document.getElementById('main-action-btn');
 
       label.textContent = "RECUPERO SUPERSERIE / DEFATICAMENTO";
-      display.className = "text-6xl font-black font-mono text-emerald-400";
+      display.className = "text-6xl font-black font-mono text-violet-300";
       btn.textContent = "RIPOSO IN CORSO...";
-      btn.className = "w-full py-3.5 bg-slate-800 text-slate-500 font-black text-xl rounded-xl cursor-not-allowed uppercase tracking-wider";
+      btn.className = "w-full py-3.5 bg-indigo-950 text-indigo-400 font-black text-xl rounded-xl cursor-not-allowed uppercase tracking-wider border border-indigo-800";
 
       const update = () => {
         display.textContent = formatTime(time);
@@ -560,9 +623,9 @@
       block.exercises.forEach((ex, idx) => {
         const existingVal = workoutLogs[ex.name] || "";
         container.innerHTML += `
-          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1.5 shadow-sm">
-            <span class="text-xs font-black text-emerald-400 block">${ex.name}</span>
-            <input type="text" id="block-ex-input-${idx}" data-name="${ex.name}" value="${existingVal}" placeholder="Es: 12 reps / 20kg" class="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-amber-300 font-bold outline-none focus:border-amber-400">
+          <div class="p-3 bg-indigo-950/90 rounded-xl border border-indigo-800/80 space-y-1.5 shadow-sm">
+            <span class="text-xs font-black text-violet-300 block">${ex.name}</span>
+            <input type="text" id="block-ex-input-${idx}" data-name="${ex.name}" value="${existingVal}" placeholder="Es: 12 reps / 20kg" class="w-full p-2 bg-indigo-900 border border-indigo-700 rounded-lg text-xs text-amber-300 font-bold outline-none focus:border-amber-400">
           </div>
         `;
       });
@@ -592,6 +655,11 @@
     }
 
     function showSummaryScreen() {
+      endTimeString = getCurrentFormattedTime();
+
+      document.getElementById('time-start-display').textContent = startTimeString;
+      document.getElementById('time-end-display').textContent = endTimeString;
+
       document.getElementById('screen-workout').classList.add('hidden');
       document.getElementById('screen-block-log').classList.add('hidden');
       document.getElementById('footer-nav').classList.add('hidden');
@@ -602,12 +670,12 @@
 
       const entries = Object.entries(workoutLogs);
       if (entries.length === 0) {
-        loggedContainer.innerHTML = `<p class="italic text-slate-500">Nessun dato registrato nei blocchi.</p>`;
+        loggedContainer.innerHTML = `<p class="italic text-indigo-400">Nessun dato registrato nei blocchi.</p>`;
       } else {
         entries.forEach(([name, val]) => {
           loggedContainer.innerHTML += `
-            <div class="flex justify-between border-b border-slate-800/80 py-1">
-              <span class="font-medium text-slate-300">${name}:</span>
+            <div class="flex justify-between border-b border-indigo-800/60 py-1">
+              <span class="font-medium text-indigo-200">${name}:</span>
               <span class="font-bold text-amber-300">${val}</span>
             </div>
           `;
@@ -645,6 +713,10 @@
             action: "FINISH", 
             routine: "CHALLENGE_SUPERSERIE", 
             date: new Date().toISOString().split('T')[0],
+            startTime: startTimeString,
+            endTime: endTimeString,
+            motivation: selectedMotivation,
+            evaluation: selectedEvaluation,
             exerciseLogs: workoutLogs,
             notes: notes 
           })
@@ -657,7 +729,7 @@
 
     async function initAIChat(notes, exerciseLogs) {
       const logsString = Object.entries(exerciseLogs).map(([k, v]) => `${k}: ${v}`).join(", ");
-      const prompt = `Ho appena completato l'allenamento. Risultati registrati nei blocchi: ${logsString || "Nessun dato inserito"}. Note: ${notes || "Nessuna"}. Proponi analisi e consigli per la prossima volta.`;
+      const prompt = `Ho appena completato l'allenamento dalle ${startTimeString} alle ${endTimeString}. Motivazione iniziale: ${selectedMotivation}, Valutazione finale: ${selectedEvaluation}. Risultati registrati: ${logsString || "Nessun dato"}. Note: ${notes || "Nessuna"}. Proponi analisi e consigli per la prossima volta.`;
       addChatMessage("IA", "Sto analizzando l'allenamento...");
       callGemini(prompt);
     }
@@ -702,7 +774,7 @@
       const box = document.getElementById('chat-messages');
       const isUser = sender === "TU";
       box.innerHTML += `
-        <div class="p-2 rounded-xl text-xs ${isUser ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 self-end ml-4' : 'bg-slate-800 text-slate-200 mr-4'}">
+        <div class="p-2 rounded-xl text-xs ${isUser ? 'bg-violet-600/20 border border-violet-500/30 text-violet-200 self-end ml-4' : 'bg-indigo-900 text-indigo-100 mr-4'}">
           <strong>${sender}:</strong> <span class="whitespace-pre-line">${text}</span>
         </div>
       `;
