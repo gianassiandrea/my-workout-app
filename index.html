@@ -1,10 +1,9 @@
-HTML
 <!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PUMP // LAB</title>
+  <title>BUNKER APP</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-indigo-950 text-indigo-50 font-sans min-h-screen flex justify-center overflow-hidden">
@@ -12,23 +11,27 @@ HTML
   <div class="w-full max-w-md bg-indigo-900/40 border-x border-indigo-800/60 flex flex-col h-screen relative pb-16 shadow-2xl backdrop-blur-md">
     
     <!-- Header App -->
-    <header class="p-3 border-b border-indigo-800/60 flex justify-between items-center bg-indigo-950/90 shrink-0">
-      <h1 class="text-lg font-extrabold tracking-wider text-violet-400">PUMP // LAB</h1>
+    <header class="p-3 border-b border-indigo-800/60 flex justify-between items-center bg-indigo-950/90 shrink-0 z-10">
+      <h1 class="text-lg font-extrabold tracking-wider text-amber-400">BUNKER APP</h1>
       <span id="routine-tag" class="text-xs bg-indigo-800/80 text-violet-200 px-2.5 py-0.5 rounded-full font-mono">SUPERSERIE</span>
     </header>
 
-    <main class="flex-1 p-3 flex flex-col justify-between overflow-hidden">
+    <main class="flex-1 p-3 flex flex-col justify-between overflow-hidden relative">
 
-      <!-- SCHERMATA 1: HOME -->
-      <div id="screen-home" class="flex-1 flex flex-col items-center justify-between py-4 space-y-4 text-center px-4 overflow-y-auto">
+      <!-- SCHERMATA 1: HOME (CON SFONDO PERSONALIZZATO) -->
+      <div id="screen-home" class="flex-1 flex flex-col items-center justify-between py-4 space-y-4 text-center px-4 overflow-y-auto bg-cover bg-center relative rounded-xl" style="background-image: url('sfondo.png');">
+        
+        <!-- Overlay Scuro per migliorare la leggibilità -->
+        <div class="absolute inset-0 bg-slate-950/60 rounded-xl"></div>
+
         <!-- FRASE MOTIVAZIONALE DINAMICA -->
-        <div class="p-3 bg-indigo-950/80 border border-violet-500/30 rounded-2xl shadow-lg w-full">
-          <p id="motivational-quote" class="text-xs italic font-medium text-violet-300">"Ogni ripetizione ti avvicina al tuo obiettivo."</p>
+        <div class="relative z-10 p-3 bg-indigo-950/85 border border-amber-500/40 rounded-2xl shadow-xl w-full backdrop-blur-sm">
+          <p id="motivational-quote" class="text-xs italic font-medium text-amber-300">"Ogni ripetizione ti avvicina al tuo obiettivo."</p>
         </div>
 
         <!-- SELEZIONE MOTIVAZIONE INIZIALE -->
-        <div class="w-full p-3 bg-indigo-950/90 border border-indigo-800/80 rounded-2xl space-y-2 shadow-md">
-          <span class="text-xs font-black text-violet-300 uppercase tracking-widest block">MOTIVAZIONE</span>
+        <div class="relative z-10 w-full p-3 bg-indigo-950/85 border border-indigo-800/80 rounded-2xl space-y-2 shadow-xl backdrop-blur-sm">
+          <span class="text-xs font-black text-amber-300 uppercase tracking-widest block">MOTIVAZIONE</span>
           <div class="flex justify-center gap-6">
             <button type="button" onclick="selectMood('motivation', '🟢 Alta (Verde)')" id="mot-green" class="mood-btn text-3xl transition duration-200 transform hover:scale-110 active:scale-95" title="Sorridente">😊</button>
             <button type="button" onclick="selectMood('motivation', '🟡 Media (Gialla)')" id="mot-yellow" class="mood-btn text-3xl transition duration-200 transform hover:scale-110 active:scale-95" title="Neutra">😐</button>
@@ -36,10 +39,12 @@ HTML
           </div>
         </div>
 
-        <button onclick="startWorkout()" class="w-44 h-44 rounded-full bg-gradient-to-tr from-violet-600 to-indigo-500 hover:from-violet-500 hover:to-indigo-400 text-white font-black text-xl tracking-widest shadow-xl shadow-violet-500/25 active:scale-95 transition flex items-center justify-center text-center p-3 border-2 border-violet-300/40">
-          ALLENIAMOCI
+        <!-- PULSANTE START -->
+        <button onclick="startWorkout()" class="relative z-10 w-44 h-44 rounded-full bg-gradient-to-tr from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-3xl tracking-widest shadow-2xl shadow-amber-500/40 active:scale-95 transition flex items-center justify-center text-center border-4 border-amber-300/80">
+          START
         </button>
-        <p class="text-3xs text-indigo-300/70 font-mono">EMOM personalizzabile & Prep 5s</p>
+
+        <p class="relative z-10 text-3xs text-amber-200/90 font-mono font-bold bg-slate-950/70 px-3 py-1 rounded-full border border-amber-500/30">EMOM personalizzabile & Prep 5s</p>
       </div>
 
       <!-- SCHERMATA 2: EXECUTION WORKOUT -->
@@ -102,7 +107,7 @@ HTML
 
       <!-- SCHERMATA 3: FINE WORKOUT & REGISTRAZIONE DATI -->
       <div id="screen-summary" class="hidden space-y-4 py-3 overflow-y-auto">
-        <h2 class="font-black text-xl text-violet-300 text-center">SESSIONE COMPLETATA! 🎉</h2>
+        <h2 class="font-black text-xl text-amber-400 text-center">SESSIONE COMPLETATA! 🎉</h2>
 
         <!-- ORARIO E VALUTAZIONE -->
         <div class="p-3 bg-indigo-950/90 border border-indigo-800/80 rounded-xl space-y-2">
@@ -424,7 +429,7 @@ HTML
       timerDisplay.textContent = firstTimerEx ? formatTime(firstTimerEx.workTime) : "00:00";
 
       actionBtn.textContent = "VIA";
-      actionBtn.className = "w-full py-3.5 bg-violet-600 hover:bg-violet-500 text-white font-black text-xl rounded-xl transition shadow-lg shadow-violet-600/30 uppercase tracking-wider border border-violet-400/30";
+      actionBtn.className = "w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xl rounded-xl transition shadow-lg uppercase tracking-wider border border-amber-300/40";
     }
 
     function handleMainAction() {
@@ -436,7 +441,6 @@ HTML
           if (block.isEmom) {
             document.getElementById('emom-selector-box').classList.add('hidden');
             
-            // Registra la progressione completa dell'EMOM
             let emomRepsSeq = [];
             for (let i = 1; i <= 10; i++) {
               emomRepsSeq.push(emomStartReps + Math.floor((i - 1) / 2));
@@ -460,7 +464,6 @@ HTML
       } 
       else if (state === "WORKING") {
         if (block.isEmom) {
-          // Se preme il pulsante durante un minuto EMOM, passa subito al minuto successivo
           advanceEmomNextMinute();
         } else {
           if (block.restAfterSet > 0) {
@@ -539,10 +542,8 @@ HTML
       clearInterval(mainTimer);
       let time = seconds;
 
-      // Aggiorna il contatore dei giri
       document.getElementById('set-counter').textContent = `GIRO ${currentSetIndex} DI 10`;
 
-      // Flessioni richieste per il minuto corrente (+1 ogni 2 minuti)
       let currentReps = emomStartReps + Math.floor((currentSetIndex - 1) / 2);
 
       const display = document.getElementById('timer-display');
