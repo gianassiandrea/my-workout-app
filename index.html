@@ -1,21 +1,3 @@
-Il motivo per cui l'EMOM non avanzava o sembrava bloccato è legato a due fattori specifici:
-
-Pulsante disabilitato durante l'EMOM: Il pulsante VIA veniva disabilitato (cursor-not-allowed) e non permetteva di terminare il minuto in anticipo o avanzare manualmente se avevi già terminato le flessioni prima dei 60 secondi.
-
-Aggiornamento del contatore: Il badge del giro (GIRO X DI 10) e l'obiettivo di flessioni non si sincronizzavano istantaneamente all'avvio.
-
-Soluzione Applicata
-Ecco le modifiche inserite per far funzionare l'EMOM al 100%:
-
-Avanzamento Manuale o Automatico: Durante il minuto dell'EMOM, il pulsante principale diventa FATTO / PROSSIMO MINUTO. Se finisci prima delle 60 ripetizioni puoi premere il pulsante per passare subito al minuto successivo; se invece lasci scorrere il tempo, passa al minuto dopo in automatico con il segnale acustico.
-
-Calcolo Dinamico delle Flessioni: Ad ogni minuto il sistema calcola ed evidenzia subito le flessioni da fare (+1 rep ogni 2 minuti: es. Min 1-2: 5 rep, Min 3-4: 6 rep, Min 5-6: 7 rep, ecc.).
-
-Registrazione Automatica della Sequenza: Al termine viene salvata automaticamente la stringa completa dell'EMOM per Google Sheets.
-
-File index.html Aggiornato
-Sostituisci l'intero contenuto del file index.html su GitHub con questo codice:
-
 HTML
 <!DOCTYPE html>
 <html lang="it">
