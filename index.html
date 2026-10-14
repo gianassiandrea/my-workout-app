@@ -36,7 +36,7 @@
         
         <!-- BADGE BLOCCO E GIRO -->
         <div class="border-b border-slate-800 pb-2 flex justify-between items-center shrink-0">
-          <span id="block-number" class="text-xs font-mono font-black text-slate-300 uppercase tracking-wider">BLOCCO 1 DE 6</span>
+          <span id="block-number" class="text-xs font-mono font-black text-slate-300 uppercase tracking-wider">BLOCCO 1 DE 5</span>
           <span id="set-counter" class="text-base font-black bg-emerald-400 text-slate-950 px-3 py-1 rounded-xl shadow-lg tracking-wide border border-emerald-300">GIRO 1 DI 3</span>
         </div>
 
@@ -77,7 +77,7 @@
       <!-- SCHERMATA INTERMEDIA: REGISTRAZIONE FINE BLOCCO -->
       <div id="screen-block-log" class="hidden flex-1 flex flex-col justify-between py-4 space-y-4 overflow-y-auto">
         <div class="text-center space-y-1 border-b border-slate-800 pb-3">
-          <span class="text-xs font-mono text-amber-400 font-bold uppercase tracking-wider">SUPERSERIE COMPLETATA 🎉</span>
+          <span class="text-xs font-mono text-amber-400 font-bold uppercase tracking-wider">BLOCCO COMPLETATO 🎉</span>
           <h2 id="block-log-title" class="font-black text-xl text-white">BLOCCO 1</h2>
           <p class="text-xs text-slate-400">Inserisci ripetizioni e carichi usati per questo blocco:</p>
         </div>
@@ -225,15 +225,6 @@
         exercises: [
           { name: "Piegamenti braccia - EMOM", isTimer: true, workTime: 60, note: "+1 rep ogni 2 giri per 10 minuti." }
         ]
-      },
-      {
-        id: 6,
-        title: "BLOCCO 6: STRETCHING COMPLETO",
-        totalSets: 1,
-        isStretching: true,
-        exercises: [
-          { name: "Stretching: Cane Basso + Cane Alto", isTimer: true }
-        ]
       }
     ];
 
@@ -363,12 +354,8 @@
       timerDisplay.className = "text-6xl font-black font-mono text-slate-100 tracking-tight";
       timerLabel.textContent = "PRONTO";
       
-      if (block.isStretching) {
-        timerDisplay.textContent = "00:05";
-      } else {
-        const firstTimerEx = block.exercises.find(e => e.isTimer);
-        timerDisplay.textContent = firstTimerEx ? formatTime(firstTimerEx.workTime) : "00:00";
-      }
+      const firstTimerEx = block.exercises.find(e => e.isTimer);
+      timerDisplay.textContent = firstTimerEx ? formatTime(firstTimerEx.workTime) : "00:00";
 
       actionBtn.textContent = "VIA";
       actionBtn.className = "w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xl rounded-xl transition shadow-lg shadow-emerald-500/10 uppercase tracking-wider";
@@ -380,10 +367,9 @@
 
       if (state === "IDLE") {
         startPreparationCountdown(() => {
-          if (block.isStretching) {
-            startStretchingUnifiedSequence();
-          } else if (block.isEmom) {
+          if (block.isEmom) {
             document.getElementById('emom-selector-box').classList.add('hidden');
+            workoutLogs["Piegamenti braccia - EMOM"] = `Start: ${emomStartReps} reps (+1 ogni 2 min)`;
             startEmomTimer(60);
           } else {
             const timerEx = block.exercises.find(e => e.isTimer);
@@ -398,7 +384,7 @@
           }
         });
       } 
-      else if (state === "WORKING" && !block.isStretching && !block.isEmom) {
+      else if (state === "WORKING" && !block.isEmom) {
         if (block.restAfterSet > 0) {
           startRestTimer(block.restAfterSet);
         } else {
@@ -436,74 +422,6 @@
 
       updatePrep();
       mainTimer = setInterval(updatePrep, 1000);
-    }
-
-    function startStretchingUnifiedSequence() {
-      state = "WORKING";
-      executeStretchStep(1);
-    }
-
-    function executeStretchStep(stepNum) {
-      let exName = stepNum <= 3 ? "CANE BASSO" : "CANE ALTO";
-      let exTenutaNum = stepNum <= 3 ? stepNum : stepNum - 3;
-
-      clearInterval(mainTimer);
-      let time = 10;
-
-      const display = document.getElementById('timer-display');
-      const label = document.getElementById('timer-label');
-
-      label.textContent = `${exName}: TENUTA ${exTenutaNum} DI 3 (10s)`;
-      display.className = "text-6xl font-black font-mono text-red-500 animate-pulse";
-
-      const updateTenuta = () => {
-        display.textContent = formatTime(time);
-        if (time <= 3 && time > 0) playBeep(700, 0.12);
-
-        if (time <= 0) {
-          clearInterval(mainTimer);
-          playBeep(900, 0.2);
-
-          if (stepNum < 6) {
-            startStretchPausaGeneric(5, () => executeStretchStep(stepNum + 1));
-          } else {
-            playTripleBeep();
-            advanceWorkout();
-          }
-        } else {
-          time--;
-        }
-      };
-
-      updateTenuta();
-      mainTimer = setInterval(updateTenuta, 1000);
-    }
-
-    function startStretchPausaGeneric(seconds, onComplete) {
-      clearInterval(mainTimer);
-      let time = seconds;
-
-      const display = document.getElementById('timer-display');
-      const label = document.getElementById('timer-label');
-
-      label.textContent = `PAUSA / CAMBIO POSIZIONE (${seconds}s)`;
-      display.className = "text-6xl font-black font-mono text-amber-400";
-
-      const updatePausa = () => {
-        display.textContent = formatTime(time);
-        if (time <= 2 && time > 0) playBeep(600, 0.12);
-
-        if (time <= 0) {
-          clearInterval(mainTimer);
-          playBeep(800, 0.2);
-          onComplete();
-        } else {
-          time--;
-        }
-      };
-
-      updatePausa();
-      mainTimer = setInterval(updatePausa, 1000);
     }
 
     function startWorkTimer(seconds) {
@@ -622,7 +540,6 @@
         currentSetIndex++;
         loadBlock();
       } else {
-        // Blocco o superserie completata: mostra schermata di input per il blocco appena finito
         showBlockLogScreen();
       }
     }
@@ -639,10 +556,11 @@
       container.innerHTML = "";
 
       block.exercises.forEach((ex, idx) => {
+        const existingVal = workoutLogs[ex.name] || "";
         container.innerHTML += `
           <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1.5 shadow-sm">
             <span class="text-xs font-black text-emerald-400 block">${ex.name}</span>
-            <input type="text" id="block-ex-input-${idx}" data-name="${ex.name}" placeholder="Es: 12 reps / 20kg" class="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-amber-300 font-bold outline-none focus:border-amber-400">
+            <input type="text" id="block-ex-input-${idx}" data-name="${ex.name}" value="${existingVal}" placeholder="Es: 12 reps / 20kg" class="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-amber-300 font-bold outline-none focus:border-amber-400">
           </div>
         `;
       });
