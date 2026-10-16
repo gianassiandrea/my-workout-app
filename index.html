@@ -8,7 +8,7 @@
 </head>
 <body class="bg-indigo-950 text-indigo-50 font-sans min-h-screen flex justify-center overflow-hidden">
 
-  <div class="w-full max-w-md bg-indigo-900/40 border-x border-indigo-800/60 flex flex-col h-screen relative pb-16 shadow-2xl backdrop-blur-md">
+  <div class="w-full max-w-md bg-indigo-900/40 border-x border-indigo-800/60 flex flex-col h-screen relative shadow-2xl backdrop-blur-md">
     
     <!-- Header App -->
     <header class="p-3 border-b border-indigo-800/60 flex justify-between items-center bg-indigo-950/90 shrink-0 z-10">
@@ -46,7 +46,7 @@
       </div>
 
       <!-- SCHERMATA 2: EXECUTION WORKOUT -->
-      <div id="screen-workout" class="hidden flex-1 flex flex-col justify-between space-y-2 overflow-hidden pb-12">
+      <div id="screen-workout" class="hidden flex-1 flex flex-col justify-between space-y-2 overflow-hidden">
         
         <!-- BADGE BLOCCO E GIRO -->
         <div class="border-b border-indigo-800/60 pb-2 flex justify-between items-center shrink-0">
@@ -85,6 +85,16 @@
 
         <!-- 3. CONTENITORE ESERCIZI DEL BLOCCO -->
         <div id="exercises-list" class="flex-1 flex flex-col justify-center gap-2 overflow-y-auto py-1"></div>
+
+        <!-- 4. PULSANTI DI NAVIGAZIONE PRECEDENTE / SUCCESSIVO INTEGRATI -->
+        <div class="pt-2 border-t border-indigo-800/60 flex justify-between items-center shrink-0">
+          <button onclick="prevStep()" class="px-4 py-2 bg-indigo-800 hover:bg-indigo-700 active:scale-95 text-indigo-100 font-bold text-xs rounded-xl flex items-center gap-1 shadow-md border border-indigo-700/60">
+            ← Precedente
+          </button>
+          <button onclick="nextStep()" class="px-4 py-2 bg-indigo-800 hover:bg-indigo-700 active:scale-95 text-indigo-100 font-bold text-xs rounded-xl flex items-center gap-1 shadow-md border border-indigo-700/60">
+            Successivo →
+          </button>
+        </div>
 
       </div>
 
@@ -154,16 +164,6 @@
       </div>
 
     </main>
-
-    <!-- FRECCE DI NAVIGAZIONE IN CALCE -->
-    <footer id="footer-nav" class="hidden fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-indigo-950/95 border-t border-indigo-800/60 p-2.5 flex justify-between items-center backdrop-blur z-30">
-      <button onclick="prevStep()" class="px-3 py-1.5 bg-indigo-800 hover:bg-indigo-700 text-indigo-100 font-bold text-xs rounded-lg flex items-center gap-1">
-        ← Precedente
-      </button>
-      <button onclick="nextStep()" class="px-3 py-1.5 bg-indigo-800 hover:bg-indigo-700 text-indigo-100 font-bold text-xs rounded-lg flex items-center gap-1">
-        Successivo →
-      </button>
-    </footer>
 
   </div>
 
@@ -281,7 +281,7 @@
         title: "BLOCCO 5: EMOM PIEGAMENTI",
         totalSets: 10,
         isEmom: true,
-        restAfterSet: 0, // Nessun riposo dopo EMOM
+        restAfterSet: 0,
         exercises: [
           { name: "Piegamenti braccia - EMOM", isTimer: true, workTime: 60, note: "+1 rep ogni 2 giri per 10 minuti." }
         ]
@@ -342,7 +342,6 @@
 
       document.getElementById('screen-home').classList.add('hidden');
       document.getElementById('screen-workout').classList.remove('hidden');
-      document.getElementById('footer-nav').classList.remove('hidden');
       currentBlockIndex = 0;
       currentSetIndex = 1;
       loadBlock();
@@ -584,7 +583,6 @@
         startEmomTimer(60);
       } else {
         document.getElementById('emom-target-banner').classList.add('hidden');
-        // Direttamente alla schermata di registrazione del blocco senza riposo
         advanceWorkout();
       }
     }
@@ -634,7 +632,6 @@
     function showBlockLogScreen() {
       const block = workoutBlocks[currentBlockIndex];
       document.getElementById('screen-workout').classList.add('hidden');
-      document.getElementById('footer-nav').classList.add('hidden');
       document.getElementById('screen-block-log').classList.remove('hidden');
 
       document.getElementById('block-log-title').textContent = block.title;
@@ -669,7 +666,6 @@
         currentBlockIndex++;
         currentSetIndex = 1;
         document.getElementById('screen-workout').classList.remove('hidden');
-        document.getElementById('footer-nav').classList.remove('hidden');
         loadBlock();
       } else {
         showSummaryScreen();
@@ -684,7 +680,6 @@
 
       document.getElementById('screen-workout').classList.add('hidden');
       document.getElementById('screen-block-log').classList.add('hidden');
-      document.getElementById('footer-nav').classList.add('hidden');
       document.getElementById('screen-summary').classList.remove('hidden');
 
       const loggedContainer = document.getElementById('summary-logged-data');
