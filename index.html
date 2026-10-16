@@ -18,10 +18,9 @@
 
     <main class="flex-1 p-3 flex flex-col justify-between overflow-hidden relative">
 
-      <!-- SCHERMATA 1: HOME (LAYOUT REVISIONATO) -->
+      <!-- SCHERMATA 1: HOME -->
       <div id="screen-home" class="flex-1 flex flex-col items-center justify-between py-4 space-y-4 text-center px-4 overflow-y-auto bg-cover bg-center relative rounded-xl" style="background-image: url('sfondo.png');">
         
-        <!-- Overlay Scuro per leggibilità sfondo -->
         <div class="absolute inset-0 bg-slate-950/60 rounded-xl"></div>
 
         <!-- 1. IN ALTO: SELEZIONE MOTIVAZIONE INIZIALE -->
@@ -47,7 +46,7 @@
       </div>
 
       <!-- SCHERMATA 2: EXECUTION WORKOUT -->
-      <div id="screen-workout" class="hidden flex-1 flex flex-col justify-between space-y-2 overflow-hidden">
+      <div id="screen-workout" class="hidden flex-1 flex flex-col justify-between space-y-2 overflow-hidden pb-12">
         
         <!-- BADGE BLOCCO E GIRO -->
         <div class="border-b border-indigo-800/60 pb-2 flex justify-between items-center shrink-0">
@@ -282,7 +281,7 @@
         title: "BLOCCO 5: EMOM PIEGAMENTI",
         totalSets: 10,
         isEmom: true,
-        restAfterSet: 90,
+        restAfterSet: 0, // Nessun riposo dopo EMOM
         exercises: [
           { name: "Piegamenti braccia - EMOM", isTimer: true, workTime: 60, note: "+1 rep ogni 2 giri per 10 minuti." }
         ]
@@ -585,7 +584,8 @@
         startEmomTimer(60);
       } else {
         document.getElementById('emom-target-banner').classList.add('hidden');
-        startRestTimer(workoutBlocks[currentBlockIndex].restAfterSet || 90);
+        // Direttamente alla schermata di registrazione del blocco senza riposo
+        advanceWorkout();
       }
     }
 
