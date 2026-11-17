@@ -5,42 +5,71 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>BUNKER APP</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Stile personalizzato rilassante per gli slider su schermo OLED */
+    input[type="range"].bunker-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 8px;
+      background: #181e26;
+      border-radius: 999px;
+      outline: none;
+      border: 1px solid #27303d;
+    }
+    input[type="range"].bunker-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #34d399;
+      cursor: pointer;
+      border: 2px solid #06090d;
+      box-shadow: 0 0 8px rgba(52, 211, 153, 0.35);
+    }
+    input[type="range"].bunker-slider.kg-slider::-webkit-slider-thumb {
+      background: #38bdf8;
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.35);
+    }
+  </style>
 </head>
-<body class="bg-indigo-950 text-indigo-50 font-sans h-[100dvh] w-screen flex justify-center overflow-hidden">
+<body class="bg-[#050708] text-zinc-200 font-sans h-[100dvh] w-screen flex justify-center overflow-hidden">
 
-  <div class="w-full max-w-md bg-indigo-900/40 border-x border-indigo-800/60 flex flex-col h-[100dvh] relative shadow-2xl backdrop-blur-md">
+  <div class="w-full max-w-md bg-[#080b0e] border-x border-zinc-900 flex flex-col h-[100dvh] relative shadow-2xl">
     
     <!-- Header App -->
-    <header class="p-2 border-b border-indigo-800/60 flex justify-between items-center bg-indigo-950/90 shrink-0 z-10">
-      <h1 class="text-base font-extrabold tracking-wider text-amber-400">BUNKER APP</h1>
-      <span id="routine-tag" class="text-3xs bg-indigo-800/80 text-violet-200 px-2 py-0.5 rounded-full font-mono">SUPERSERIE</span>
+    <header class="p-2.5 border-b border-zinc-900 flex justify-between items-center bg-[#06080b] shrink-0 z-10">
+      <h1 class="text-base font-extrabold tracking-wider text-emerald-400">BUNKER APP</h1>
+      <span id="routine-tag" class="text-[11px] bg-zinc-900 text-zinc-400 border border-zinc-800 px-2.5 py-0.5 rounded-full font-mono">SUPERSERIE</span>
     </header>
 
-    <main class="flex-1 p-2 flex flex-col min-h-0 overflow-hidden relative">
+    <main class="flex-1 p-2.5 flex flex-col min-h-0 overflow-hidden relative">
 
-      <!-- SCHERMATA 1: HOME (PERFETTAMENTE ADATTATA A MOBILE) -->
-      <div id="screen-home" class="flex-1 flex flex-col items-center justify-between p-2 text-center bg-cover bg-center relative rounded-xl overflow-hidden" style="background-image: url('sfondo.png');">
+      <!-- SCHERMATA 1: HOME -->
+      <div id="screen-home" class="flex-1 flex flex-col items-center justify-between p-2.5 text-center bg-cover bg-center relative rounded-xl overflow-hidden border border-zinc-900" style="background-image: url('sfondo.png');">
         
-        <div class="absolute inset-0 bg-slate-950/65 rounded-xl"></div>
+        <!-- Overlay OLED scuro per risparmio batteria e leggibilità -->
+        <div class="absolute inset-0 bg-[#050708]/80 rounded-xl"></div>
 
         <!-- 1. IN ALTO: SELEZIONE MOTIVAZIONE INIZIALE -->
-        <div class="relative z-10 w-full p-2 bg-indigo-950/85 border border-indigo-800/80 rounded-xl space-y-1 shadow-xl backdrop-blur-sm shrink-0">
-          <span class="text-3xs font-black text-amber-300 uppercase tracking-widest block">MOTIVAZIONE</span>
+        <div class="relative z-10 w-full p-2.5 bg-[#0b0f14]/90 border border-zinc-800/90 rounded-xl space-y-1 shadow-xl backdrop-blur-sm shrink-0">
+          <span class="text-[11px] font-black text-emerald-400/90 uppercase tracking-widest block">MOTIVAZIONE</span>
           <div class="flex justify-center gap-6">
-            <button type="button" onclick="selectMood('motivation', '🟢 Alta (Verde)')" id="mot-green" class="mood-btn text-2xl transition duration-200 transform hover:scale-110 active:scale-95" title="Sorridente">😊</button>
-            <button type="button" onclick="selectMood('motivation', '🟡 Media (Gialla)')" id="mot-yellow" class="mood-btn text-2xl transition duration-200 transform hover:scale-110 active:scale-95" title="Neutra">😐</button>
-            <button type="button" onclick="selectMood('motivation', '🔴 Bassa (Rossa)')" id="mot-red" class="mood-btn text-2xl transition duration-200 transform hover:scale-110 active:scale-95" title="Triste">☹️</button>
+            <button type="button" onclick="selectMood('motivation', '🟢 Alta (Verde)')" id="mot-green" class="mood-btn text-2xl transition duration-200 transform hover:scale-110 active:scale-95" title="Alta">😊</button>
+            <button type="button" onclick="selectMood('motivation', '🟡 Media (Gialla)')" id="mot-yellow" class="mood-btn text-2xl transition duration-200 transform hover:scale-110 active:scale-95" title="Media">😐</button>
+            <button type="button" onclick="selectMood('motivation', '🔴 Bassa (Rossa)')" id="mot-red" class="mood-btn text-2xl transition duration-200 transform hover:scale-110 active:scale-95" title="Bassa">☹️</button>
           </div>
         </div>
 
         <!-- 2. AL CENTRO: PULSANTE START -->
-        <button onclick="startWorkout()" class="relative z-10 w-32 h-32 rounded-full bg-gradient-to-tr from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-2xl tracking-widest shadow-2xl shadow-amber-500/40 active:scale-95 transition flex items-center justify-center text-center border-4 border-amber-300/80 shrink-0 my-auto">
+        <button onclick="startWorkout()" class="relative z-10 w-32 h-32 rounded-full bg-emerald-950/90 hover:bg-emerald-900/90 text-emerald-300 font-black text-2xl tracking-widest shadow-2xl shadow-emerald-950/60 active:scale-95 transition flex items-center justify-center text-center border-2 border-emerald-500/70 shrink-0 my-auto">
           START
         </button>
 
         <!-- 3. IN BASSO: FRASE MOTIVAZIONALE DINAMICA -->
-        <div class="relative z-10 p-2 bg-indigo-950/85 border border-amber-500/40 rounded-xl shadow-xl w-full backdrop-blur-sm shrink-0">
-          <p id="motivational-quote" class="text-3xs italic font-semibold text-amber-300 leading-tight">"Ogni ripetizione ti avvicina al tuo obiettivo."</p>
+        <div class="relative z-10 p-2.5 bg-[#0b0f14]/90 border border-zinc-800/90 rounded-xl shadow-xl w-full backdrop-blur-sm shrink-0">
+          <p id="motivational-quote" class="text-[11px] italic font-medium text-zinc-300 leading-tight">"Ogni ripetizione ti avvicina al tuo obiettivo."</p>
         </div>
 
       </div>
@@ -49,115 +78,128 @@
       <div id="screen-workout" class="hidden flex-1 flex flex-col justify-between space-y-1.5 min-h-0 overflow-hidden">
         
         <!-- BADGE BLOCCO E GIRO -->
-        <div class="border-b border-indigo-800/60 pb-1 flex justify-between items-center shrink-0">
-          <span id="block-number" class="text-3xs font-mono font-black text-indigo-200 uppercase tracking-wider">BLOCCO 1 DE 5</span>
-          <span id="set-counter" class="text-xs font-black bg-violet-500 text-white px-2 py-0.5 rounded-lg shadow-lg tracking-wide border border-violet-300/50">GIRO 1 DI 3</span>
+        <div class="border-b border-zinc-900 pb-1.5 flex justify-between items-center shrink-0">
+          <span id="block-number" class="text-[11px] font-mono font-bold text-zinc-400 uppercase tracking-wider">BLOCCO 1 DI 5</span>
+          <span id="set-counter" class="text-xs font-extrabold bg-emerald-950/90 text-emerald-300 px-2.5 py-0.5 rounded-lg tracking-wide border border-emerald-700/50">GIRO 1 DI 3</span>
         </div>
 
         <!-- 1. TIMER DISPLAY -->
-        <div id="timer-box" class="py-1.5 px-3 bg-indigo-950/90 rounded-xl border-2 border-indigo-800 text-center space-y-0.5 shrink-0 shadow-2xl">
-          <span id="timer-label" class="text-4xs font-mono font-bold text-indigo-300 uppercase tracking-widest">PRONTO</span>
-          <div id="timer-display" class="text-4xl font-black font-mono text-indigo-100 tracking-tight">00:00</div>
+        <div id="timer-box" class="py-2 px-3 bg-[#0b0f14] rounded-xl border border-zinc-800/90 text-center space-y-0.5 shrink-0">
+          <span id="timer-label" class="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest">PRONTO</span>
+          <div id="timer-display" class="text-4xl font-black font-mono text-zinc-100 tracking-tight">00:00</div>
         </div>
 
-        <!-- BOX TARGET EMOM GIGANTE -->
-        <div id="emom-target-banner" class="hidden py-1 px-3 bg-amber-500 text-slate-950 rounded-xl text-center border-2 border-amber-300 shadow-xl shrink-0">
-          <span class="text-4xs font-black uppercase tracking-widest text-slate-900 block">OBIETTIVO MINUTO CORRENTE</span>
-          <div id="emom-reps-count" class="text-xl font-black tracking-tight">5 FLESSIONI</div>
+        <!-- BOX TARGET EMOM -->
+        <div id="emom-target-banner" class="hidden py-1.5 px-3 bg-emerald-950/70 text-emerald-200 rounded-xl text-center border border-emerald-700/60 shrink-0">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400/90 block">OBIETTIVO MINUTO CORRENTE</span>
+          <div id="emom-reps-count" class="text-xl font-black tracking-tight text-zinc-100">5 FLESSIONI</div>
+          <span id="emom-load-badge" class="text-[10px] font-mono text-sky-300/90 block">CARICO: 0 KG</span>
         </div>
 
-        <!-- INPUT REPS INIZIALI EMOM PERSONALIZZABILE -->
-        <div id="emom-selector-box" class="hidden bg-indigo-950 p-1.5 rounded-xl border border-indigo-800 flex flex-col items-center space-y-0.5 shrink-0">
-          <span class="text-4xs font-mono font-extrabold text-amber-300 uppercase tracking-wider">INSERISCI FLESSIONI DI PARTENZA:</span>
-          <div class="flex items-center gap-3 w-full justify-center">
-            <button onclick="changeEmomInputReps(-1)" class="w-7 h-7 bg-indigo-800 hover:bg-indigo-700 text-amber-400 font-black text-base rounded-lg border border-indigo-700 flex items-center justify-center active:scale-95">-</button>
-            <input type="number" id="emom-input-reps" value="5" min="1" max="100" oninput="updateEmomStartRepsFromInput()" class="w-14 py-0.5 bg-indigo-900 border-2 border-amber-400 text-amber-300 font-black text-base rounded-lg text-center outline-none focus:border-violet-400">
-            <button onclick="changeEmomInputReps(1)" class="w-7 h-7 bg-indigo-800 hover:bg-indigo-700 text-amber-400 font-black text-base rounded-lg border border-indigo-700 flex items-center justify-center active:scale-95">+</button>
+        <!-- PANNELLO SETTING EMOM (FLESSIONI + CARICO 0-10 KG) -->
+        <div id="emom-selector-box" class="hidden bg-[#0b0f14] p-2.5 rounded-xl border border-zinc-800 flex flex-col space-y-2 shrink-0">
+          <!-- Flessioni di partenza -->
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-wider">FLESSIONI PARTENZA:</span>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="changeEmomInputReps(-1)" class="w-7 h-7 bg-zinc-900 hover:bg-zinc-800 text-emerald-400 font-black text-base rounded-lg border border-zinc-700 flex items-center justify-center active:scale-95">-</button>
+              <input type="number" id="emom-input-reps" value="5" min="1" max="100" oninput="updateEmomSettings()" class="w-14 py-0.5 bg-zinc-950 border border-zinc-700 text-zinc-100 font-black text-base rounded-lg text-center outline-none focus:border-emerald-500">
+              <button type="button" onclick="changeEmomInputReps(1)" class="w-7 h-7 bg-zinc-900 hover:bg-zinc-800 text-emerald-400 font-black text-base rounded-lg border border-zinc-700 flex items-center justify-center active:scale-95">+</button>
+            </div>
+          </div>
+
+          <!-- Slider Carico EMOM 0-10 kg -->
+          <div class="space-y-1 border-t border-zinc-900 pt-1.5">
+            <div class="flex justify-between items-center">
+              <span class="text-[10px] font-mono font-bold text-sky-400 uppercase tracking-wider">CARICO EMOM (KG):</span>
+              <span id="emom-kg-display" class="text-xs font-black font-mono text-sky-300 bg-zinc-900 px-2 py-0.5 rounded border border-zinc-800">0 kg</span>
+            </div>
+            <input type="range" id="emom-input-kg" min="0" max="10" step="1" value="0" oninput="updateEmomSettings()" class="bunker-slider kg-slider">
           </div>
         </div>
 
         <!-- 2. PULSANTE PRINCIPALE -->
         <div class="shrink-0">
-          <button id="main-action-btn" onclick="handleMainAction()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-base rounded-xl transition shadow-lg uppercase tracking-wider border border-amber-300/40">
+          <button id="main-action-btn" onclick="handleMainAction()" class="w-full py-2.5 bg-emerald-600/90 hover:bg-emerald-500/90 text-zinc-950 font-black text-base rounded-xl transition uppercase tracking-wider border border-emerald-400/40">
             VIA
           </button>
         </div>
 
         <!-- 3. CONTENITORE ESERCIZI DEL BLOCCO -->
-        <div id="exercises-list" class="flex-1 flex flex-col justify-center gap-1 overflow-y-auto py-0.5 min-h-0"></div>
+        <div id="exercises-list" class="flex-1 flex flex-col justify-center gap-1.5 overflow-y-auto py-0.5 min-h-0"></div>
 
-        <!-- 4. PULSANTI DI NAVIGAZIONE PRECEDENTE / SUCCESSIVO INTEGRATI -->
-        <div class="pt-1 border-t border-indigo-800/60 flex justify-between items-center shrink-0">
-          <button onclick="prevStep()" class="px-3 py-1 bg-indigo-800 hover:bg-indigo-700 active:scale-95 text-indigo-100 font-bold text-xs rounded-lg flex items-center gap-1 shadow-md border border-indigo-700/60">
+        <!-- 4. PULSANTI DI NAVIGAZIONE PRECEDENTE / SUCCESSIVO -->
+        <div class="pt-1.5 border-t border-zinc-900 flex justify-between items-center shrink-0">
+          <button onclick="prevStep()" class="px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 active:scale-95 text-zinc-300 font-bold text-xs rounded-lg flex items-center gap-1 border border-zinc-800">
             ← Precedente
           </button>
-          <button onclick="nextStep()" class="px-3 py-1 bg-indigo-800 hover:bg-indigo-700 active:scale-95 text-indigo-100 font-bold text-xs rounded-lg flex items-center gap-1 shadow-md border border-indigo-700/60">
+          <button onclick="nextStep()" class="px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 active:scale-95 text-zinc-300 font-bold text-xs rounded-lg flex items-center gap-1 border border-zinc-800">
             Successivo →
           </button>
         </div>
 
       </div>
 
-      <!-- SCHERMATA INTERMEDIA: REGISTRAZIONE FINE BLOCCO -->
-      <div id="screen-block-log" class="hidden flex-1 flex flex-col justify-between py-2 space-y-2 overflow-y-auto min-h-0">
-        <div class="text-center space-y-0.5 border-b border-indigo-800/60 pb-1.5 shrink-0">
-          <span class="text-3xs font-mono text-amber-400 font-bold uppercase tracking-wider">BLOCCO COMPLETATO 🎉</span>
-          <h2 id="block-log-title" class="font-black text-base text-white">BLOCCO 1</h2>
-          <p class="text-3xs text-indigo-300/80">Inserisci ripetizioni e carichi usati per questo blocco:</p>
+      <!-- SCHERMATA INTERMEDIA: REGISTRAZIONE FINE BLOCCO CON SLIDER -->
+      <div id="screen-block-log" class="hidden flex-1 flex flex-col justify-between py-1.5 space-y-2 overflow-hidden min-h-0">
+        <div class="text-center space-y-0.5 border-b border-zinc-900 pb-1.5 shrink-0">
+          <span class="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider">BLOCCO COMPLETATO</span>
+          <h2 id="block-log-title" class="font-black text-base text-zinc-100">BLOCCO 1</h2>
+          <p class="text-[11px] text-zinc-400">Scorri per impostare ripetizioni e carico:</p>
         </div>
 
-        <div id="block-exercises-inputs" class="space-y-1.5 flex-1 overflow-y-auto py-1 min-h-0"></div>
+        <div id="block-exercises-inputs" class="space-y-2 flex-1 overflow-y-auto py-1 pr-0.5 min-h-0"></div>
 
-        <button onclick="saveBlockLogAndContinue()" class="w-full py-2.5 bg-violet-600 hover:bg-violet-500 text-white font-black text-xs rounded-xl shadow-lg uppercase tracking-wider border border-violet-400/30 shrink-0">
+        <button onclick="saveBlockLogAndContinue()" class="w-full py-2.5 bg-emerald-600/90 hover:bg-emerald-500/90 text-zinc-950 font-black text-xs rounded-xl uppercase tracking-wider border border-emerald-400/40 shrink-0">
           CONFERMA E PROSEGUI →
         </button>
       </div>
 
       <!-- SCHERMATA 3: FINE WORKOUT & REGISTRAZIONE DATI -->
-      <div id="screen-summary" class="hidden space-y-2 py-1 overflow-y-auto min-h-0">
-        <h2 class="font-black text-base text-amber-400 text-center">SESSIONE COMPLETATA! 🎉</h2>
+      <div id="screen-summary" class="hidden flex-1 flex-col space-y-2.5 py-1 overflow-y-auto min-h-0">
+        <h2 class="font-black text-base text-emerald-400 text-center">SESSIONE COMPLETATA</h2>
 
         <!-- ORARIO E VALUTAZIONE -->
-        <div class="p-2 bg-indigo-950/90 border border-indigo-800/80 rounded-xl space-y-1">
-          <div class="flex justify-between text-3xs text-indigo-300 font-mono">
-            <span>Inizio: <strong id="time-start-display" class="text-white">--:--</strong></span>
-            <span>Fine: <strong id="time-end-display" class="text-white">--:--</strong></span>
+        <div class="p-2.5 bg-[#0b0f14] border border-zinc-800/90 rounded-xl space-y-1.5">
+          <div class="flex justify-between text-[11px] text-zinc-400 font-mono">
+            <span>Inizio: <strong id="time-start-display" class="text-zinc-200">--:--</strong></span>
+            <span>Fine: <strong id="time-end-display" class="text-zinc-200">--:--</strong></span>
           </div>
 
-          <div class="border-t border-indigo-800/60 pt-1 text-center space-y-0.5">
-            <span class="text-3xs font-black text-violet-300 uppercase tracking-widest block">VALUTAZIONE</span>
-            <div class="flex justify-center gap-5">
-              <button type="button" onclick="selectMood('evaluation', '🟢 Ottima (Verde)')" id="eval-green" class="mood-btn text-2xl transition duration-200 transform hover:scale-110 active:scale-95" title="Sorridente">😊</button>
-              <button type="button" onclick="selectMood('evaluation', '🟡 Media (Gialla)')" id="eval-yellow" class="mood-btn text-2xl transition duration-200 transform hover:scale-110 active:scale-95" title="Neutra">😐</button>
-              <button type="button" onclick="selectMood('evaluation', '🔴 Difficile (Rossa)')" id="eval-red" class="mood-btn text-2xl transition duration-200 transform hover:scale-110 active:scale-95" title="Triste">☹️</button>
+          <div class="border-t border-zinc-900 pt-1.5 text-center space-y-1">
+            <span class="text-[10px] font-black text-zinc-400 uppercase tracking-widest block">VALUTAZIONE</span>
+            <div class="flex justify-center gap-6">
+              <button type="button" onclick="selectMood('evaluation', '🟢 Ottima (Verde)')" id="eval-green" class="mood-btn text-2xl transition duration-200 transform hover:scale-110 active:scale-95" title="Ottima">😊</button>
+              <button type="button" onclick="selectMood('evaluation', '🟡 Media (Gialla)')" id="eval-yellow" class="mood-btn text-2xl transition duration-200 transform hover:scale-110 active:scale-95" title="Media">😐</button>
+              <button type="button" onclick="selectMood('evaluation', '🔴 Difficile (Rossa)')" id="eval-red" class="mood-btn text-2xl transition duration-200 transform hover:scale-110 active:scale-95" title="Difficile">☹️</button>
             </div>
           </div>
         </div>
         
-        <div class="p-2 bg-indigo-950/90 border border-indigo-800/80 rounded-xl space-y-1">
-          <h3 class="text-3xs font-black text-amber-300 uppercase tracking-wider">Riepilogo Dati Registrati:</h3>
-          <div id="summary-logged-data" class="space-y-0.5 text-3xs text-indigo-200"></div>
+        <div class="p-2.5 bg-[#0b0f14] border border-zinc-800/90 rounded-xl space-y-1.5">
+          <h3 class="text-[10px] font-black text-emerald-400 uppercase tracking-wider">Riepilogo Dati Registrati:</h3>
+          <div id="summary-logged-data" class="space-y-1 text-[11px] text-zinc-300"></div>
         </div>
 
-        <div class="p-2 bg-indigo-900/60 border border-indigo-800/80 rounded-xl space-y-0.5">
-          <label class="text-3xs font-bold text-indigo-200 uppercase">Note Finali Allenamento:</label>
-          <textarea id="workout-notes" placeholder="Sensazioni, fatica..." class="w-full p-1.5 bg-indigo-950 border border-indigo-700/80 rounded-lg text-3xs text-white outline-none h-10 focus:border-violet-500"></textarea>
+        <div class="p-2.5 bg-[#0b0f14] border border-zinc-800/90 rounded-xl space-y-1">
+          <label class="text-[10px] font-bold text-zinc-400 uppercase">Note Finali Allenamento:</label>
+          <textarea id="workout-notes" placeholder="Sensazioni, fatica..." class="w-full p-2 bg-zinc-950 border border-zinc-800 rounded-lg text-xs text-zinc-200 outline-none h-12 focus:border-emerald-500"></textarea>
         </div>
 
-        <button onclick="finishWorkoutAndSend()" class="w-full py-2 bg-violet-600 hover:bg-violet-500 text-white font-black text-3xs rounded-xl shadow-lg border border-violet-400/30 uppercase tracking-wider">
+        <button onclick="finishWorkoutAndSend()" class="w-full py-2.5 bg-emerald-600/90 hover:bg-emerald-500/90 text-zinc-950 font-black text-xs rounded-xl border border-emerald-400/40 uppercase tracking-wider">
           💾 SALVA SU GOOGLE SHEETS & DRIVE
         </button>
 
         <div id="ai-chat-box" class="hidden space-y-1.5 pt-0.5">
-          <div class="p-2 bg-indigo-950 border border-violet-500/30 rounded-xl space-y-1">
-            <div class="flex justify-between items-center border-b border-indigo-800 pb-0.5">
-              <span class="font-bold text-3xs text-violet-400">🤖 GEMINI COACH IA</span>
-              <span id="chat-status" class="text-4xs text-indigo-400">In ascolto...</span>
+          <div class="p-2.5 bg-[#0b0f14] border border-zinc-800 rounded-xl space-y-1.5">
+            <div class="flex justify-between items-center border-b border-zinc-900 pb-1">
+              <span class="font-bold text-[11px] text-emerald-400">🤖 GEMINI COACH IA</span>
+              <span id="chat-status" class="text-[10px] text-zinc-500">In ascolto...</span>
             </div>
-            <div id="chat-messages" class="space-y-1 max-h-36 overflow-y-auto text-3xs text-indigo-100"></div>
+            <div id="chat-messages" class="space-y-1 max-h-36 overflow-y-auto text-[11px] text-zinc-300"></div>
             <div class="flex gap-1.5 pt-0.5">
-              <input type="text" id="chat-input" placeholder="Chiedi al coach..." class="flex-1 bg-indigo-900 p-1 rounded-lg border border-indigo-700 text-3xs text-white outline-none focus:border-violet-500">
-              <button onclick="sendChatMessage()" class="px-2 bg-violet-600 text-white font-bold rounded-lg text-3xs">Invia</button>
+              <input type="text" id="chat-input" placeholder="Chiedi al coach..." class="flex-1 bg-zinc-950 p-1.5 rounded-lg border border-zinc-800 text-[11px] text-zinc-200 outline-none focus:border-emerald-500">
+              <button onclick="sendChatMessage()" class="px-2.5 bg-emerald-600/90 text-zinc-950 font-bold rounded-lg text-[11px]">Invia</button>
             </div>
           </div>
         </div>
@@ -202,7 +244,7 @@
       const redBtn = document.getElementById(`${prefix}-red`);
 
       [greenBtn, yellowBtn, redBtn].forEach(b => {
-        if (b) b.style.opacity = "0.3";
+        if (b) b.style.opacity = "0.25";
       });
 
       if (val.includes('Verde') && greenBtn) greenBtn.style.opacity = "1";
@@ -233,7 +275,7 @@
         totalSets: 3,
         restAfterSet: 90,
         exercises: [
-          { name: "Salto della corda", isTimer: true, workTime: 60 },
+          { name: "Salto della corda", isTimer: true, isCardioNoLog: true, workTime: 90 },
           { name: "Squat rana", isTimer: false },
           { name: "Montagna", isTimer: false }
         ]
@@ -244,7 +286,7 @@
         totalSets: 3,
         restAfterSet: 90,
         exercises: [
-          { name: "Jumping Jacks", isTimer: true, workTime: 60 },
+          { name: "Jumping Jacks", isTimer: true, isCardioNoLog: true, workTime: 90 },
           { name: "Affondi alternati indietro", isTimer: false },
           { name: "Piegamenti stretti", isTimer: false },
           { name: "Crunch gambe tese", isTimer: false }
@@ -261,7 +303,7 @@
             name: "Squat: Moby - Flower", isTimer: false, 
             videoUrl: "https://youtu.be/6A2V9Bu80J4?si=zNy6BcOgIki9Z0O-", 
             autoplay: true,
-            note: "🎵 CANZONE: 'Bring Sally Down' -> Scendi | 'Bring Sally Up' -> Sali." 
+            note: "🎵 'Bring Sally Down' -> Scendi | 'Bring Sally Up' -> Sali." 
           }
         ]
       },
@@ -271,7 +313,7 @@
         totalSets: 3,
         restAfterSet: 90,
         exercises: [
-          { name: "Mountain climber", isTimer: true, workTime: 60 },
+          { name: "Mountain climber", isTimer: true, isCardioNoLog: true, workTime: 90 },
           { name: "Rematore", isTimer: false },
           { name: "Criss Cross", isTimer: false }
         ]
@@ -291,10 +333,12 @@
     let currentBlockIndex = 0;
     let currentSetIndex = 1;
     let emomStartReps = 5; 
+    let emomLoadKg = 0;
     let mainTimer = null;
     let audioCtx = null;
     let state = "IDLE"; 
     let workoutLogs = {};
+    let exerciseSliderValues = {};
 
     window.onload = function() {
       const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
@@ -324,6 +368,11 @@
       } catch (e) {}
     }
 
+    function playHalfwayBeep() {
+      playBeep(750, 0.14);
+      setTimeout(() => playBeep(1050, 0.22), 180);
+    }
+
     function playTripleBeep() {
       playBeep(900, 0.15);
       setTimeout(() => playBeep(900, 0.15), 200);
@@ -338,6 +387,7 @@
     function startWorkout() {
       initAudio();
       workoutLogs = {};
+      exerciseSliderValues = {};
       startTimeString = getCurrentFormattedTime();
 
       document.getElementById('screen-home').classList.add('hidden');
@@ -347,13 +397,25 @@
       loadBlock();
     }
 
-    function updateEmomStartRepsFromInput() {
-      const inputEl = document.getElementById('emom-input-reps');
-      let val = parseInt(inputEl.value) || 1;
+    function updateEmomSettings() {
+      const repsInput = document.getElementById('emom-input-reps');
+      let val = parseInt(repsInput.value) || 1;
       if (val < 1) val = 1;
       emomStartReps = val;
+
+      const kgInput = document.getElementById('emom-input-kg');
+      emomLoadKg = parseInt(kgInput.value) || 0;
+
+      const kgDisplay = document.getElementById('emom-kg-display');
+      if (kgDisplay) kgDisplay.textContent = `${emomLoadKg} kg`;
+
       const repsCountEl = document.getElementById('emom-reps-count');
       if (repsCountEl) repsCountEl.textContent = `${emomStartReps} FLESSIONI`;
+
+      const loadBadgeEl = document.getElementById('emom-load-badge');
+      if (loadBadgeEl) {
+        loadBadgeEl.textContent = emomLoadKg > 0 ? `CARICO: ${emomLoadKg} KG` : `CORPO LIBERO (0 KG)`;
+      }
     }
 
     function changeEmomInputReps(delta) {
@@ -361,7 +423,20 @@
       let val = (parseInt(inputEl.value) || 1) + delta;
       if (val < 1) val = 1;
       inputEl.value = val;
-      updateEmomStartRepsFromInput();
+      updateEmomSettings();
+    }
+
+    function recordEmomAutomatically() {
+      let emomRepsSeq = [];
+      let totalReps = 0;
+      for (let i = 1; i <= 10; i++) {
+        const r = emomStartReps + Math.floor((i - 1) / 2);
+        emomRepsSeq.push(r);
+        totalReps += r;
+      }
+      const endReps = emomRepsSeq[emomRepsSeq.length - 1];
+      const kgStr = emomLoadKg > 0 ? `Carico: ${emomLoadKg} kg` : `0 kg`;
+      workoutLogs["Piegamenti braccia - EMOM"] = `Da ${emomStartReps} a ${endReps} rep (tot. ${totalReps} rep) - ${kgStr}`;
     }
 
     function loadBlock() {
@@ -378,7 +453,7 @@
       if (block.isEmom) {
         targetBanner.classList.remove('hidden');
         selectorBox.classList.remove('hidden');
-        updateEmomStartRepsFromInput();
+        updateEmomSettings();
       } else {
         targetBanner.classList.add('hidden');
         selectorBox.classList.add('hidden');
@@ -393,20 +468,23 @@
         if (block.isMobyBlock) {
           const mainEmbed = parseYouTubeEmbedUrl(ex.videoUrl, true);
           html = `
-            <div class="p-2 bg-indigo-950/90 rounded-xl border border-indigo-800/80 space-y-1 shadow-sm">
-              <h3 class="font-black text-white text-xs tracking-wide">${ex.name}</h3>
-              ${ex.note ? `<p class="text-4xs text-amber-400/90 italic font-semibold">${ex.note}</p>` : ''}
-              <div class="aspect-video w-full bg-indigo-900 rounded-xl overflow-hidden border border-indigo-800 shadow-md">
+            <div class="p-2 bg-[#0b0f14] rounded-xl border border-zinc-800/90 space-y-1">
+              <h3 class="font-bold text-zinc-100 text-xs tracking-wide">${ex.name}</h3>
+              ${ex.note ? `<p class="text-[11px] text-emerald-400/90 italic">${ex.note}</p>` : ''}
+              <div class="aspect-video w-full bg-zinc-950 rounded-lg overflow-hidden border border-zinc-800">
                 <iframe class="w-full h-full" src="${mainEmbed}" title="${ex.name}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
               </div>
             </div>
           `;
         } else {
           html = `
-            <div class="p-2 bg-indigo-950/90 rounded-xl border border-indigo-800/80 flex items-center justify-between gap-2 shadow-sm">
+            <div class="p-2.5 bg-[#0b0f14] rounded-xl border border-zinc-800/90 flex items-center justify-between gap-2">
               <div class="min-w-0 flex-1">
-                <h3 class="font-black text-white text-xs truncate tracking-wide">${ex.name}</h3>
-                ${ex.note ? `<p class="text-4xs text-amber-400/90 italic truncate mt-0.5">${ex.note}</p>` : ''}
+                <div class="flex items-center justify-between gap-2">
+                  <h3 class="font-bold text-zinc-100 text-xs truncate tracking-wide">${ex.name}</h3>
+                  ${ex.isCardioNoLog ? `<span class="text-[10px] font-mono text-emerald-400 bg-emerald-950/70 border border-emerald-800/50 px-1.5 py-0.5 rounded shrink-0">1'30" (bip 45s)</span>` : ''}
+                </div>
+                ${ex.note ? `<p class="text-[11px] text-zinc-400 italic truncate mt-0.5">${ex.note}</p>` : ''}
               </div>
             </div>
           `;
@@ -419,14 +497,14 @@
       const timerLabel = document.getElementById('timer-label');
       const actionBtn = document.getElementById('main-action-btn');
 
-      timerDisplay.className = "text-4xl font-black font-mono text-indigo-100 tracking-tight";
+      timerDisplay.className = "text-4xl font-black font-mono text-zinc-100 tracking-tight";
       timerLabel.textContent = "PRONTO";
       
       const firstTimerEx = block.exercises.find(e => e.isTimer);
       timerDisplay.textContent = firstTimerEx ? formatTime(firstTimerEx.workTime) : "00:00";
 
       actionBtn.textContent = "VIA";
-      actionBtn.className = "w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-base rounded-xl transition shadow-lg uppercase tracking-wider border border-amber-300/40";
+      actionBtn.className = "w-full py-2.5 bg-emerald-600/90 hover:bg-emerald-500/90 text-zinc-950 font-black text-base rounded-xl transition uppercase tracking-wider border border-emerald-400/40";
     }
 
     function handleMainAction() {
@@ -437,13 +515,6 @@
         startPreparationCountdown(() => {
           if (block.isEmom) {
             document.getElementById('emom-selector-box').classList.add('hidden');
-            
-            let emomRepsSeq = [];
-            for (let i = 1; i <= 10; i++) {
-              emomRepsSeq.push(emomStartReps + Math.floor((i - 1) / 2));
-            }
-            workoutLogs["Piegamenti braccia - EMOM"] = `Da ${emomStartReps} a ${emomStartReps + 4} rep (${emomRepsSeq.join(',')})`;
-
             currentSetIndex = 1;
             startEmomTimer(60);
           } else {
@@ -454,7 +525,7 @@
               state = "WORKING";
               const actionBtn = document.getElementById('main-action-btn');
               actionBtn.textContent = "FATTO (INIZIA RIPOSO)";
-              actionBtn.className = "w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-base rounded-xl transition shadow-lg uppercase tracking-wider";
+              actionBtn.className = "w-full py-2.5 bg-teal-600/90 hover:bg-teal-500/90 text-zinc-950 font-black text-base rounded-xl transition uppercase tracking-wider";
             }
           }
         });
@@ -482,9 +553,9 @@
       const btn = document.getElementById('main-action-btn');
 
       label.textContent = "PREPARATI (5s)";
-      display.className = "text-4xl font-black font-mono text-amber-400 animate-pulse";
+      display.className = "text-4xl font-black font-mono text-amber-300/90";
       btn.textContent = "PREPARAZIONE...";
-      btn.className = "w-full py-2.5 bg-indigo-950 text-indigo-400 font-black text-base rounded-xl cursor-not-allowed uppercase tracking-wider border border-indigo-800";
+      btn.className = "w-full py-2.5 bg-zinc-900 text-zinc-500 font-black text-base rounded-xl cursor-not-allowed uppercase tracking-wider border border-zinc-800";
 
       const updatePrep = () => {
         display.textContent = formatTime(prepTime);
@@ -513,18 +584,27 @@
       const btn = document.getElementById('main-action-btn');
 
       label.textContent = "TEMPO ESERCIZIO IN CORSO";
-      display.className = "text-4xl font-black font-mono text-rose-400 animate-pulse";
+      display.className = "text-4xl font-black font-mono text-emerald-400";
       btn.textContent = "FATTO (COMPLETA GIRO)";
-      btn.className = "w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-base rounded-xl transition shadow-lg uppercase tracking-wider";
+      btn.className = "w-full py-2.5 bg-teal-600/90 hover:bg-teal-500/90 text-zinc-950 font-black text-base rounded-xl transition uppercase tracking-wider";
 
       const update = () => {
         display.textContent = formatTime(time);
-        if (time <= 5 && time > 0) playBeep(700, 0.12);
+
+        // Segnale sonoro a 45 secondi (metà dello sforzo da 90s)
+        if (seconds === 90 && time === 45) {
+          playHalfwayBeep();
+          label.textContent = "METÀ TEMPO (45s) - CONTINUA!";
+          display.className = "text-4xl font-black font-mono text-amber-300";
+        } else if (time <= 5 && time > 0) {
+          playBeep(700, 0.12);
+        }
         
         if (time <= 0) {
           clearInterval(mainTimer);
           playTripleBeep();
-          label.textContent = "TEMPO ESERCIZIO CONCLUSO - COMPLETA GLI ALTRI";
+          label.textContent = "CARDIO COMPLETATO - PROSEGUI CON GLI ALTRI";
+          display.className = "text-4xl font-black font-mono text-zinc-300";
         } else {
           time--;
         }
@@ -549,15 +629,21 @@
       
       const targetBanner = document.getElementById('emom-target-banner');
       const repsCountEl = document.getElementById('emom-reps-count');
+      const loadBadgeEl = document.getElementById('emom-load-badge');
 
       targetBanner.classList.remove('hidden');
       repsCountEl.textContent = `${currentReps} FLESSIONI`;
+      if (loadBadgeEl) {
+        loadBadgeEl.textContent = emomLoadKg > 0 ? `CARICO: ${emomLoadKg} KG` : `CORPO LIBERO (0 KG)`;
+      }
 
       label.textContent = `EMOM: MINUTO ${currentSetIndex} DI 10`;
-      display.className = "text-4xl font-black font-mono text-rose-400 animate-pulse";
+      display.className = "text-4xl font-black font-mono text-emerald-400";
       
-      btn.textContent = `FATTO / PROSSIMO MINUTO (${currentSetIndex}/10) →`;
-      btn.className = "w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm rounded-xl transition shadow-lg uppercase tracking-wider";
+      btn.textContent = currentSetIndex < 10 
+        ? `FATTO / PROSSIMO MINUTO (${currentSetIndex}/10) →` 
+        : `COMPLETA ULTIMO MINUTO (10/10) ✓`;
+      btn.className = "w-full py-2.5 bg-teal-600/90 hover:bg-teal-500/90 text-zinc-950 font-black text-sm rounded-xl transition uppercase tracking-wider";
 
       const update = () => {
         display.textContent = formatTime(time);
@@ -583,7 +669,9 @@
         startEmomTimer(60);
       } else {
         document.getElementById('emom-target-banner').classList.add('hidden');
-        advanceWorkout();
+        // Registrazione automatica dell'EMOM senza richiedere conferme manuali
+        recordEmomAutomatically();
+        proceedToNextBlockOrSummary();
       }
     }
 
@@ -596,10 +684,10 @@
       const label = document.getElementById('timer-label');
       const btn = document.getElementById('main-action-btn');
 
-      label.textContent = "RECUPERO SUPERSERIE / DEFATICAMENTO";
-      display.className = "text-4xl font-black font-mono text-violet-300";
+      label.textContent = "RECUPERO SUPERSERIE";
+      display.className = "text-4xl font-black font-mono text-sky-300/80";
       btn.textContent = "RIPOSO IN CORSO...";
-      btn.className = "w-full py-2.5 bg-indigo-950 text-indigo-400 font-black text-base rounded-xl cursor-not-allowed uppercase tracking-wider border border-indigo-800";
+      btn.className = "w-full py-2.5 bg-zinc-900 text-zinc-500 font-black text-base rounded-xl cursor-not-allowed uppercase tracking-wider border border-zinc-800";
 
       const update = () => {
         display.textContent = formatTime(time);
@@ -624,44 +712,16 @@
       if (currentSetIndex < block.totalSets) {
         currentSetIndex++;
         loadBlock();
+      } else if (block.isEmom) {
+        recordEmomAutomatically();
+        proceedToNextBlockOrSummary();
       } else {
         showBlockLogScreen();
       }
     }
 
-    function showBlockLogScreen() {
-      const block = workoutBlocks[currentBlockIndex];
-      document.getElementById('screen-workout').classList.add('hidden');
-      document.getElementById('screen-block-log').classList.remove('hidden');
-
-      document.getElementById('block-log-title').textContent = block.title;
-
-      const container = document.getElementById('block-exercises-inputs');
-      container.innerHTML = "";
-
-      block.exercises.forEach((ex, idx) => {
-        const existingVal = workoutLogs[ex.name] || "";
-        container.innerHTML += `
-          <div class="p-2 bg-indigo-950/90 rounded-xl border border-indigo-800/80 space-y-1 shadow-sm">
-            <span class="text-xs font-black text-violet-300 block">${ex.name}</span>
-            <input type="text" id="block-ex-input-${idx}" data-name="${ex.name}" value="${existingVal}" placeholder="Es: 12 reps / 20kg" class="w-full p-2 bg-indigo-900 border border-indigo-700 rounded-lg text-xs text-amber-300 font-bold outline-none focus:border-amber-400">
-          </div>
-        `;
-      });
-    }
-
-    function saveBlockLogAndContinue() {
-      const block = workoutBlocks[currentBlockIndex];
-      block.exercises.forEach((ex, idx) => {
-        const input = document.getElementById(`block-ex-input-${idx}`);
-        if (input) {
-          const val = input.value.trim();
-          workoutLogs[ex.name] = val ? val : "/";
-        }
-      });
-
+    function proceedToNextBlockOrSummary() {
       document.getElementById('screen-block-log').classList.add('hidden');
-
       if (currentBlockIndex < workoutBlocks.length - 1) {
         currentBlockIndex++;
         currentSetIndex = 1;
@@ -672,7 +732,104 @@
       }
     }
 
+    function updateExerciseSliderUI(idx, type, delta = 0) {
+      const sliderEl = document.getElementById(`block-ex-${type}-${idx}`);
+      const valEl = document.getElementById(`block-ex-${type}-val-${idx}`);
+      if (!sliderEl || !valEl) return;
+
+      let current = parseInt(sliderEl.value) || 0;
+      if (delta !== 0) {
+        const min = parseInt(sliderEl.min) || 0;
+        const max = parseInt(sliderEl.max) || 100;
+        current = Math.min(max, Math.max(min, current + delta));
+        sliderEl.value = current;
+      }
+      valEl.textContent = type === 'kg' ? `${current} kg` : `${current} rep`;
+    }
+
+    function showBlockLogScreen() {
+      clearInterval(mainTimer);
+      const block = workoutBlocks[currentBlockIndex];
+      document.getElementById('screen-workout').classList.add('hidden');
+      document.getElementById('screen-block-log').classList.remove('hidden');
+
+      document.getElementById('block-log-title').textContent = block.title;
+
+      const container = document.getElementById('block-exercises-inputs');
+      container.innerHTML = "";
+
+      block.exercises.forEach((ex, idx) => {
+        if (ex.isCardioNoLog) {
+          workoutLogs[ex.name] = "1'30\" (Cardio)";
+          container.innerHTML += `
+            <div class="p-2.5 bg-[#0b0f14] rounded-xl border border-zinc-800/80 flex items-center justify-between">
+              <span class="text-xs font-bold text-zinc-300">${ex.name}</span>
+              <span class="text-[11px] font-mono font-bold text-emerald-400">✓ 1'30"</span>
+            </div>
+          `;
+        } else {
+          const saved = exerciseSliderValues[ex.name] || { reps: 0, kg: 0 };
+          container.innerHTML += `
+            <div class="p-2.5 bg-[#0b0f14] rounded-xl border border-zinc-800/90 space-y-2">
+              <span class="text-xs font-black text-emerald-400 block">${ex.name}</span>
+              
+              <!-- Slider Ripetizioni 0-100 -->
+              <div class="space-y-1">
+                <div class="flex justify-between items-center">
+                  <span class="text-[10px] font-mono uppercase text-zinc-400">Ripetizioni (0-100)</span>
+                  <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="updateExerciseSliderUI(${idx}, 'reps', -1)" class="w-6 h-6 bg-zinc-900 text-zinc-300 rounded border border-zinc-800 text-xs font-bold">-</button>
+                    <span id="block-ex-reps-val-${idx}" class="text-xs font-mono font-black text-emerald-300 w-14 text-center">${saved.reps} rep</span>
+                    <button type="button" onclick="updateExerciseSliderUI(${idx}, 'reps', 1)" class="w-6 h-6 bg-zinc-900 text-zinc-300 rounded border border-zinc-800 text-xs font-bold">+</button>
+                  </div>
+                </div>
+                <input type="range" id="block-ex-reps-${idx}" min="0" max="100" step="1" value="${saved.reps}" oninput="updateExerciseSliderUI(${idx}, 'reps', 0)" class="bunker-slider">
+              </div>
+
+              <!-- Slider Carico Kg 0-10 -->
+              <div class="space-y-1 pt-1 border-t border-zinc-900">
+                <div class="flex justify-between items-center">
+                  <span class="text-[10px] font-mono uppercase text-zinc-400">Carico (0-10 kg)</span>
+                  <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="updateExerciseSliderUI(${idx}, 'kg', -1)" class="w-6 h-6 bg-zinc-900 text-zinc-300 rounded border border-zinc-800 text-xs font-bold">-</button>
+                    <span id="block-ex-kg-val-${idx}" class="text-xs font-mono font-black text-sky-300 w-14 text-center">${saved.kg} kg</span>
+                    <button type="button" onclick="updateExerciseSliderUI(${idx}, 'kg', 1)" class="w-6 h-6 bg-zinc-900 text-zinc-300 rounded border border-zinc-800 text-xs font-bold">+</button>
+                  </div>
+                </div>
+                <input type="range" id="block-ex-kg-${idx}" min="0" max="10" step="1" value="${saved.kg}" oninput="updateExerciseSliderUI(${idx}, 'kg', 0)" class="bunker-slider kg-slider">
+              </div>
+            </div>
+          `;
+        }
+      });
+    }
+
+    function saveBlockLogAndContinue() {
+      const block = workoutBlocks[currentBlockIndex];
+      block.exercises.forEach((ex, idx) => {
+        if (ex.isCardioNoLog) {
+          workoutLogs[ex.name] = "1'30\" (Cardio)";
+        } else {
+          const repsSlider = document.getElementById(`block-ex-reps-${idx}`);
+          const kgSlider = document.getElementById(`block-ex-kg-${idx}`);
+          const reps = repsSlider ? parseInt(repsSlider.value) || 0 : 0;
+          const kg = kgSlider ? parseInt(kgSlider.value) || 0 : 0;
+
+          exerciseSliderValues[ex.name] = { reps, kg };
+
+          if (reps === 0 && kg === 0) {
+            workoutLogs[ex.name] = "/";
+          } else {
+            workoutLogs[ex.name] = `${reps} rep - ${kg} kg`;
+          }
+        }
+      });
+
+      proceedToNextBlockOrSummary();
+    }
+
     function showSummaryScreen() {
+      clearInterval(mainTimer);
       endTimeString = getCurrentFormattedTime();
 
       document.getElementById('time-start-display').textContent = startTimeString;
@@ -687,13 +844,13 @@
 
       const entries = Object.entries(workoutLogs);
       if (entries.length === 0) {
-        loggedContainer.innerHTML = `<p class="italic text-indigo-400">Nessun dato registrato nei blocchi.</p>`;
+        loggedContainer.innerHTML = `<p class="italic text-zinc-500">Nessun dato registrato nei blocchi.</p>`;
       } else {
         entries.forEach(([name, val]) => {
           loggedContainer.innerHTML += `
-            <div class="flex justify-between border-b border-indigo-800/60 py-1">
-              <span class="font-medium text-indigo-200">${name}:</span>
-              <span class="font-bold text-amber-300">${val}</span>
+            <div class="flex justify-between items-start gap-2 border-b border-zinc-900 py-1">
+              <span class="font-medium text-zinc-300">${name}:</span>
+              <span class="font-bold text-emerald-400 text-right">${val}</span>
             </div>
           `;
         });
@@ -791,7 +948,7 @@
       const box = document.getElementById('chat-messages');
       const isUser = sender === "TU";
       box.innerHTML += `
-        <div class="p-2 rounded-xl text-xs ${isUser ? 'bg-violet-600/20 border border-violet-500/30 text-violet-200 self-end ml-4' : 'bg-indigo-900 text-indigo-100 mr-4'}">
+        <div class="p-2 rounded-xl text-[11px] ${isUser ? 'bg-emerald-950/60 border border-emerald-800/50 text-emerald-200 self-end ml-4' : 'bg-zinc-900 text-zinc-300 mr-4'}">
           <strong>${sender}:</strong> <span class="whitespace-pre-line">${text}</span>
         </div>
       `;
