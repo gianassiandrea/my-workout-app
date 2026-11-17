@@ -145,7 +145,7 @@
         <div class="text-center space-y-0.5 border-b border-zinc-900 pb-1.5 shrink-0">
           <span class="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider">BLOCCO COMPLETATO</span>
           <h2 id="block-log-title" class="font-black text-base text-zinc-100">BLOCCO 1</h2>
-          <p class="text-[11px] text-zinc-400">Scorri per impostare ripetizioni e carico:</p>
+          <p class="text-[11px] text-zinc-400">Verifica o modifica i valori preimpostati:</p>
         </div>
 
         <div id="block-exercises-inputs" class="space-y-2 flex-1 overflow-y-auto py-1 pr-0.5 min-h-0"></div>
@@ -276,8 +276,8 @@
         restAfterSet: 90,
         exercises: [
           { name: "Salto della corda", isTimer: true, isCardioNoLog: true, workTime: 90 },
-          { name: "Squat rana", isTimer: false },
-          { name: "Montagna", isTimer: false }
+          { name: "Squat rana", isTimer: false, defaultReps: 12, defaultKg: 0 },
+          { name: "Montagna", isTimer: false, defaultReps: 10, defaultKg: 0 }
         ]
       },
       {
@@ -287,9 +287,9 @@
         restAfterSet: 90,
         exercises: [
           { name: "Jumping Jacks", isTimer: true, isCardioNoLog: true, workTime: 90 },
-          { name: "Affondi alternati indietro", isTimer: false },
-          { name: "Piegamenti stretti", isTimer: false },
-          { name: "Crunch gambe tese", isTimer: false }
+          { name: "Affondi alternati indietro", isTimer: false, defaultReps: 18, defaultKg: 6 },
+          { name: "Piegamenti stretti", isTimer: false, defaultReps: 14, defaultKg: 6 },
+          { name: "Crunch gambe tese", isTimer: false, defaultReps: 34, defaultKg: 0 }
         ]
       },
       {
@@ -301,6 +301,7 @@
         exercises: [
           { 
             name: "Squat: Moby - Flower", isTimer: false, 
+            noReps: true, defaultKg: 10,
             videoUrl: "https://youtu.be/6A2V9Bu80J4?si=zNy6BcOgIki9Z0O-", 
             autoplay: true,
             note: "🎵 'Bring Sally Down' -> Scendi | 'Bring Sally Up' -> Sali." 
@@ -314,8 +315,8 @@
         restAfterSet: 90,
         exercises: [
           { name: "Mountain climber", isTimer: true, isCardioNoLog: true, workTime: 90 },
-          { name: "Rematore", isTimer: false },
-          { name: "Criss Cross", isTimer: false }
+          { name: "Rematore", isTimer: false, defaultReps: 18, defaultKg: 12 },
+          { name: "Criss Cross", isTimer: false, defaultReps: 14, defaultKg: 0 }
         ]
       },
       {
@@ -591,7 +592,6 @@
       const update = () => {
         display.textContent = formatTime(time);
 
-        // Segnale sonoro a 45 secondi (metà dello sforzo da 90s)
         if (seconds === 90 && time === 45) {
           playHalfwayBeep();
           label.textContent = "METÀ TEMPO (45s) - CONTINUA!";
@@ -669,7 +669,6 @@
         startEmomTimer(60);
       } else {
         document.getElementById('emom-target-banner').classList.add('hidden');
-        // Registrazione automatica dell'EMOM senza richiedere conferme manuali
         recordEmomAutomatically();
         proceedToNextBlockOrSummary();
       }
@@ -768,11 +767,12 @@
             </div>
           `;
         } else {
-          const saved = exerciseSliderValues[ex.name] || { reps: 0, kg: 0 };
-          container.innerHTML += `
-            <div class="p-2.5 bg-[#0b0f14] rounded-xl border border-zinc-800/90 space-y-2">
-              <span class="text-xs font-black text-emerald-400 block">${ex.name}</span>
-              
+          const saved = exerciseSliderValues[ex.name] || {
+            reps: ex.defaultReps !== undefined ? ex.defaultReps : 0,
+            kg: ex.defaultKg !== undefined ? ex.defaultKg : 0
+          };
+
+          const repsSection = ex.noReps ? '' : `
               <!-- Slider Ripetizioni 0-100 -->
               <div class="space-y-1">
                 <div class="flex justify-between items-center">
@@ -785,18 +785,23 @@
                 </div>
                 <input type="range" id="block-ex-reps-${idx}" min="0" max="100" step="1" value="${saved.reps}" oninput="updateExerciseSliderUI(${idx}, 'reps', 0)" class="bunker-slider">
               </div>
+          `;
 
-              <!-- Slider Carico Kg 0-10 -->
-              <div class="space-y-1 pt-1 border-t border-zinc-900">
+          container.innerHTML += `
+            <div class="p-2.5 bg-[#0b0f14] rounded-xl border border-zinc-800/90 space-y-2">
+              <span class="text-xs font-black text-emerald-400 block">${ex.name}</span>
+              ${repsSection}
+              <!-- Slider Carico Kg 0-20 -->
+              <div class="space-y-1 ${ex.noReps ? '' : 'pt-1 border-t border-zinc-900'}">
                 <div class="flex justify-between items-center">
-                  <span class="text-[10px] font-mono uppercase text-zinc-400">Carico (0-10 kg)</span>
+                  <span class="text-[10px] font-mono uppercase text-zinc-400">Carico (0-20 kg)</span>
                   <div class="flex items-center gap-1.5">
                     <button type="button" onclick="updateExerciseSliderUI(${idx}, 'kg', -1)" class="w-6 h-6 bg-zinc-900 text-zinc-300 rounded border border-zinc-800 text-xs font-bold">-</button>
                     <span id="block-ex-kg-val-${idx}" class="text-xs font-mono font-black text-sky-300 w-14 text-center">${saved.kg} kg</span>
                     <button type="button" onclick="updateExerciseSliderUI(${idx}, 'kg', 1)" class="w-6 h-6 bg-zinc-900 text-zinc-300 rounded border border-zinc-800 text-xs font-bold">+</button>
                   </div>
                 </div>
-                <input type="range" id="block-ex-kg-${idx}" min="0" max="10" step="1" value="${saved.kg}" oninput="updateExerciseSliderUI(${idx}, 'kg', 0)" class="bunker-slider kg-slider">
+                <input type="range" id="block-ex-kg-${idx}" min="0" max="20" step="1" value="${saved.kg}" oninput="updateExerciseSliderUI(${idx}, 'kg', 0)" class="bunker-slider kg-slider">
               </div>
             </div>
           `;
@@ -809,6 +814,11 @@
       block.exercises.forEach((ex, idx) => {
         if (ex.isCardioNoLog) {
           workoutLogs[ex.name] = "1'30\" (Cardio)";
+        } else if (ex.noReps) {
+          const kgSlider = document.getElementById(`block-ex-kg-${idx}`);
+          const kg = kgSlider ? parseInt(kgSlider.value) || 0 : 0;
+          exerciseSliderValues[ex.name] = { reps: 0, kg };
+          workoutLogs[ex.name] = `${kg} kg`;
         } else {
           const repsSlider = document.getElementById(`block-ex-reps-${idx}`);
           const kgSlider = document.getElementById(`block-ex-kg-${idx}`);
